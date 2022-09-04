@@ -1,0 +1,20 @@
+spring:
+  profiles:
+    active: dev
+
+---
+server:
+  port: 8086
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/poetry_club
+    username: "postgres"
+    password: "PostgreSQL"
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+  config:
+    activate:
+      on-profile: dev
+
