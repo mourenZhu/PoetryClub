@@ -37,6 +37,7 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    implementation 'com.github.houbb:opencc4j:1.7.2'
 }
 
 group = 'cn.zhumouren'

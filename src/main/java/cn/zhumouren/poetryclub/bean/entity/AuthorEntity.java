@@ -28,12 +28,15 @@ public class AuthorEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(length = 30)
     @NotEmpty
     private String name;
 
     @NotEmpty
     @Column(length = 10)
     private String era;
+    @Column(length = 2048)
+    private String description;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
 
@@ -54,4 +57,5 @@ public class AuthorEntity {
     public void postLoad() {
 
     }
+
 }
