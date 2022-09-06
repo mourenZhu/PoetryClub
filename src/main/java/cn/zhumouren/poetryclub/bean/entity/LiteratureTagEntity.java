@@ -45,4 +45,9 @@ public class LiteratureTagEntity {
     public int hashCode() {
         return getClass().hashCode();
     }
+
+    public LiteratureTagEntity(String tag) {
+        this.tag = tag;
+        this.createTime = LocalDateTime.now();
+    }
 }
