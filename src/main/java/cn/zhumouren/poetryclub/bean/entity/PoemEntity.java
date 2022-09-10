@@ -30,13 +30,15 @@ public class PoemEntity implements ILiterature {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     private AuthorEntity author;
 
+    // CREATE INDEX idx_gin_poem_entity_title ON poem_entity USING gin (to_tsvector('chinese_zh', title));
     @NotEmpty
     private String title;
 
-    @Column(unique = true, length = 3072)
+    // CREATE INDEX idx_gin_poem_entity_content ON poem_entity USING gin (to_tsvector('chinese_zh', content));
+    @Column(length = 3072, columnDefinition = "text")
     @NotEmpty
     private String content;
 

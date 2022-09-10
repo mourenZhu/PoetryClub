@@ -32,11 +32,20 @@ public class AuthorEntity {
     @NotEmpty
     private String name;
 
-    @NotEmpty
     @Column(length = 10)
     private String era;
     @Column(length = 2048)
     private String description;
+
+    @Override
+    public String toString() {
+        return "AuthorEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", era='" + era + '\'' +
+                '}';
+    }
+
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
 

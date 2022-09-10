@@ -2,10 +2,12 @@ package cn.zhumouren.poetryclub.init.db;
 
 import cn.zhumouren.poetryclub.bean.entity.LiteratureTagEntity;
 import cn.zhumouren.poetryclub.dao.LiteratureTagEntityRepository;
+import cn.zhumouren.poetryclub.init.IInitData;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
-import org.junit.jupiter.api.Test;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -19,15 +21,22 @@ import java.util.Set;
  * @description todo
  * @date 2022/9/6 9:23
  **/
-@SpringBootTest
-public class InitTag {
+@Component
+@Order(1)
+@Log4j2
+public class InitTag implements IInitData {
 
     @Autowired
     private LiteratureTagEntityRepository tagEntityRepository;
 
-    @Test
-    public void initTag() throws IOException {
-        List<Map> poemMaps = InitPoem.getPoemMaps();
+    @Override
+    public void init() {
+        List<Map> poemMaps = null;
+        try {
+            poemMaps = InitPoem.getPoemMaps();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         Set<String> strTagSet = new HashSet<>();
         poemMaps.forEach(poemMap -> {
             List<String> tags = (List<String>) poemMap.get("tags");
@@ -37,15 +46,15 @@ public class InitTag {
                 });
             }
         });
-        System.out.println("标签共有: " + strTagSet.size() + "个。");
+        log.info("标签共有: {} 个。", strTagSet.size());
 
         Set<LiteratureTagEntity> tagEntitySet = new HashSet<>();
         strTagSet.forEach(tag -> {
             tagEntitySet.add(new LiteratureTagEntity(tag));
         });
 
-        System.out.println("开始保存tags");
+        log.info("开始保存tags");
         tagEntityRepository.saveAll(tagEntitySet);
-        System.out.println("结束");
+        log.info("结束");
     }
 }
