@@ -26,24 +26,33 @@ import java.util.Set;
 @Log4j2
 public class InitTag implements IInitData {
 
-    @Autowired
-    private LiteratureTagEntityRepository tagEntityRepository;
+    private final LiteratureTagEntityRepository tagEntityRepository;
+
+    private final InitPoem initPoem;
+
+    public InitTag(InitPoem initPoem, LiteratureTagEntityRepository tagEntityRepository) {
+        this.initPoem = initPoem;
+        this.tagEntityRepository = tagEntityRepository;
+    }
 
     @Override
     public void init() {
-        List<Map> poemMaps = null;
-        try {
-            poemMaps = InitPoem.getPoemMaps();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+
         Set<String> strTagSet = new HashSet<>();
-        poemMaps.forEach(poemMap -> {
-            List<String> tags = (List<String>) poemMap.get("tags");
-            if (tags != null) {
-                tags.forEach(tag -> {
-                    strTagSet.add(ZhConverterUtil.toSimple(tag));
+
+        initPoem.getPoemFileList().forEach(file -> {
+            try {
+                List<Map> poemMaps = initPoem.getPoemMaps(file);
+                poemMaps.forEach(poemMap -> {
+                    List<String> tags = (List<String>) poemMap.get("tags");
+                    if (tags != null) {
+                        tags.forEach(tag -> {
+                            strTagSet.add(ZhConverterUtil.toSimple(tag));
+                        });
+                    }
                 });
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         });
         log.info("标签共有: {} 个。", strTagSet.size());

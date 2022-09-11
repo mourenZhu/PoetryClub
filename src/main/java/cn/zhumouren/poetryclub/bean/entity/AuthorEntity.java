@@ -19,7 +19,6 @@ import java.util.Objects;
  **/
 @Getter
 @Setter
-@ToString
 @RequiredArgsConstructor
 @Entity
 public class AuthorEntity {

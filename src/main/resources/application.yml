@@ -2,6 +2,10 @@ spring:
   profiles:
     active: dev
 
+app:
+  init:
+    poem-files-path: C:\\data\\github-project\\chinese-poetry\\json
+
 ---
 server:
   port: 8086
@@ -13,7 +17,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 #    defer-datasource-initialization: true
   sql:
     init:

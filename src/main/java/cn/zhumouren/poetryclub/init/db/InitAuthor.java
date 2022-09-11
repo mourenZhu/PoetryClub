@@ -3,17 +3,17 @@ package cn.zhumouren.poetryclub.init.db;
 import cn.zhumouren.poetryclub.bean.entity.AuthorEntity;
 import cn.zhumouren.poetryclub.dao.AuthorEntityRepository;
 import cn.zhumouren.poetryclub.init.IInitData;
+import cn.zhumouren.poetryclub.properties.AppInitProperties;
 import cn.zhumouren.poetryclub.utils.JsonFileUtil;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author mourenZhu
@@ -26,32 +26,45 @@ import java.util.Map;
 @Log4j2
 public class InitAuthor implements IInitData {
 
-    private static final String TANG_AUTHORS_FILE_PATH = "classpath:authors/authors.tang.json";
-
     private static final String SONG_AUTHORS_FILE_PATH = "classpath:authors/authors.song.json";
-
     private static final String SONG_CI_AUTHORS_FILE_PATH = "classpath:authors/ci_author.song.json";
+    private static final String TANG_AUTHORS_FILE_PATH = "classpath:authors/authors.tang.json";
+    private final AppInitProperties appInitProperties;
 
     private final AuthorEntityRepository authorEntityRepository;
 
-    public InitAuthor(AuthorEntityRepository authorEntityRepository) {
+    public InitAuthor(AppInitProperties appInitProperties, AuthorEntityRepository authorEntityRepository) {
+        this.appInitProperties = appInitProperties;
         this.authorEntityRepository = authorEntityRepository;
     }
 
     @Override
     public void init() {
         log.info("开始初始化作者");
-        try {
-            savaAuthor(TANG_AUTHORS_FILE_PATH, "唐");
-            savaAuthor(SONG_AUTHORS_FILE_PATH, "宋");
-            savaAuthor(SONG_CI_AUTHORS_FILE_PATH, "宋");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        List<File> authorsFileList = getAuthorsFileList();
+        authorsFileList.forEach(file -> {
+            String era = "";
+            if (file.getName().matches(".*song.*")) {
+                era = "宋";
+            } else if (file.getName().matches(".*tang.*")) {
+                era = "唐";
+            }
+            try {
+                savaAuthor(file, era);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
-    private void savaAuthor(String path, String era) throws IOException {
-        List<Map> tangAuthorMapList = JsonFileUtil.getListMapByJsonFile(path);
+    private List<File> getAuthorsFileList() {
+        File files = new File(appInitProperties.getPoemFilesPath());
+        return Arrays.stream(Objects.requireNonNull(files.listFiles()))
+                .filter(file -> file.getName().matches("authors.*")).collect(Collectors.toList());
+    }
+
+    private void savaAuthor(File file, String era) throws IOException {
+        List<Map> tangAuthorMapList = JsonFileUtil.getListMapByJsonFile(file);
         log.info("{} 朝诗人共有 {} 人", era, tangAuthorMapList.size());
         List<AuthorEntity> authorEntityList = new ArrayList<>();
         tangAuthorMapList.forEach(authorMap -> {
