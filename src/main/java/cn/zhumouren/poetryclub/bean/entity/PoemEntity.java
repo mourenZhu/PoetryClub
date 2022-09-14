@@ -1,6 +1,7 @@
 package cn.zhumouren.poetryclub.bean.entity;
 
 import cn.zhumouren.poetryclub.core.ILiterature;
+import cn.zhumouren.poetryclub.core.PoemType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -41,6 +42,9 @@ public class PoemEntity implements ILiterature {
     @Column(length = 3072, columnDefinition = "text")
     @NotEmpty
     private String content;
+
+    @Enumerated(EnumType.STRING)
+    private PoemType poemType;
 
     @ManyToMany
     @ToString.Exclude

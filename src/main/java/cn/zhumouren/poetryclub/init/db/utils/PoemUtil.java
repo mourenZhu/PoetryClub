@@ -3,6 +3,7 @@ package cn.zhumouren.poetryclub.init.db.utils;
 import cn.zhumouren.poetryclub.bean.entity.AuthorEntity;
 import cn.zhumouren.poetryclub.bean.entity.LiteratureTagEntity;
 import cn.zhumouren.poetryclub.bean.entity.PoemEntity;
+import cn.zhumouren.poetryclub.core.PoemType;
 import cn.zhumouren.poetryclub.dao.AuthorEntityRepository;
 import cn.zhumouren.poetryclub.utils.JsonFileUtil;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
@@ -69,6 +70,9 @@ public class PoemUtil {
             }
         }
 
+        // 设置诗文类型
+        poemEntity.setPoemType(getPoemTypeByParagraphs((List<String>) map.get("paragraphs")));
+
         // 设置tags
         Set<LiteratureTagEntity> literatureTagEntitySet = new HashSet<>();
         List<String> tags = (List<String>) map.get("tags");
@@ -89,5 +93,42 @@ public class PoemUtil {
             content.append(s);
         }
         return content.toString();
+    }
+
+    public PoemType getPoemTypeByParagraphs(List<String> strings) {
+        int rows = strings.size();
+        int firstRowLen = strings.get(0).length();
+        if (rows == 2) {
+            if (firstRowLen == 12) {
+                return PoemType.FIVE_CHARACTER_QUATRAIN;
+            }
+            if (firstRowLen == 14) {
+                return PoemType.SIX_CHARACTER_QUATRAIN;
+            }
+            if (firstRowLen == 16) {
+                return PoemType.SEVEN_CHARACTER_QUATRAIN;
+            }
+        } else if (rows == 4) {
+            if (firstRowLen == 12) {
+                return PoemType.FIVE_CHARACTER_RHYTHM_POEM;
+            }
+            if (firstRowLen == 14) {
+                return PoemType.SIX_CHARACTER_RHYTHM_POEM;
+            }
+            if (firstRowLen == 16) {
+                return PoemType.SEVEN_CHARACTER_RHYTHM_POEM;
+            }
+        } else if (rows > 4) {
+            if (firstRowLen == 12) {
+                return PoemType.FIVE_CHARACTER_LONG_RHYTHM_POEM;
+            }
+            if (firstRowLen == 14) {
+                return PoemType.SIX_CHARACTER_LONG_RHYTHM_POEM;
+            }
+            if (firstRowLen == 16) {
+                return PoemType.SEVEN_CHARACTER_LONG_RHYTHM_POEM;
+            }
+        }
+        return PoemType.UNKNOWN;
     }
 }
