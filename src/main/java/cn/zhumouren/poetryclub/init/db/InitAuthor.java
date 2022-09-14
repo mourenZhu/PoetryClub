@@ -6,7 +6,7 @@ import cn.zhumouren.poetryclub.init.IInitData;
 import cn.zhumouren.poetryclub.properties.AppInitProperties;
 import cn.zhumouren.poetryclub.utils.JsonFileUtil;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  **/
 @Component
 @Order(1)
-@Log4j2
+@Slf4j
 public class InitAuthor implements IInitData {
 
     private static final String SONG_AUTHORS_FILE_PATH = "classpath:authors/authors.song.json";

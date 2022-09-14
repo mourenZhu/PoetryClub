@@ -10,7 +10,7 @@ import cn.zhumouren.poetryclub.init.IInitData;
 import cn.zhumouren.poetryclub.properties.AppInitProperties;
 import cn.zhumouren.poetryclub.utils.JsonFileUtil;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  **/
 @Component
 @Order(2)
-@Log4j2
+@Slf4j
 public class InitPoem implements IInitData {
 
     private final AppInitProperties appInitProperties;

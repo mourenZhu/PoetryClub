@@ -4,8 +4,7 @@ import cn.zhumouren.poetryclub.bean.entity.LiteratureTagEntity;
 import cn.zhumouren.poetryclub.dao.LiteratureTagEntityRepository;
 import cn.zhumouren.poetryclub.init.IInitData;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +22,7 @@ import java.util.Set;
  **/
 @Component
 @Order(1)
-@Log4j2
+@Slf4j
 public class InitTag implements IInitData {
 
     private final LiteratureTagEntityRepository tagEntityRepository;
