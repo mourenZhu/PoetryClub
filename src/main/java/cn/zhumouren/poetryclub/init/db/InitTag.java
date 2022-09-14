@@ -3,6 +3,7 @@ package cn.zhumouren.poetryclub.init.db;
 import cn.zhumouren.poetryclub.bean.entity.LiteratureTagEntity;
 import cn.zhumouren.poetryclub.dao.LiteratureTagEntityRepository;
 import cn.zhumouren.poetryclub.init.IInitData;
+import cn.zhumouren.poetryclub.init.db.utils.PoemUtil;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
@@ -26,12 +27,14 @@ import java.util.Set;
 public class InitTag implements IInitData {
 
     private final LiteratureTagEntityRepository tagEntityRepository;
-
     private final InitPoem initPoem;
+    private final PoemUtil poemUtil;
 
-    public InitTag(InitPoem initPoem, LiteratureTagEntityRepository tagEntityRepository) {
-        this.initPoem = initPoem;
+    public InitTag(LiteratureTagEntityRepository tagEntityRepository, InitPoem initPoem, PoemUtil poemUtil) {
+
         this.tagEntityRepository = tagEntityRepository;
+        this.initPoem = initPoem;
+        this.poemUtil = poemUtil;
     }
 
     @Override
@@ -41,7 +44,7 @@ public class InitTag implements IInitData {
 
         initPoem.getPoemFileList().forEach(file -> {
             try {
-                List<Map> poemMaps = initPoem.getPoemMaps(file);
+                List<Map> poemMaps = poemUtil.getPoemMaps(file);
                 poemMaps.forEach(poemMap -> {
                     List<String> tags = (List<String>) poemMap.get("tags");
                     if (tags != null) {
