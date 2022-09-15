@@ -34,4 +34,6 @@ build/
 
 ### Gradle ###
 .gradle
+### 隐私文件 ###
 /server_conf/
+/src/main/resources/github-oauth2.yml
