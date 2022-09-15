@@ -1,7 +1,6 @@
 package cn.zhumouren.poetryclub.config.response;
 
 import cn.zhumouren.poetryclub.bean.vo.response.ResponseVO;
-import cn.zhumouren.poetryclub.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,9 +21,6 @@ public class ResponseExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseVO<String> exception(Exception e) {
         log.error("全局异常信息 ex={}", e.getMessage());
-        if (e instanceof BaseException) {
-            ResponseVO.failed(((BaseException) e).getResponseCode());
-        }
         return ResponseVO.failed(e.getMessage());
     }
 
