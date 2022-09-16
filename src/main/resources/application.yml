@@ -4,6 +4,10 @@ spring:
   data:
     rest:
       base-path: /api
+  security:
+    oauth2:
+      client:
+        registration:
 
 app:
   init:
@@ -18,6 +22,8 @@ spring:
     username: "postgres"
     password: "PostgreSQL"
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 50
   jpa:
     hibernate:
       ddl-auto: update

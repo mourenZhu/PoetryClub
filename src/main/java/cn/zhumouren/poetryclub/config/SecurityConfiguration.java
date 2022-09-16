@@ -33,7 +33,8 @@ public class SecurityConfiguration {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().antMatchers("/api/**", "/websocket/**");
+        return (web) -> web.ignoring().antMatchers(
+                "/api/**", "/websocket/**", "/oauth2/**");
     }
 
     @Bean
