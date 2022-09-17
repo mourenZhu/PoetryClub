@@ -1,11 +1,13 @@
 package cn.zhumouren.poetryclub.bean.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import java.util.Collection;
 import java.util.Set;
@@ -30,10 +32,17 @@ public class UserEntity implements UserDetails {
     @Column(unique = true)
     private String username;
     @NotEmpty
+    @JsonIgnore
     private String password;
     @OneToMany
     @ToString.Exclude
     private Set<RoleEntity> roles;
+
+    @Length(max = 20)
+    private String name;
+
+    @Email
+    private String email;
 
     @Override
     public boolean equals(Object o) {

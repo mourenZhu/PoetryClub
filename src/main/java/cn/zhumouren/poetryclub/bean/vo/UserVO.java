@@ -1,5 +1,6 @@
 package cn.zhumouren.poetryclub.bean.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
@@ -17,6 +18,7 @@ public class UserVO implements Serializable {
     @NotEmpty
     private final String username;
     @NotEmpty
+    @JsonIgnore
     private final String password;
     private final Set<RoleVO> roles;
 }
