@@ -4,7 +4,7 @@ import cn.zhumouren.poetryclub.bean.entity.RoleEntity;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.mapper.UserMapper;
 import cn.zhumouren.poetryclub.bean.vo.UserRegisterVO;
-import cn.zhumouren.poetryclub.constants.RoleType;
+import cn.zhumouren.poetryclub.constants.DBRoleType;
 import cn.zhumouren.poetryclub.dao.RoleEntityRepository;
 import cn.zhumouren.poetryclub.dao.UserEntityRepository;
 import cn.zhumouren.poetryclub.exception.UsernameNotAvailableException;
@@ -53,7 +53,7 @@ public class RegisterController {
         }
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
         Set<RoleEntity> roles = new HashSet<>();
-        roles.add(roleEntityRepository.findByRole(RoleType.ROLE_USER.getRole()));
+        roles.add(roleEntityRepository.findByRole(DBRoleType.ROLE_USER.getRole()));
         userEntity.setRoles(roles);
         UserEntity save = userEntityRepository.save(userEntity);
         return ObjectUtils.isNotEmpty(save);

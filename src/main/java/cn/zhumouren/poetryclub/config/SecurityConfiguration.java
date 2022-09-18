@@ -3,6 +3,7 @@ package cn.zhumouren.poetryclub.config;
 
 import cn.zhumouren.poetryclub.config.security.filter.JwtTokenFilter;
 import cn.zhumouren.poetryclub.config.security.handle.CustomizeAuthenticationSuccessHandler;
+import cn.zhumouren.poetryclub.constants.RoleType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -55,8 +56,9 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests((authz) ->
 
                         authz.antMatchers("/api/auth/login", "/api/register").permitAll()
-                                .antMatchers("/api/user/**").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
-                                .antMatchers("/api/admin/**").hasRole("ROLE_ADMIN")
+                                .antMatchers("/api/user/**")
+                                .hasAnyRole(RoleType.USER.getStr(), RoleType.ADMIN.getStr())
+                                .antMatchers("/api/admin/**").hasRole(RoleType.ADMIN.getStr())
                                 .anyRequest().authenticated())
                 .httpBasic(withDefaults())
                 .userDetailsService(userDetailsManager);

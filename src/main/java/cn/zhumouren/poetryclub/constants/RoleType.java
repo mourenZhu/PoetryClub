@@ -5,16 +5,17 @@ import lombok.Getter;
 /**
  * @author mourenZhu
  * @version 1.0
- * @description todo
- * @date 2022/9/14 22:31
+ * @description 这个是 spring security 直接读取的角色值
+ * @date 2022/9/18 22:09
  **/
 @Getter
 public enum RoleType {
-    ROLE_ADMIN("ROLE_ADMIN"),
-    ROLE_USER("ROLE_USER");
-    private final String role;
+    USER("USER"),
+    ADMIN("ADMIN");
 
-    RoleType(String role) {
-        this.role = role;
+    private final String str;
+
+    RoleType(String str) {
+        this.str = str;
     }
 }
