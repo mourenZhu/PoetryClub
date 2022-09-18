@@ -1,9 +1,13 @@
 package cn.zhumouren.poetryclub.bean.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
@@ -11,6 +15,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author mourenZhu
@@ -34,7 +39,7 @@ public class UserEntity implements UserDetails {
     @NotEmpty
     @JsonIgnore
     private String password;
-    @OneToMany
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @ToString.Exclude
     private Set<RoleEntity> roles;
 
@@ -64,7 +69,9 @@ public class UserEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return getRoles().stream()
+                .map(roleEntity -> new SimpleGrantedAuthority(roleEntity.getRole()))
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -52,9 +52,9 @@ public class RegisterController {
             throw new UsernameNotAvailableException();
         }
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
-        Set<RoleEntity> roleSet = new HashSet<>();
-        roleSet.add(roleEntityRepository.findByRole(RoleType.ROLE_USER.getRole()));
-        userEntity.setRoles(roleSet);
+        Set<RoleEntity> roles = new HashSet<>();
+        roles.add(roleEntityRepository.findByRole(RoleType.ROLE_USER.getRole()));
+        userEntity.setRoles(roles);
         UserEntity save = userEntityRepository.save(userEntity);
         return ObjectUtils.isNotEmpty(save);
     }

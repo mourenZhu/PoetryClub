@@ -53,7 +53,10 @@ public class SecurityConfiguration {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http
                 .authorizeHttpRequests((authz) ->
-                        authz.antMatchers("/api/auth/login").permitAll()
+
+                        authz.antMatchers("/api/auth/login", "/api/register").permitAll()
+                                .antMatchers("/api/user/**").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
+                                .antMatchers("/api/admin/**").hasRole("ROLE_ADMIN")
                                 .anyRequest().authenticated())
                 .httpBasic(withDefaults())
                 .userDetailsService(userDetailsManager);
