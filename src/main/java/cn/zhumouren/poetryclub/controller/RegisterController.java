@@ -4,7 +4,7 @@ import cn.zhumouren.poetryclub.bean.entity.RoleEntity;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.mapper.UserMapper;
 import cn.zhumouren.poetryclub.bean.vo.UserRegisterVO;
-import cn.zhumouren.poetryclub.constant.RoleType;
+import cn.zhumouren.poetryclub.constants.RoleType;
 import cn.zhumouren.poetryclub.dao.RoleEntityRepository;
 import cn.zhumouren.poetryclub.dao.UserEntityRepository;
 import cn.zhumouren.poetryclub.exception.UsernameNotAvailableException;

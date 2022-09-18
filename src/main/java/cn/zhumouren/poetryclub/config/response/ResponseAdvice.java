@@ -46,6 +46,7 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
         if (body instanceof RepresentationModel<?>) {
             return body;
         }
+        log.info("body = {}", body.getClass());
         return ResponseVO.success(body);
     }
 }

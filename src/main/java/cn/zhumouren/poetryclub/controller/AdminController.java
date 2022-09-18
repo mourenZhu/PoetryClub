@@ -1,6 +1,5 @@
 package cn.zhumouren.poetryclub.controller;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,11 +8,11 @@ import org.springframework.web.bind.annotation.RestController;
  * @author mourenZhu
  * @version 1.0
  * @description todo
- * @date 2022/9/14 18:13
+ * @date 2022/9/17 19:31
  **/
 @RestController
-@RequestMapping("/api/user")
-public class UserController {
+@RequestMapping("/api/admin")
+public class AdminController {
 
     @GetMapping("/hello")
     public String hello() {

@@ -2,6 +2,7 @@ package cn.zhumouren.poetryclub.config.jwt;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.config.YamlPropertySourceFactory;
+import cn.zhumouren.poetryclub.config.security.constants.SecurityConstants;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -9,8 +10,8 @@ import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
-
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -29,20 +30,20 @@ public class JwtTokenUtil {
     private static final long EXPIRE_DURATION = 24 * 60 * 60 * 1000; // 24 hour
 
     @Value("${jwt.secret-key}")
-    private String secretKey;
-
-    @Autowired
-    private Key getKey() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
-    }
-
-    @Value("${jwt.secret-key}")
     private String SECRET_KEY;
+    @Value("${jwt.issuer}")
+    private String issuer;
+
+    @Bean
+    private Key getKey() {
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY));
+    }
 
     public String generateAccessToken(UserEntity user) {
         return Jwts.builder()
                 .setSubject(String.format("%s,%s", user.getId(), user.getUsername()))
-                .setIssuer("CodeJava")
+                .claim(SecurityConstants.TOKEN_ROLE_CLAIM.getName(), user.getRoles())
+                .setIssuer(issuer)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRE_DURATION))
                 .signWith(getKey(), SignatureAlgorithm.HS512)
@@ -52,7 +53,7 @@ public class JwtTokenUtil {
 
     public boolean validateAccessToken(String token) {
         try {
-            Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(getKey()).build().parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException ex) {
             log.error("JWT expired", ex.getMessage());
@@ -73,9 +74,8 @@ public class JwtTokenUtil {
     }
 
     private Claims parseClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(SECRET_KEY)
-                .parseClaimsJws(token)
-                .getBody();
+        return Jwts.parserBuilder()
+                .setSigningKey(getKey())
+                .build().parseClaimsJws(token).getBody();
     }
 }

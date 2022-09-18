@@ -3,7 +3,7 @@ spring:
     active: dev
   data:
     rest:
-      base-path: /api
+      base-path: /api/data-rest
   security:
     oauth2:
       client:

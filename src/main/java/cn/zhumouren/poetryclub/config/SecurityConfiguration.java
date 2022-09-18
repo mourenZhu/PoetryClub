@@ -6,13 +6,17 @@ import cn.zhumouren.poetryclub.config.security.handle.CustomizeAuthenticationSuc
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -46,18 +50,15 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // Enable CORS and disable CSRF
         http = http.cors().and().csrf().disable();
-
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http
                 .authorizeHttpRequests((authz) ->
-                        authz.anyRequest().authenticated())
+                        authz.antMatchers("/api/auth/login").permitAll()
+                                .anyRequest().authenticated())
                 .httpBasic(withDefaults())
-                .formLogin().permitAll()
-                .loginProcessingUrl("/api/login")
-                .successHandler(authenticationSuccessHandler)
-                .and()
                 .userDetailsService(userDetailsManager);
 
-//        http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -67,12 +68,17 @@ public class SecurityConfiguration {
                 "/websocket/**", "/oauth2/**");
     }
 
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
+    }
+
 //    @Bean
 //    public UserDetailsManager userDetailsManager() {
 //        log.info("UserDetailsManager = {}", userDetailsManager);
 //        return userDetailsManager;
 //    }
-
 
 
     // Used by spring security if CORS is enabled.
@@ -94,8 +100,4 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
-//    @Bean
-//    public UserDetailsManager users(DataSource dataSource) {
-//        return new JdbcUserDetailsManager(dataSource);
-//    }
 }

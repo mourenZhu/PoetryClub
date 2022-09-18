@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  **/
 @Component
 @Data
-@PropertySource(value = "classpath:oauth2-github.yml", factory = YamlPropertySourceFactory.class)
+@PropertySource(value = "classpath:privacy/oauth2-github.yml", factory = YamlPropertySourceFactory.class)
 @ConfigurationProperties(prefix = "oauth2-github")
 public class GitHubOauth2Properties {
     private String clientId;
