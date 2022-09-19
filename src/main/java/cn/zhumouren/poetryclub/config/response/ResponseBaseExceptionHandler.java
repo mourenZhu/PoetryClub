@@ -1,6 +1,6 @@
 package cn.zhumouren.poetryclub.config.response;
 
-import cn.zhumouren.poetryclub.bean.vo.response.ResponseVO;
+import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.exception.BaseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,7 +18,7 @@ public class ResponseBaseExceptionHandler {
 
     @ExceptionHandler(BaseException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseVO<String> exception(BaseException e) {
-        return ResponseVO.failed(e.getResponseCode());
+    public ResponseResult<String> exception(BaseException e) {
+        return ResponseResult.failed(e.getResponseCode());
     }
 }

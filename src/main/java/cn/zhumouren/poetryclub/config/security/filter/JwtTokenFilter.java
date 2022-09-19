@@ -2,6 +2,7 @@ package cn.zhumouren.poetryclub.config.security.filter;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.config.jwt.JwtTokenUtil;
+import cn.zhumouren.poetryclub.dao.UserEntityRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,9 +29,11 @@ import java.io.IOException;
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtil jwtTokenUtil;
+    private final UserEntityRepository userEntityRepository;
 
-    public JwtTokenFilter(JwtTokenUtil jwtTokenUtil) {
+    public JwtTokenFilter(JwtTokenUtil jwtTokenUtil, UserEntityRepository userEntityRepository) {
         this.jwtTokenUtil = jwtTokenUtil;
+        this.userEntityRepository = userEntityRepository;
     }
 
     @Override
@@ -44,9 +47,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         if (!jwtTokenUtil.validateAccessToken(token)) {
             filterChain.doFilter(request, response);
+            log.info("验证失败");
             return;
         }
         setAuthenticationContext(token, request);
+        log.info("验证成功继续");
         filterChain.doFilter(request, response);
     }
 
@@ -64,7 +69,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         UserDetails userDetails = getUserDetails(token);
 
         UsernamePasswordAuthenticationToken
-                authentication = new UsernamePasswordAuthenticationToken(userDetails, null, null);
+                authentication = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 
         authentication.setDetails(
                 new WebAuthenticationDetailsSource().buildDetails(request));
@@ -73,12 +78,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     private UserEntity getUserDetails(String token) {
-        UserEntity userDetails = new UserEntity();
         String[] jwtSubject = jwtTokenUtil.getSubject(token).split(",");
-
-        userDetails.setId(Long.parseLong(jwtSubject[0]));
-        userDetails.setUsername(jwtSubject[1]);
-
-        return userDetails;
+        return userEntityRepository.findByUsername(jwtSubject[1]);
     }
 }

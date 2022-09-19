@@ -1,6 +1,6 @@
 package cn.zhumouren.poetryclub.config.response;
 
-import cn.zhumouren.poetryclub.bean.vo.response.ResponseVO;
+import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -38,15 +38,15 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
         if (body instanceof String) {
-            return objectMapper.writeValueAsString(ResponseVO.success(body));
+            return objectMapper.writeValueAsString(ResponseResult.success(body));
         }
-        if(body instanceof ResponseVO<?>){
+        if(body instanceof ResponseResult<?>){
             return body;
         }
         if (body instanceof RepresentationModel<?>) {
             return body;
         }
         log.info("body = {}", body.getClass());
-        return ResponseVO.success(body);
+        return ResponseResult.success(body);
     }
 }

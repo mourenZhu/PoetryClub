@@ -2,7 +2,7 @@ package cn.zhumouren.poetryclub.controller;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.vo.LoginVO;
-import cn.zhumouren.poetryclub.bean.vo.response.ResponseCode;
+import cn.zhumouren.poetryclub.common.response.ResponseCode;
 import cn.zhumouren.poetryclub.config.jwt.JwtTokenUtil;
 import cn.zhumouren.poetryclub.exception.HttpException;
 import org.springframework.security.authentication.AuthenticationManager;

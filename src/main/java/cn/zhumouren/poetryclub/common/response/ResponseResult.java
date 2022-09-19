@@ -1,4 +1,4 @@
-package cn.zhumouren.poetryclub.bean.vo.response;
+package cn.zhumouren.poetryclub.common.response;
 
 import lombok.Data;
 
@@ -11,64 +11,64 @@ import java.io.Serializable;
  * @date 2022/9/12 17:02
  **/
 @Data
-public class ResponseVO<T> implements Serializable {
+public class ResponseResult<T> implements Serializable {
     private int code;
     private T data;
     private String msg;
 
-    public static <T> ResponseVO<T> success() {
-        ResponseVO<T> vo = new ResponseVO<>();
+    public static <T> ResponseResult<T> success() {
+        ResponseResult<T> vo = new ResponseResult<>();
         vo.code = ResponseCode.SUCCESS.getCode();
         vo.msg = ResponseCode.SUCCESS.getMsg();
         return vo;
     }
 
-    public static <T> ResponseVO<T> success(T data) {
-        ResponseVO<T> vo = new ResponseVO<>();
+    public static <T> ResponseResult<T> success(T data) {
+        ResponseResult<T> vo = new ResponseResult<>();
         vo.code = ResponseCode.SUCCESS.getCode();
         vo.data = data;
         vo.msg = ResponseCode.SUCCESS.getMsg();
         return vo;
     }
 
-    public static <T> ResponseVO<T> successWithMessage(String message) {
-        ResponseVO<T> vo = new ResponseVO<>();
+    public static <T> ResponseResult<T> successWithMessage(String message) {
+        ResponseResult<T> vo = new ResponseResult<>();
         vo.code = ResponseCode.SUCCESS.getCode();
         vo.msg = message;
         return vo;
     }
 
-    public static <T> ResponseVO<T> success(ResponseCode code, T data) {
-        ResponseVO<T> vo = new ResponseVO<>();
+    public static <T> ResponseResult<T> success(ResponseCode code, T data) {
+        ResponseResult<T> vo = new ResponseResult<>();
         vo.code = code.getCode();
         vo.data = data;
         vo.msg = code.getMsg();
         return vo;
     }
 
-    public static <T> ResponseVO<T> failed() {
-        ResponseVO<T> vo = new ResponseVO<>();
+    public static <T> ResponseResult<T> failed() {
+        ResponseResult<T> vo = new ResponseResult<>();
         vo.code = ResponseCode.FAILED.getCode();
         vo.msg = ResponseCode.FAILED.getMsg();
         return vo;
     }
 
-    public static <T> ResponseVO<T> failed(ResponseCode code) {
-        ResponseVO<T> vo = new ResponseVO<>();
+    public static <T> ResponseResult<T> failed(ResponseCode code) {
+        ResponseResult<T> vo = new ResponseResult<>();
         vo.code = code.getCode();
         vo.msg = code.getMsg();
         return vo;
     }
 
-    public static <T> ResponseVO<T> failed(String message) {
-        ResponseVO<T> vo = new ResponseVO<>();
+    public static <T> ResponseResult<T> failed(String message) {
+        ResponseResult<T> vo = new ResponseResult<>();
         vo.code = ResponseCode.FAILED.getCode();
         vo.msg = message;
         return vo;
     }
 
-    public static <T> ResponseVO<T> failed(ResponseCode code, String message) {
-        ResponseVO<T> vo = new ResponseVO<>();
+    public static <T> ResponseResult<T> failed(ResponseCode code, String message) {
+        ResponseResult<T> vo = new ResponseResult<>();
         vo.code = code.getCode();
         vo.msg = message;
         return vo;

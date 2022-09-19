@@ -1,4 +1,4 @@
-package cn.zhumouren.poetryclub.bean.vo.response;
+package cn.zhumouren.poetryclub.common.response;
 
 import lombok.Getter;
 

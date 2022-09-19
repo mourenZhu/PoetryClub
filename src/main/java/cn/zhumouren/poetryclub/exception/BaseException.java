@@ -1,6 +1,6 @@
 package cn.zhumouren.poetryclub.exception;
 
-import cn.zhumouren.poetryclub.bean.vo.response.ResponseCode;
+import cn.zhumouren.poetryclub.common.response.ResponseCode;
 
 /**
  * @author mourenZhu
