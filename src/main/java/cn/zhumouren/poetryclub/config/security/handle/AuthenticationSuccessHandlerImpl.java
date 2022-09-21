@@ -21,7 +21,7 @@ import java.io.IOException;
  **/
 @Component
 @Slf4j
-public class CustomizeAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {

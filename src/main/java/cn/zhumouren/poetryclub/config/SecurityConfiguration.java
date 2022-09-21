@@ -2,7 +2,7 @@ package cn.zhumouren.poetryclub.config;
 
 
 import cn.zhumouren.poetryclub.config.security.filter.JwtTokenFilter;
-import cn.zhumouren.poetryclub.config.security.handle.CustomizeAuthenticationSuccessHandler;
+import cn.zhumouren.poetryclub.config.security.handle.AuthenticationSuccessHandlerImpl;
 import cn.zhumouren.poetryclub.constants.RoleType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -36,11 +36,11 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfiguration {
 
     private final JwtTokenFilter jwtTokenFilter;
-    private final CustomizeAuthenticationSuccessHandler authenticationSuccessHandler;
+    private final AuthenticationSuccessHandlerImpl authenticationSuccessHandler;
     private final UserDetailsManager userDetailsManager;
 
     public SecurityConfiguration(
-            JwtTokenFilter jwtTokenFilter, CustomizeAuthenticationSuccessHandler authenticationSuccessHandler,
+            JwtTokenFilter jwtTokenFilter, AuthenticationSuccessHandlerImpl authenticationSuccessHandler,
             UserDetailsManager userDetailsManager) {
         this.jwtTokenFilter = jwtTokenFilter;
         this.authenticationSuccessHandler = authenticationSuccessHandler;
