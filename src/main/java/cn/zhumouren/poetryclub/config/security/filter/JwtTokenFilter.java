@@ -6,6 +6,7 @@ import cn.zhumouren.poetryclub.dao.UserEntityRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -66,15 +67,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     private void setAuthenticationContext(String token, HttpServletRequest request) {
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
         UserDetails userDetails = getUserDetails(token);
-
         UsernamePasswordAuthenticationToken
                 authentication = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-
         authentication.setDetails(
                 new WebAuthenticationDetailsSource().buildDetails(request));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        context.setAuthentication(authentication);
+        SecurityContextHolder.setContext(context);
     }
 
     private UserEntity getUserDetails(String token) {
