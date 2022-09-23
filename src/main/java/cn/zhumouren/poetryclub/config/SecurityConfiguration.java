@@ -13,9 +13,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -37,14 +37,13 @@ public class SecurityConfiguration {
 
     private final JwtTokenFilter jwtTokenFilter;
     private final AuthenticationSuccessHandlerImpl authenticationSuccessHandler;
-    private final UserDetailsManager userDetailsManager;
+    private final UserDetailsService userDetailsService;
 
     public SecurityConfiguration(
-            JwtTokenFilter jwtTokenFilter, AuthenticationSuccessHandlerImpl authenticationSuccessHandler,
-            UserDetailsManager userDetailsManager) {
+            JwtTokenFilter jwtTokenFilter, AuthenticationSuccessHandlerImpl authenticationSuccessHandler, UserDetailsService userDetailsService) {
         this.jwtTokenFilter = jwtTokenFilter;
         this.authenticationSuccessHandler = authenticationSuccessHandler;
-        this.userDetailsManager = userDetailsManager;
+        this.userDetailsService = userDetailsService;
     }
 
     @Bean
@@ -61,7 +60,7 @@ public class SecurityConfiguration {
                                 .antMatchers("/api/admin/**").hasRole(RoleType.ADMIN.getStr())
                                 .anyRequest().authenticated())
                 .httpBasic(withDefaults())
-                .userDetailsService(userDetailsManager);
+                .userDetailsService(userDetailsService);
 
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

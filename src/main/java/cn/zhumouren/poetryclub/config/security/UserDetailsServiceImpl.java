@@ -5,6 +5,7 @@ import cn.zhumouren.poetryclub.dao.UserEntityRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
@@ -17,11 +18,11 @@ import org.springframework.stereotype.Service;
  **/
 @Service
 @Slf4j
-public class UserDetailsManagerImpl implements UserDetailsManager {
+public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserEntityRepository userEntityRepository;
 
-    public UserDetailsManagerImpl(UserEntityRepository userEntityRepository) {
+    public UserDetailsServiceImpl(UserEntityRepository userEntityRepository) {
         this.userEntityRepository = userEntityRepository;
     }
 
@@ -31,29 +32,4 @@ public class UserDetailsManagerImpl implements UserDetailsManager {
         return userEntityRepository.findByUsername(username);
     }
 
-    @Override
-    public void createUser(UserDetails user) {
-
-    }
-
-    @Override
-    public void updateUser(UserDetails user) {
-
-    }
-
-    @Override
-    public void deleteUser(String username) {
-
-    }
-
-    @Override
-    public void changePassword(String oldPassword, String newPassword) {
-
-    }
-
-    @Override
-    public boolean userExists(String username) {
-        UserEntity user = userEntityRepository.findByUsername(username);
-        return ObjectUtils.isNotEmpty(user);
-    }
 }
