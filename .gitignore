@@ -38,3 +38,4 @@ build/
 /docker_server_conf/
 /src/main/resources/privacy/
 /src/main/resources/application-pro.yml
+/src/main/resources/application-dev.yml

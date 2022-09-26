@@ -7,33 +7,9 @@ spring:
   security:
     oauth2:
       client:
-        registration:
 
 app:
   init:
     poem-files-path: C:\\data\\github-project\\chinese-poetry\\json
 
----
-server:
-  port: 8086
-spring:
-  datasource:
-    url: jdbc:postgresql://192.168.3.110:5432/poetry_club
-    username: "postgres"
-    password: "PostgreSQL"
-    driver-class-name: org.postgresql.Driver
-    hikari:
-      maximum-pool-size: 50
-  jpa:
-    hibernate:
-      ddl-auto: update
-#    defer-datasource-initialization: true
-  sql:
-    init:
-#      mode: always
-#      data-locations: classpath:data.sql
-#      schema-locations: classpath:schema.sql
-  config:
-    activate:
-      on-profile: dev
 
