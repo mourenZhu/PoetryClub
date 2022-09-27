@@ -1,5 +1,9 @@
 package cn.zhumouren.poetryclub.controller;
 
+import cn.zhumouren.poetryclub.bean.entity.UserEntity;
+import cn.zhumouren.poetryclub.bean.mapper.UserMapper;
+import cn.zhumouren.poetryclub.bean.vo.UserResVO;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,8 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/user")
 public class UserController {
 
-    @GetMapping("/hello")
-    public String hello() {
-        return "hello";
+    @GetMapping("/info")
+    public UserResVO getInfo() {
+        UserEntity userEntity = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return UserMapper.INSTANCE.userEntityToUserResVO(userEntity);
     }
 }

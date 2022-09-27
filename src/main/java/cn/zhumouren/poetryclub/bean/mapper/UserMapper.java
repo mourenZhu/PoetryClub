@@ -2,6 +2,7 @@ package cn.zhumouren.poetryclub.bean.mapper;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.vo.UserRegisterVO;
+import cn.zhumouren.poetryclub.bean.vo.UserResVO;
 import cn.zhumouren.poetryclub.bean.vo.UserVO;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
@@ -30,4 +31,6 @@ public interface UserMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     UserEntity updateUserEntityFromUserVO(UserVO userVO, @MappingTarget UserEntity userEntity);
+
+    UserResVO userEntityToUserResVO(UserEntity userEntity);
 }

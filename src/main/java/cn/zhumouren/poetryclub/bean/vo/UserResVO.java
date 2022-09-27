@@ -1,0 +1,24 @@
+package cn.zhumouren.poetryclub.bean.vo;
+
+import lombok.Data;
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
+import java.util.Set;
+
+/**
+ * A DTO for the {@link cn.zhumouren.poetryclub.bean.entity.UserEntity} entity
+ */
+@Data
+public class UserResVO implements Serializable {
+    @Length(message = "用户名不能为空", min = 6, max = 30)
+    @NotEmpty
+    private final String username;
+    private final Set<String> roleRoles;
+    @Length(max = 20)
+    private final String name;
+    @Email
+    private final String email;
+}
