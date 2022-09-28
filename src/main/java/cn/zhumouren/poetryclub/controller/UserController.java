@@ -5,11 +5,11 @@ import cn.zhumouren.poetryclub.bean.mapper.UserMapper;
 import cn.zhumouren.poetryclub.bean.vo.UserReqVO;
 import cn.zhumouren.poetryclub.bean.vo.UserResVO;
 import cn.zhumouren.poetryclub.dao.UserEntityRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import cn.zhumouren.poetryclub.service.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author mourenZhu
@@ -21,10 +21,20 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/user")
 public class UserController {
 
+
     private final UserEntityRepository userEntityRepository;
 
-    public UserController(UserEntityRepository userEntityRepository) {
+    private final UserService userService;
+
+    public UserController(UserEntityRepository userEntityRepository, UserService userService) {
         this.userEntityRepository = userEntityRepository;
+        this.userService = userService;
+    }
+
+    @PostMapping("/avatar")
+    public Boolean postUserAvatar(MultipartFile file) {
+        userService.saveUserAvatar(file);
+        return true;
     }
 
     @GetMapping("/info")

@@ -7,9 +7,26 @@ spring:
   security:
     oauth2:
       client:
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  #    show-sql: true
+  servlet:
+    multipart:
+      max-file-size: 15MB
+      max-request-size: 50MB
+  mvc:
+    static-path-pattern: "/files/**"
+  web:
+    resources:
+      static-locations: classpath:/files/,classpath:/static/, file:${app.files-path}
 
 app:
   init:
-    poem-files-path: C:\\data\\github-project\\chinese-poetry\\json
+    poem-files-path: D:\\data\\github-project\\chinese-poetry\\json
+  web:
+    image:
+      url: http://localhost:${server.port}
+      user-avatar-path: user_avatar/
 
 

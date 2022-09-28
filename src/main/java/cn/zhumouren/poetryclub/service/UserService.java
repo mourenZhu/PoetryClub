@@ -1,5 +1,7 @@
 package cn.zhumouren.poetryclub.service;
 
+import org.springframework.web.multipart.MultipartFile;
+
 /**
  * @author mourenZhu
  * @version 1.0
@@ -8,4 +10,6 @@ package cn.zhumouren.poetryclub.service;
  **/
 public interface UserService {
     boolean isUsernameAvailable(String username);
+
+    boolean saveUserAvatar(MultipartFile file);
 }
