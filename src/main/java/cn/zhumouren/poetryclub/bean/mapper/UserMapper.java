@@ -2,8 +2,8 @@ package cn.zhumouren.poetryclub.bean.mapper;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.vo.UserRegisterVO;
+import cn.zhumouren.poetryclub.bean.vo.UserReqVO;
 import cn.zhumouren.poetryclub.bean.vo.UserResVO;
-import cn.zhumouren.poetryclub.bean.vo.UserVO;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
@@ -25,12 +25,13 @@ public interface UserMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     UserEntity updateUserEntityFromUserRegisterVO(UserRegisterVO userRegisterVO, @MappingTarget UserEntity userEntity);
 
-    UserEntity userVOToUserEntity(UserVO userVO);
-
-    UserVO userEntityToUserVO(UserEntity userEntity);
-
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    UserEntity updateUserEntityFromUserVO(UserVO userVO, @MappingTarget UserEntity userEntity);
 
     UserResVO userEntityToUserResVO(UserEntity userEntity);
+
+    UserEntity userReqVOToUserEntity(UserReqVO userReqVO);
+
+    UserReqVO userEntityToUserReqVO(UserEntity userEntity);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    UserEntity updateUserEntityFromUserReqVO(UserReqVO userReqVO, @MappingTarget UserEntity userEntity);
 }
