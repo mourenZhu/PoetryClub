@@ -42,13 +42,12 @@ public class JwtTokenUtil {
     public String generateAccessToken(UserEntity user) {
         return Jwts.builder()
                 .setSubject(String.format("%s,%s", user.getId(), user.getUsername()))
-                .claim(SecurityConstants.TOKEN_ROLE_CLAIM.getName(), user.getRoles())
+//                .claim(SecurityConstants.TOKEN_ROLE_CLAIM.getName(), user.getRoles())
                 .setIssuer(issuer)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRE_DURATION))
                 .signWith(getKey(), SignatureAlgorithm.HS512)
                 .compact();
-
     }
 
     public boolean validateAccessToken(String token) {

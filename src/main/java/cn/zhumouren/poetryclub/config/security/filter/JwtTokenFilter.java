@@ -52,7 +52,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             return;
         }
         setAuthenticationContext(token, request);
-        log.info("验证成功继续");
+//        log.info("验证成功继续");
         filterChain.doFilter(request, response);
     }
 
