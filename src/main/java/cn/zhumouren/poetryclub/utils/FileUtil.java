@@ -40,6 +40,11 @@ public class FileUtil {
         }
     }
 
+    public static void deleteFile(String path) {
+        File file = new File(path);
+        file.delete();
+    }
+
     private static String getFileSuffixName(MultipartFile multipartFile) {
         String originalFilename = multipartFile.getOriginalFilename();
         return originalFilename.substring(originalFilename.lastIndexOf("."));

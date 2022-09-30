@@ -42,8 +42,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean saveUserAvatar(MultipartFile file) {
         UserEntity userEntity = SecurityUtil.getUserEntity();
-        FileUtil.saveFileGetFileName(file, getUserAvatarSystemFilePath(),
+        // 先删除原图片
+        FileUtil.deleteFile(getUserAvatarSystemFilePath() + "/" + userEntity.getAvatarName());
+        String fileName = FileUtil.saveFileGetFileName(file, getUserAvatarSystemFilePath(),
                 UserUtil.getUserAvatarName(userEntity.getUsername()));
+        userEntity.setAvatarName(fileName);
+        userEntityRepository.save(userEntity);
         return true;
     }
 

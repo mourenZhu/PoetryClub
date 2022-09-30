@@ -43,6 +43,8 @@ public class UserEntity implements UserDetails {
     @ToString.Exclude
     private Set<RoleEntity> roles;
 
+    private String avatarName;
+
     @Length(max = 20)
     private String name;
 
