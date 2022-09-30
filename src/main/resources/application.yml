@@ -15,8 +15,8 @@ spring:
     multipart:
       max-file-size: 15MB
       max-request-size: 50MB
-  mvc:
-    static-path-pattern: "/files/**"
+#  mvc:
+#    static-path-pattern: "/files/**"
   web:
     resources:
       static-locations: classpath:/files/,classpath:/static/, file:${app.files-path}
@@ -27,6 +27,6 @@ app:
   web:
     image:
       url: http://localhost:${server.port}
-      user-avatar-path: user_avatar/
+      user-avatar-path: /user_avatar # 与 mvc.static-path-pattern 对应
 
 

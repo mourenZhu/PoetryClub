@@ -2,6 +2,7 @@ package cn.zhumouren.poetryclub.bean.vo;
 
 import cn.zhumouren.poetryclub.bean.entity.RoleEntity;
 import cn.zhumouren.poetryclub.properties.AppWebImageProperties;
+import cn.zhumouren.poetryclub.utils.UserUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -36,8 +37,6 @@ public class UserResVO implements Serializable {
     }
 
     public String getAvatar() {
-        AppWebImageProperties imageProperties = ContextLoader.getCurrentWebApplicationContext().getBean(AppWebImageProperties.class);
-        imageProperties.getUrl();
-        return "";
+        return UserUtil.getUserAvatarUrl(username);
     }
 }

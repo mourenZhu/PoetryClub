@@ -6,6 +6,7 @@ import cn.zhumouren.poetryclub.properties.AppWebImageProperties;
 import cn.zhumouren.poetryclub.service.UserService;
 import cn.zhumouren.poetryclub.utils.FileUtil;
 import cn.zhumouren.poetryclub.utils.SecurityUtil;
+import cn.zhumouren.poetryclub.utils.UserUtil;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean saveUserAvatar(MultipartFile file) {
         UserEntity userEntity = SecurityUtil.getUserEntity();
-        FileUtil.saveFileGetFileName(file, getUserAvatarSystemFilePath(), userEntity.getUsername() + "_avatar");
+        FileUtil.saveFileGetFileName(file, getUserAvatarSystemFilePath(),
+                UserUtil.getUserAvatarName(userEntity.getUsername()));
         return true;
     }
 

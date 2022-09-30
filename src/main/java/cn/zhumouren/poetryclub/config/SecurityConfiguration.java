@@ -69,7 +69,7 @@ public class SecurityConfiguration {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().antMatchers(
-                "/files/**", "/oauth2/**");
+                "/files/**", "/oauth2/**", "/user_avatar/**");
     }
 
     @Bean

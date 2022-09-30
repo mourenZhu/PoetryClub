@@ -1,11 +1,12 @@
 package cn.zhumouren.poetryclub.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
+@Slf4j
 public class FileUtil {
 
     public static String saveFileGetFileName(MultipartFile file, String path, String name) {
@@ -14,21 +15,25 @@ public class FileUtil {
     }
 
     /**
+     * 保存文件，如果文件存在，则删除后再创建
+     *
      * @param multipartFile 文件
      * @param path          文件要存入的文件夹路径
      * @param name          文件名（不带后缀）
      */
     public static void saveFile(MultipartFile multipartFile, String path, String name) {
+        log.debug("file name = {}, originalFilename = {}, contentType = {}, size = {}",
+                multipartFile.getName(), multipartFile.getOriginalFilename(),
+                multipartFile.getContentType(), multipartFile.getSize());
         String suffix = getFileSuffixName(multipartFile);
-        String realPath = path + name + suffix;
-        //        logger.info("文件路径为:  " + realPath);
+        String realPath = path + "\\" + name + suffix;
+        log.debug("文件路径为:  " + realPath);
         try {
             File dir = new File(path);
             if (!dir.exists()) {
                 dir.mkdirs();
             }
             File file = new File(realPath);
-            file.createNewFile();
             multipartFile.transferTo(file);
         } catch (IOException e) {
             throw new RuntimeException(e);
