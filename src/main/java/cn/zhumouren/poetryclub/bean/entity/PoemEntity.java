@@ -10,6 +10,7 @@ import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Set;
@@ -25,7 +26,7 @@ import java.util.Set;
 @ToString
 @RequiredArgsConstructor
 @Entity
-public class PoemEntity implements ILiterature {
+public class PoemEntity implements ILiterature, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -3,6 +3,7 @@ package cn.zhumouren.poetryclub.bean.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * @author mourenZhu
@@ -12,7 +13,7 @@ import javax.persistence.*;
  **/
 @Entity
 @Data
-public class RoleEntity {
+public class RoleEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

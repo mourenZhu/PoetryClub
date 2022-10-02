@@ -7,6 +7,7 @@ import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -20,7 +21,7 @@ import java.util.Objects;
 @Setter
 @RequiredArgsConstructor
 @Entity
-public class AuthorEntity {
+public class AuthorEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +35,8 @@ public class AuthorEntity {
     private String era;
     @Column(length = 2048)
     private String description;
+    private LocalDateTime createTime;
+    private LocalDateTime updateTime;
 
     @Override
     public String toString() {
@@ -43,9 +46,6 @@ public class AuthorEntity {
                 ", era='" + era + '\'' +
                 '}';
     }
-
-    private LocalDateTime createTime;
-    private LocalDateTime updateTime;
 
     @Override
     public boolean equals(Object o) {
