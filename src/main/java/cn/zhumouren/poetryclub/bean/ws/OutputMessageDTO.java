@@ -1,11 +1,12 @@
 package cn.zhumouren.poetryclub.bean.ws;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.io.Serializable;
-
 @Data
-public class Message implements Serializable {
+@AllArgsConstructor
+public class OutputMessageDTO {
     private String from;
     private String text;
+    private String time;
 }
