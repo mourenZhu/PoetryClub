@@ -58,7 +58,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {
                     String authorizationToken = accessor.getFirstNativeHeader("Authorization");
-                    log.info("websocket authorization = {}", authorizationToken);
+                    log.debug("websocket authorization = {}", authorizationToken);
                     if (!jwtTokenUtil.hasAuthorizationBearer(authorizationToken)) {
                         return message;
                     }
