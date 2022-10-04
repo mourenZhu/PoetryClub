@@ -18,7 +18,7 @@ import java.util.Date;
 @Controller
 public class GameRoomController {
 
-    @MessageMapping("/ws/chat")
+    @MessageMapping("/chat")
     @SendTo("/topic/messages")
     public OutputMessage send(Message message) throws Exception {
         String time = new SimpleDateFormat("HH:mm").format(new Date());

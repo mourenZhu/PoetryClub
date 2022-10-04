@@ -23,7 +23,7 @@ public class WebSocketSecurityConfig extends AbstractSecurityWebSocketMessageBro
                 .nullDestMatcher().authenticated()
                 .simpSubscribeDestMatchers("/user/queue/errors").permitAll()
                 .simpDestMatchers("/app/**").hasRole(RoleType.USER.getStr())
-                .simpSubscribeDestMatchers("/user/**", "/topic/friends/*").hasRole(RoleType.USER.getStr())
+                .simpSubscribeDestMatchers("/user/**", "/topic/**").hasRole(RoleType.USER.getStr())
                 .simpTypeMatchers(MESSAGE, SUBSCRIBE).denyAll()
                 .anyMessage().denyAll();
     }
