@@ -1,14 +1,14 @@
-package cn.zhumouren.poetryclub.config.jwt;
+package cn.zhumouren.poetryclub.utils;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.config.YamlPropertySourceFactory;
-import cn.zhumouren.poetryclub.config.security.constants.SecurityConstants;
+import cn.zhumouren.poetryclub.dao.UserEntityRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
@@ -29,10 +29,16 @@ import java.util.Date;
 public class JwtTokenUtil {
     private static final long EXPIRE_DURATION = 24 * 60 * 60 * 1000; // 24 hour
 
+    private final UserEntityRepository userEntityRepository;
+
     @Value("${jwt.secret-key}")
     private String SECRET_KEY;
     @Value("${jwt.issuer}")
     private String issuer;
+
+    public JwtTokenUtil(UserEntityRepository userEntityRepository) {
+        this.userEntityRepository = userEntityRepository;
+    }
 
     @Bean
     private Key getKey() {
@@ -76,5 +82,18 @@ public class JwtTokenUtil {
         return Jwts.parserBuilder()
                 .setSigningKey(getKey())
                 .build().parseClaimsJws(token).getBody();
+    }
+
+    public boolean hasAuthorizationBearer(String authorization) {
+        return !ObjectUtils.isEmpty(authorization) && authorization.startsWith("Bearer");
+    }
+
+    public String getAccessToken(String authorization) {
+        return authorization.split(" ")[1].trim();
+    }
+
+    public UserEntity getUserDetails(String token) {
+        String[] jwtSubject = getSubject(token).split(",");
+        return userEntityRepository.findByUsername(jwtSubject[1]);
     }
 }

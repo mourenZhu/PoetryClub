@@ -4,7 +4,7 @@ import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.vo.LoginVO;
 import cn.zhumouren.poetryclub.common.response.LoginRes;
 import cn.zhumouren.poetryclub.common.response.ResponseCode;
-import cn.zhumouren.poetryclub.config.jwt.JwtTokenUtil;
+import cn.zhumouren.poetryclub.utils.JwtTokenUtil;
 import cn.zhumouren.poetryclub.exception.HttpException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;

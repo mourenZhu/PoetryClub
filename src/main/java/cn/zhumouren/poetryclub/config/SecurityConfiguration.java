@@ -53,8 +53,7 @@ public class SecurityConfiguration {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http
                 .authorizeHttpRequests((authz) ->
-
-                        authz.antMatchers("/api/auth/login", "/api/register").permitAll()
+                        authz.antMatchers("/api/auth/login", "/api/register", "/ws/**").permitAll()
                                 .antMatchers("/api/user/**")
                                 .hasAnyRole(RoleType.USER.getStr(), RoleType.ADMIN.getStr())
                                 .antMatchers("/api/admin/**").hasRole(RoleType.ADMIN.getStr())
@@ -69,7 +68,7 @@ public class SecurityConfiguration {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().antMatchers(
-                "/files/**", "/oauth2/**", "/user_avatar/**");
+                "/files/**", "/oauth2/**", "/user_avatar/**", "/ws/**");
     }
 
     @Bean

@@ -1,8 +1,6 @@
 package cn.zhumouren.poetryclub.config.security.filter;
 
-import cn.zhumouren.poetryclub.bean.entity.UserEntity;
-import cn.zhumouren.poetryclub.config.jwt.JwtTokenUtil;
-import cn.zhumouren.poetryclub.dao.UserEntityRepository;
+import cn.zhumouren.poetryclub.utils.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,11 +28,9 @@ import java.io.IOException;
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtil jwtTokenUtil;
-    private final UserEntityRepository userEntityRepository;
 
-    public JwtTokenFilter(JwtTokenUtil jwtTokenUtil, UserEntityRepository userEntityRepository) {
+    public JwtTokenFilter(JwtTokenUtil jwtTokenUtil) {
         this.jwtTokenUtil = jwtTokenUtil;
-        this.userEntityRepository = userEntityRepository;
     }
 
     @Override
@@ -48,7 +44,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         if (!jwtTokenUtil.validateAccessToken(token)) {
             filterChain.doFilter(request, response);
-            log.info("验证失败");
+//            log.info("验证失败");
             return;
         }
         setAuthenticationContext(token, request);
@@ -66,19 +62,16 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         return header.split(" ")[1].trim();
     }
 
+
     private void setAuthenticationContext(String token, HttpServletRequest request) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
-        UserDetails userDetails = getUserDetails(token);
+        UserDetails userDetails = jwtTokenUtil.getUserDetails(token);
         UsernamePasswordAuthenticationToken
-                authentication = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+                authentication = new UsernamePasswordAuthenticationToken(userDetails,
+                "", userDetails.getAuthorities());
         authentication.setDetails(
                 new WebAuthenticationDetailsSource().buildDetails(request));
         context.setAuthentication(authentication);
         SecurityContextHolder.setContext(context);
-    }
-
-    private UserEntity getUserDetails(String token) {
-        String[] jwtSubject = jwtTokenUtil.getSubject(token).split(",");
-        return userEntityRepository.findByUsername(jwtSubject[1]);
     }
 }
