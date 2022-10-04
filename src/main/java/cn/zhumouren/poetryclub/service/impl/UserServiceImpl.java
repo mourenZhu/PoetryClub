@@ -5,7 +5,7 @@ import cn.zhumouren.poetryclub.dao.UserEntityRepository;
 import cn.zhumouren.poetryclub.properties.AppWebImageProperties;
 import cn.zhumouren.poetryclub.service.UserService;
 import cn.zhumouren.poetryclub.utils.FileUtil;
-import cn.zhumouren.poetryclub.utils.SecurityUtil;
+import cn.zhumouren.poetryclub.utils.SecurityContextUtil;
 import cn.zhumouren.poetryclub.utils.UserUtil;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean saveUserAvatar(MultipartFile file) {
-        UserEntity userEntity = SecurityUtil.getUserEntity();
+        UserEntity userEntity = SecurityContextUtil.getUserEntity();
         // 先删除原图片
         FileUtil.deleteFile(getUserAvatarSystemFilePath() + "/" + userEntity.getAvatarName());
         String fileName = FileUtil.saveFileGetFileName(file, getUserAvatarSystemFilePath(),
