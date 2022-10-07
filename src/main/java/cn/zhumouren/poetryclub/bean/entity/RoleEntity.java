@@ -1,6 +1,7 @@
 package cn.zhumouren.poetryclub.bean.entity;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -13,6 +14,7 @@ import java.io.Serializable;
  **/
 @Entity
 @Data
+@NoArgsConstructor
 public class RoleEntity implements Serializable {
 
     @Id
@@ -21,6 +23,10 @@ public class RoleEntity implements Serializable {
 
     @Column(unique = true, length = 30)
     private String role;
+
+    public RoleEntity(String role) {
+        this.role = role;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -31,6 +37,7 @@ public class RoleEntity implements Serializable {
 
         return getRole().equals(that.getRole());
     }
+
 
     @Override
     public int hashCode() {

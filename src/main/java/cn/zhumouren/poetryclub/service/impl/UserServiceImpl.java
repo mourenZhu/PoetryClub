@@ -1,16 +1,25 @@
 package cn.zhumouren.poetryclub.service.impl;
 
+import cn.zhumouren.poetryclub.bean.entity.RoleEntity;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
+import cn.zhumouren.poetryclub.constants.DBRoleType;
+import cn.zhumouren.poetryclub.dao.RoleEntityRepository;
 import cn.zhumouren.poetryclub.dao.UserEntityRepository;
+import cn.zhumouren.poetryclub.exception.UsernameNotAvailableException;
 import cn.zhumouren.poetryclub.properties.AppWebImageProperties;
 import cn.zhumouren.poetryclub.service.UserService;
 import cn.zhumouren.poetryclub.utils.FileUtil;
 import cn.zhumouren.poetryclub.utils.SecurityContextUtil;
 import cn.zhumouren.poetryclub.utils.UserUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author mourenZhu
@@ -19,18 +28,24 @@ import org.springframework.web.multipart.MultipartFile;
  * @date 2022/9/14 19:27
  **/
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserEntityRepository userEntityRepository;
 
     private final AppWebImageProperties appWebImageProperties;
 
+    private final RoleEntityRepository roleEntityRepository;
+    private final PasswordEncoder passwordEncoder;
+
     @Value("${app.files-path}")
     private String appFilesPath;
 
-    public UserServiceImpl(UserEntityRepository userEntityRepository, AppWebImageProperties appWebImageProperties) {
+    public UserServiceImpl(UserEntityRepository userEntityRepository, AppWebImageProperties appWebImageProperties, RoleEntityRepository roleEntityRepository, PasswordEncoder passwordEncoder) {
         this.userEntityRepository = userEntityRepository;
         this.appWebImageProperties = appWebImageProperties;
+        this.roleEntityRepository = roleEntityRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -49,6 +64,33 @@ public class UserServiceImpl implements UserService {
         userEntity.setAvatarName(fileName);
         userEntityRepository.save(userEntity);
         return true;
+    }
+
+    @Override
+    public boolean createUser(UserEntity userEntity) {
+        if (!isUsernameAvailable(userEntity.getUsername())) {
+            throw new UsernameNotAvailableException();
+        }
+        if (ObjectUtils.isEmpty(userEntity.getRoles()) || userEntity.getRoles().size() == 0) {
+            Set<RoleEntity> roles = new HashSet<>();
+            roles.add(roleEntityRepository.findByRole(DBRoleType.ROLE_USER.getRole()));
+            log.debug("roles = {}", roles);
+            userEntity.setRoles(roles);
+        }
+        log.debug("user = {}", userEntity);
+        userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
+        UserEntity save = userEntityRepository.save(userEntity);
+        return ObjectUtils.isNotEmpty(save);
+    }
+
+    @Override
+    public boolean createUser(UserEntity userEntity, DBRoleType... dbRoleType) {
+        Set<RoleEntity> roles = new HashSet<>();
+        for (DBRoleType roleType : dbRoleType) {
+            roles.add(roleEntityRepository.findByRole(roleType.getRole()));
+        }
+        userEntity.setRoles(roles);
+        return createUser(userEntity);
     }
 
     private String getUserAvatarSystemFilePath() {
