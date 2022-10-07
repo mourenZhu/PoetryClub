@@ -9,6 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedList;
+import java.util.List;
+
 @SpringBootTest
 public class UserServiceTest {
 
@@ -16,11 +19,19 @@ public class UserServiceTest {
     private UserService userService;
 
     @Transactional
-    @Rollback(false)
     @Test
     public void createUserTest() {
-        UserRegisterVO userRegisterVO = new UserRegisterVO("test12", "123456");
-        UserEntity userEntity = UserMapper.INSTANCE.userRegisterVOToUserEntity(userRegisterVO);
-        userService.createUser(userEntity);
+        String pw = "123456";
+        for (int i = 0; i < 100; i++) {
+            UserRegisterVO userRegisterVO;
+            if (i < 10) {
+                userRegisterVO = new UserRegisterVO("test0" + i, pw);
+            } else {
+                userRegisterVO = new UserRegisterVO("test" + i, pw);
+            }
+            UserEntity userEntity = UserMapper.INSTANCE.userRegisterVOToUserEntity(userRegisterVO);
+            userService.createUser(userEntity);
+        }
+
     }
 }
