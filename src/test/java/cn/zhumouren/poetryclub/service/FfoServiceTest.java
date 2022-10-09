@@ -36,10 +36,4 @@ public class FfoServiceTest {
         }
 
     }
-
-    @Test
-    public void getGameRoomUserSetTest() {
-        Set<String> usernameList = ffoService.getUsernameSetByRoomId("Th9fxI");
-        usernameList.forEach(System.out::println);
-    }
 }

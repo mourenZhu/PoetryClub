@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
-import java.util.Set;
 
 @Service
 public class FfoServiceImpl implements FfoService {
@@ -63,8 +62,4 @@ public class FfoServiceImpl implements FfoService {
         return ResponseResult.success(roomId);
     }
 
-    public Set<String> getUsernameSetByRoomId(String roomId) {
-        Set<String> usernameSet = (Set<String>) redisUtil.hget(RedisKey.FFO_GAME_ROOM_KEY.name(), roomId);
-        return usernameSet;
-    }
 }
