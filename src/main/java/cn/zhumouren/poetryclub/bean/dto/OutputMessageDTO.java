@@ -1,4 +1,4 @@
-package cn.zhumouren.poetryclub.bean.ws;
+package cn.zhumouren.poetryclub.bean.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

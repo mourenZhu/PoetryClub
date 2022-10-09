@@ -8,7 +8,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.12.RELEASE'
     id 'java'
     id 'maven-publish'
-    id "com.diffplug.eclipse.apt" version "3.26.0" // Only for Eclipse
+    id "com.diffplug.eclipse.apt" version "3.26.0"// Only for Eclipse
 }
 
 repositories {

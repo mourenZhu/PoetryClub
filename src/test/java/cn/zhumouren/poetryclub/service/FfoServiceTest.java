@@ -1,6 +1,7 @@
 package cn.zhumouren.poetryclub.service;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
+import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constants.games.FfoType;
 import cn.zhumouren.poetryclub.dao.UserEntityRepository;
 import cn.zhumouren.poetryclub.service.impl.FfoServiceImpl;
@@ -22,16 +23,16 @@ public class FfoServiceTest {
     @Test
     public void creteGameRoomTest() {
         UserEntity user = userEntityRepository.findByUsername("test00");
-        ffoService.userCreateGameRoom(user, FfoType.FIVE_PLAYER_GAME);
+        ffoService.userCreateGameRoom(user,"测试房间", FfoType.FIVE_PLAYER_GAME);
     }
 
     @Test
     public void enterGameRoomTest() {
-        String roomId = "BkzFXj";
+        String roomId = "16KgSK";
         for (int i = 0; i < 10; i++) {
             UserEntity user = userEntityRepository.findByUsername("test0" + i);
-            boolean b = ffoService.userEnterGameRoom(user, roomId);
-            System.out.println("user " + user.getUsername() + "enter = " + b);
+            ResponseResult<Boolean> booleanResponseResult = ffoService.userEnterGameRoom(user, roomId);
+            System.out.println("user " + user.getUsername() + "enter = " + booleanResponseResult.getData());
         }
 
     }

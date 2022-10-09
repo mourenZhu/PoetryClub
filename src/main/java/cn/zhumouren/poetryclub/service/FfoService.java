@@ -1,11 +1,12 @@
 package cn.zhumouren.poetryclub.service;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
+import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constants.games.FfoType;
 
 public interface FfoService {
 
-    String userCreateGameRoom(UserEntity user, FfoType ffoType);
+    ResponseResult<String> userCreateGameRoom(UserEntity user, String roomName, FfoType ffoType);
 
-    boolean userEnterGameRoom(UserEntity user, String roomId);
+    ResponseResult<Boolean> userEnterGameRoom(UserEntity user, String roomId);
 }
