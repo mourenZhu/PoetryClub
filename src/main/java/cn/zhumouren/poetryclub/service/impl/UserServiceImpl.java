@@ -2,10 +2,10 @@ package cn.zhumouren.poetryclub.service.impl;
 
 import cn.zhumouren.poetryclub.bean.entity.RoleEntity;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
+import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constants.DBRoleType;
 import cn.zhumouren.poetryclub.dao.RoleEntityRepository;
 import cn.zhumouren.poetryclub.dao.UserEntityRepository;
-import cn.zhumouren.poetryclub.exception.UsernameNotAvailableException;
 import cn.zhumouren.poetryclub.properties.AppWebImageProperties;
 import cn.zhumouren.poetryclub.service.UserService;
 import cn.zhumouren.poetryclub.utils.FileUtil;
@@ -49,13 +49,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isUsernameAvailable(String username) {
+    public ResponseResult<Boolean> isUsernameAvailable(String username) {
         UserEntity user = userEntityRepository.findByUsername(username);
-        return ObjectUtils.isEmpty(user);
+        return ResponseResult.success(ObjectUtils.isEmpty(user));
     }
 
     @Override
-    public boolean saveUserAvatar(MultipartFile file) {
+    public ResponseResult<Boolean> saveUserAvatar(MultipartFile file) {
         UserEntity userEntity = SecurityContextUtil.getUserEntity();
         // 先删除原图片
         FileUtil.deleteFile(getUserAvatarSystemFilePath() + "/" + userEntity.getAvatarName());
@@ -63,13 +63,13 @@ public class UserServiceImpl implements UserService {
                 UserUtil.getUserAvatarName(userEntity.getUsername()));
         userEntity.setAvatarName(fileName);
         userEntityRepository.save(userEntity);
-        return true;
+        return ResponseResult.success();
     }
 
     @Override
-    public boolean createUser(UserEntity userEntity) {
-        if (!isUsernameAvailable(userEntity.getUsername())) {
-            throw new UsernameNotAvailableException();
+    public ResponseResult<Boolean> createUser(UserEntity userEntity) {
+        if (!isUsernameAvailable(userEntity.getUsername()).getData()) {
+            return ResponseResult.failed("用户名不可用");
         }
         if (ObjectUtils.isEmpty(userEntity.getRoles()) || userEntity.getRoles().size() == 0) {
             Set<RoleEntity> roles = new HashSet<>();
@@ -80,11 +80,11 @@ public class UserServiceImpl implements UserService {
         log.debug("user = {}", userEntity);
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
         UserEntity save = userEntityRepository.save(userEntity);
-        return ObjectUtils.isNotEmpty(save);
+        return ResponseResult.success(ObjectUtils.isNotEmpty(save));
     }
 
     @Override
-    public boolean createUser(UserEntity userEntity, DBRoleType... dbRoleType) {
+    public ResponseResult<Boolean> createUser(UserEntity userEntity, DBRoleType... dbRoleType) {
         Set<RoleEntity> roles = new HashSet<>();
         for (DBRoleType roleType : dbRoleType) {
             roles.add(roleEntityRepository.findByRole(roleType.getRole()));

@@ -4,6 +4,7 @@ import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.mapper.UserMapper;
 import cn.zhumouren.poetryclub.bean.vo.UserReqVO;
 import cn.zhumouren.poetryclub.bean.vo.UserResVO;
+import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.dao.UserEntityRepository;
 import cn.zhumouren.poetryclub.service.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,23 +33,22 @@ public class UserController {
     }
 
     @PostMapping("/avatar")
-    public Boolean postUserAvatar(MultipartFile file) {
-        userService.saveUserAvatar(file);
-        return true;
+    public ResponseResult<Boolean> postUserAvatar(MultipartFile file) {
+        return userService.saveUserAvatar(file);
     }
 
     @GetMapping("/info")
-    public UserResVO getInfo() {
+    public ResponseResult<UserResVO> getInfo() {
         UserEntity userEntity = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return UserMapper.INSTANCE.userEntityToUserResVO(userEntity);
+        return ResponseResult.success(UserMapper.INSTANCE.userEntityToUserResVO(userEntity));
     }
 
     @PostMapping("/info")
-    public Boolean postUserInfo(@RequestBody @Validated UserReqVO userReqVO) {
+    public ResponseResult<Boolean> postUserInfo(@RequestBody @Validated UserReqVO userReqVO) {
         UserEntity userEntity = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         userEntity.setEmail(userReqVO.getEmail());
         userEntity.setName(userReqVO.getName());
         userEntityRepository.save(userEntity);
-        return true;
+        return ResponseResult.success();
     }
 }

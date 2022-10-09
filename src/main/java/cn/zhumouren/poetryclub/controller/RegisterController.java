@@ -3,6 +3,7 @@ package cn.zhumouren.poetryclub.controller;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.mapper.UserMapper;
 import cn.zhumouren.poetryclub.bean.vo.UserRegisterVO;
+import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constants.DBRoleType;
 import cn.zhumouren.poetryclub.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,7 @@ public class RegisterController {
     }
 
     @PostMapping("/register")
-    public Boolean userRegister(@RequestBody UserRegisterVO userRegisterVO) {
+    public ResponseResult<Boolean> userRegister(@RequestBody UserRegisterVO userRegisterVO) {
         log.debug("userRegisterVO = {}", userRegisterVO);
         UserEntity userEntity = UserMapper.INSTANCE.userRegisterVOToUserEntity(userRegisterVO);
         return userService.createUser(userEntity, DBRoleType.ROLE_USER);

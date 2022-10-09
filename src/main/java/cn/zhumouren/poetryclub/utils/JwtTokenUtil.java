@@ -61,15 +61,15 @@ public class JwtTokenUtil {
             Jwts.parserBuilder().setSigningKey(getKey()).build().parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException ex) {
-            log.error("JWT expired", ex.getMessage());
+            log.debug("JWT expired", ex.getMessage());
         } catch (IllegalArgumentException ex) {
-            log.error("Token is null, empty or only whitespace", ex.getMessage());
+            log.debug("Token is null, empty or only whitespace", ex.getMessage());
         } catch (MalformedJwtException ex) {
-            log.error("JWT is invalid", ex);
+            log.debug("JWT is invalid", ex);
         } catch (UnsupportedJwtException ex) {
-            log.error("JWT is not supported", ex);
+            log.debug("JWT is not supported", ex);
         } catch (SignatureException ex) {
-            log.error("Signature validation failed");
+            log.debug("Signature validation failed");
         }
         return false;
     }

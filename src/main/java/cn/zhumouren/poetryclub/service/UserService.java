@@ -2,6 +2,7 @@ package cn.zhumouren.poetryclub.service;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.vo.UserRegisterVO;
+import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constants.DBRoleType;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,11 +13,11 @@ import org.springframework.web.multipart.MultipartFile;
  * @date 2022/9/14 19:23
  **/
 public interface UserService {
-    boolean isUsernameAvailable(String username);
+    ResponseResult<Boolean> isUsernameAvailable(String username);
 
-    boolean saveUserAvatar(MultipartFile file);
+    ResponseResult<Boolean> saveUserAvatar(MultipartFile file);
 
-    boolean createUser(UserEntity userEntity);
+    ResponseResult<Boolean> createUser(UserEntity userEntity);
 
-    boolean createUser(UserEntity userEntity, DBRoleType ...dbRoleType);
+    ResponseResult<Boolean> createUser(UserEntity userEntity, DBRoleType ...dbRoleType);
 }

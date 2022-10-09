@@ -46,6 +46,28 @@ public class ResponseResult<T> implements Serializable {
         return vo;
     }
 
+    public static <T> ResponseResult<T> forbidden() {
+        ResponseResult<T> vo = new ResponseResult<>();
+        vo.code = ResponseCode.FORBIDDEN.getCode();
+        vo.msg = ResponseCode.FORBIDDEN.getMsg();
+        return vo;
+    }
+
+    public static <T> ResponseResult<T> forbidden(String msg) {
+        ResponseResult<T> vo = new ResponseResult<>();
+        vo.code = ResponseCode.FORBIDDEN.getCode();
+        vo.msg = msg;
+        return vo;
+    }
+
+    public static <T> ResponseResult<T> forbidden(T data, String msg) {
+        ResponseResult<T> vo = new ResponseResult<>();
+        vo.code = ResponseCode.FORBIDDEN.getCode();
+        vo.msg = msg;
+        vo.data = data;
+        return vo;
+    }
+
     public static <T> ResponseResult<T> failed() {
         ResponseResult<T> vo = new ResponseResult<>();
         vo.code = ResponseCode.FAILED.getCode();
