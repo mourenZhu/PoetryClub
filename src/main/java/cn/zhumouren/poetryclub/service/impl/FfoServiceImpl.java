@@ -4,6 +4,7 @@ import cn.zhumouren.poetryclub.bean.dto.FfoGameRoomDTO;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constants.RedisKey;
+import cn.zhumouren.poetryclub.constants.games.FfoStateType;
 import cn.zhumouren.poetryclub.constants.games.FfoType;
 import cn.zhumouren.poetryclub.service.FfoService;
 import cn.zhumouren.poetryclub.utils.RedisUtil;
@@ -33,13 +34,16 @@ public class FfoServiceImpl implements FfoService {
     @Override
     public synchronized ResponseResult<Boolean> userEnterGameRoom(UserEntity user, String roomId) {
         FfoGameRoomDTO ffoGameRoomDTO = (FfoGameRoomDTO) redisUtil.hget(RedisKey.FFO_GAME_ROOM_KEY.name(), roomId);
+        if (ffoGameRoomDTO.getFfoStateType().equals(FfoStateType.PLAYING)) {
+            return ResponseResult.failed("游戏进行中，不可加入");
+        }
         if (ffoGameRoomDTO.getFfoType().equals(FfoType.FIVE_PLAYER_GAME)) {
             if (ffoGameRoomDTO.getUsers().size() >= 5) {
-                ResponseResult.failed("房间人数已满");
+                return ResponseResult.failed("房间人数已满");
             }
         } else if (ffoGameRoomDTO.getFfoType().equals(FfoType.SEVEN_PLAYER_GAME)) {
             if (ffoGameRoomDTO.getUsers().size() >= 7) {
-                ResponseResult.failed("房间人数已满");
+                return ResponseResult.failed("房间人数已满");
             }
         }
         ffoGameRoomDTO.getUsers().add(user.getUsername());
@@ -57,7 +61,8 @@ public class FfoServiceImpl implements FfoService {
         while (redisUtil.hHasKey(RedisKey.FFO_GAME_ROOM_KEY.name(), roomId)) {
             roomId = RoomIdUtil.generateRoomId();
         }
-        FfoGameRoomDTO ffoGameRoomDTO = new FfoGameRoomDTO(roomId, roomName, ffoType, user.getUsername(), user.getUsername());
+        FfoGameRoomDTO ffoGameRoomDTO = new FfoGameRoomDTO(
+                roomId, roomName, ffoType, FfoStateType.WAITING, user.getUsername(), user.getUsername());
         redisUtil.hset(RedisKey.FFO_GAME_ROOM_KEY.name(), roomId, ffoGameRoomDTO);
         return ResponseResult.success(roomId);
     }
