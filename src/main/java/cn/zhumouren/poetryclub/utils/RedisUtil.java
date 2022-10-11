@@ -168,7 +168,7 @@ public class RedisUtil {
      * @param key 键
      * @return 对应的多个键值
      */
-    public Map<Object, Object> hmget(String key) {
+    public Map<? extends Object, ? extends Object> hmget(String key) {
         return redisTemplate.opsForHash().entries(key);
     }
 
