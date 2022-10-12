@@ -18,7 +18,7 @@ public class ResponseBaseExceptionHandler {
 
     @ExceptionHandler(BaseException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseResult<String> exception(BaseException e) {
+    public ResponseResult<Boolean> exception(BaseException e) {
         return ResponseResult.failed(e.getResponseCode());
     }
 }

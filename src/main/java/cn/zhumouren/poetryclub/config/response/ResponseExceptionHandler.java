@@ -19,9 +19,9 @@ public class ResponseExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseResult<String> exception(Exception e) {
+    public ResponseResult<Boolean> exception(Exception e) {
         log.error("全局异常信息 ex={}", e.getMessage());
-        return ResponseResult.failed(e.getMessage());
+        return ResponseResult.failedWithMsg(e.getMessage());
     }
 
 }
