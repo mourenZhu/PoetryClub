@@ -6,4 +6,12 @@ public enum FfoType {
     // 七人游戏
     SEVEN_PLAYER_GAME;
 
+    public int getNum() {
+        if (this.equals(FfoType.FIVE_PLAYER_GAME)) {
+            return 5;
+        } else if (this.equals(FfoType.SEVEN_PLAYER_GAME)) {
+            return 7;
+        }
+        return 0;
+    }
 }

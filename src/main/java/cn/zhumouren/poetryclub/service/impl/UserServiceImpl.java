@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseResult<Boolean> createUser(UserEntity userEntity) {
         if (!isUsernameAvailable(userEntity.getUsername()).getData()) {
-            return ResponseResult.failed("用户名不可用");
+            return ResponseResult.failedWithMsg("用户名不可用");
         }
         if (ObjectUtils.isEmpty(userEntity.getRoles()) || userEntity.getRoles().size() == 0) {
             Set<RoleEntity> roles = new HashSet<>();
