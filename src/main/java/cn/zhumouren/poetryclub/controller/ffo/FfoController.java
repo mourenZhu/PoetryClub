@@ -5,10 +5,8 @@ import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomResVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.service.FfoService;
 import cn.zhumouren.poetryclub.utils.SecurityContextUtil;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
@@ -23,17 +21,17 @@ public class FfoController {
     }
 
     @PostMapping("/room")
-    public ResponseResult<String> createGameRoom(FfoGameRoomReqVO roomReqVO) {
+    public ResponseResult<String> createGameRoom(@RequestBody @Validated FfoGameRoomReqVO roomReqVO) {
         return ffoService.userCreateGameRoom(
                 SecurityContextUtil.getUserEntity(), roomReqVO.getName(), roomReqVO.getFfoType());
     }
 
-    @PostMapping("/room/enter")
-    public ResponseResult<Boolean> EnterGameRoom(String roomId) {
+    @PostMapping("/room/{roomId}")
+    public ResponseResult<Boolean> EnterGameRoom(@PathVariable("roomId") String roomId) {
         return ffoService.userEnterGameRoom(SecurityContextUtil.getUserEntity(), roomId);
     }
 
-    @PostMapping("/room/leave")
+    @DeleteMapping("/room")
     public ResponseResult<Boolean> leaveGameRoom() {
         return ffoService.userLeaveGameRoom(SecurityContextUtil.getUserEntity());
     }
