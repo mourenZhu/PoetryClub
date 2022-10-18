@@ -1,5 +1,6 @@
 package cn.zhumouren.poetryclub.service.impl;
 
+import cn.zhumouren.poetryclub.bean.dto.FfoGameRoomDTO;
 import cn.zhumouren.poetryclub.bean.dto.UserGameStateDTO;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.constants.GamesType;
@@ -9,6 +10,8 @@ import cn.zhumouren.poetryclub.service.RedisUserService;
 import cn.zhumouren.poetryclub.utils.RedisUtil;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Service
 public class RedisUserServiceImpl implements RedisUserService {
@@ -38,6 +41,12 @@ public class RedisUserServiceImpl implements RedisUserService {
             return "";
         }
         return userGameStateDTO.getRoomId();
+    }
+
+    @Override
+    public Set<String> listGameRoomUser(String roomId) {
+        FfoGameRoomDTO ffoGameRoomDTO = (FfoGameRoomDTO) redisUtil.hget(RedisKey.FFO_GAME_ROOM_KEY.name(), roomId);
+        return ffoGameRoomDTO.getUsers();
     }
 
 }
