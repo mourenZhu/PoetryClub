@@ -4,8 +4,8 @@
 
 
 plugins {
-    id 'org.springframework.boot' version '2.7.3'
-    id 'io.spring.dependency-management' version '1.0.12.RELEASE'
+    id 'org.springframework.boot' version '2.7.4'
+    id 'io.spring.dependency-management' version '1.0.14.RELEASE'
     id 'java'
     id 'maven-publish'
     id "com.diffplug.eclipse.apt" version "3.26.0"// Only for Eclipse
