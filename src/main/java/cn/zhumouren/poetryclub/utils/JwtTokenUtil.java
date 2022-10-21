@@ -93,7 +93,11 @@ public class JwtTokenUtil {
     }
 
     public UserEntity getUserDetails(String token) {
+        return userEntityRepository.findByUsername(getUsername(token));
+    }
+
+    public String getUsername(String token) {
         String[] jwtSubject = getSubject(token).split(",");
-        return userEntityRepository.findByUsername(jwtSubject[1]);
+        return jwtSubject[1];
     }
 }
