@@ -20,6 +20,10 @@ spring:
   web:
     resources:
       static-locations: classpath:/files/,classpath:/static/, file:${app.files-path}
+      cache:
+        cachecontrol:
+          max-age: 30
+          s-max-age: 50
 
 app:
   init:
