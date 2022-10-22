@@ -67,17 +67,17 @@ public class FfoServiceImpl implements FfoService {
         ffoGameRoomDTO.getUsers().add(user.getUsername());
         redisUtil.hset(RedisKey.FFO_GAME_ROOM_KEY.name(), roomId, ffoGameRoomDTO);
         redisUserService.userEnterGameRoom(user, GamesType.FFO, roomId);
-        userEnterGameRoomNotice(user.getUsername(), user.getNickname(), ffoGameRoomDTO.getUsers());
+        userEnterGameRoomNotice(user, ffoGameRoomDTO.getUsers());
         return ResponseResult.success();
     }
 
-    private void userEnterGameRoomNotice(String username, String nickname, Iterable<String> users) {
-        log.debug("username =  {}, 进入了房间，开始通知其他用户", username);
-        users.forEach(u -> {
-            if (!u.equals(username)) {
-                log.debug("发送给 = {}", u);
-                template.convertAndSendToUser(u, MessageDestinations.USER_GAME_ROOM_MESSAGE_DESTINATION,
-                        new OutputMessageDTO(username, nickname + "进入了房间!", LocalDateTime.now()));
+    private void userEnterGameRoomNotice(UserEntity user, Iterable<String> users) {
+        log.debug("username =  {}, 进入了房间，开始通知其他用户", user.getUsername());
+        users.forEach(username -> {
+            if (!username.equals(user.getUsername())) {
+                log.debug("发送给 = {}", username);
+                template.convertAndSendToUser(username, MessageDestinations.USER_GAME_ROOM_MESSAGE_DESTINATION,
+                        OutputMessageDTO.getOutputMessageDTO(user, user.getNickname() + "进入了房间!"));
             }
         });
     }
