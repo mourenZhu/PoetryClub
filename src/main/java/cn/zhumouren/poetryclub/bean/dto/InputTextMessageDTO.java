@@ -6,5 +6,5 @@ import java.io.Serializable;
 
 @Data
 public class InputTextMessageDTO implements Serializable {
-    private String text;
+    private String content;
 }

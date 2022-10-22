@@ -10,8 +10,9 @@ import java.time.format.DateTimeFormatter;
 @Data
 @AllArgsConstructor
 public class OutputMessageDTO implements Serializable {
-    private String from;
-    private String text;
+    private String username;
+    private String nickname;
+    private String content;
     private LocalDateTime time;
 
     public String getTime() {

@@ -34,13 +34,14 @@ public class ChatroomController {
 
     @MessageMapping("/chatroom/{roomID}")
 //    @SendTo("/topic/messages")
-    public void send(InputTextMessageDTO inputTextMessageDTO, @DestinationVariable("roomID") String roomID) throws Exception {
-        String name = SecurityContextUtil.getUserEntity().getNickname();
+    public void send(InputTextMessageDTO inputTextMessageDTO, @DestinationVariable("roomID") String roomID) {
+        String nickname = SecurityContextUtil.getUserEntity().getNickname();
+        String username = SecurityContextUtil.getUserEntity().getUsername();
         log.debug("room id = {}", roomID);
-        redisUserService.listGameRoomUser(roomID).forEach(username -> {
+        redisUserService.listGameRoomUser(roomID).forEach(u -> {
             simpMessagingTemplate
-                    .convertAndSendToUser(username, MessageDestinations.USER_GAME_ROOM_MESSAGE_DESTINATION,
-                            new OutputMessageDTO(name, inputTextMessageDTO.getText(), LocalDateTime.now()));
+                    .convertAndSendToUser(u, MessageDestinations.USER_GAME_ROOM_MESSAGE_DESTINATION,
+                            new OutputMessageDTO(username, nickname, inputTextMessageDTO.getContent(), LocalDateTime.now()));
         });
     }
 
