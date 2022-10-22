@@ -46,7 +46,7 @@ public class UserEntity implements UserDetails {
     private String avatarName;
 
     @Length(max = 20)
-    private String name;
+    private String nickname;
 
     @Email
     private String email;

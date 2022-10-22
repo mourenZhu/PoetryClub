@@ -47,7 +47,7 @@ public class UserController {
     public ResponseResult<Boolean> postUserInfo(@RequestBody @Validated UserReqVO userReqVO) {
         UserEntity userEntity = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         userEntity.setEmail(userReqVO.getEmail());
-        userEntity.setName(userReqVO.getName());
+        userEntity.setNickname(userReqVO.getNickname());
         userEntityRepository.save(userEntity);
         return ResponseResult.success();
     }

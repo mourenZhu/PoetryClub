@@ -21,7 +21,7 @@ public class UserResVO implements Serializable {
     @NotEmpty
     private final String username;
     @Length(max = 20)
-    private final String name;
+    private final String nickname;
     @Email
     private final String email;
     @JsonIgnore

@@ -9,17 +9,19 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.*;
 
+import java.util.List;
+
 @Component
 @Slf4j
 public class WebSocketListener {
 
     private final SimpMessagingTemplate template;
 
-    private final RedisUserService redisUserService;
+    private final List<UserWebsocketService> userWebsocketServiceList;
 
-    public WebSocketListener(SimpMessagingTemplate template, RedisUserService redisUserService) {
+    public WebSocketListener(SimpMessagingTemplate template, List<UserWebsocketService> userWebsocketServiceList) {
         this.template = template;
-        this.redisUserService = redisUserService;
+        this.userWebsocketServiceList = userWebsocketServiceList;
     }
 
     @EventListener
@@ -38,7 +40,8 @@ public class WebSocketListener {
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent sessionDisconnectEvent) {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(sessionDisconnectEvent.getMessage());
         UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) headerAccessor.getUser();
-        redisUserService.userLeaveGameRoom((UserEntity) authenticationToken.getPrincipal());
+        userWebsocketServiceList.forEach(userWebsocketService ->
+                userWebsocketService.sessionDisconnect((UserEntity) authenticationToken.getPrincipal()));
         log.debug("disconnect, session id = {}, username = {}", sessionDisconnectEvent.getSessionId(),
                 headerAccessor.getUser().getName());
     }

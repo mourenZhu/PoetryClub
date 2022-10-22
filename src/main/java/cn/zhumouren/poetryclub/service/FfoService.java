@@ -7,7 +7,7 @@ import cn.zhumouren.poetryclub.constants.games.FfoType;
 
 import java.util.Set;
 
-public interface FfoService {
+public interface FfoService extends UserWebsocketService {
 
     ResponseResult<String> userCreateGameRoom(UserEntity user, String roomName, FfoType ffoType);
 

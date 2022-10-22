@@ -1,11 +1,13 @@
 package cn.zhumouren.poetryclub.service.impl;
 
 import cn.zhumouren.poetryclub.bean.dto.FfoGameRoomDTO;
+import cn.zhumouren.poetryclub.bean.dto.OutputMessageDTO;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.mapper.FfoGameRoomMapper;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomResVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constants.GamesType;
+import cn.zhumouren.poetryclub.constants.MessageDestinations;
 import cn.zhumouren.poetryclub.constants.RedisKey;
 import cn.zhumouren.poetryclub.constants.games.FfoStateType;
 import cn.zhumouren.poetryclub.constants.games.FfoType;
@@ -13,23 +15,29 @@ import cn.zhumouren.poetryclub.service.FfoService;
 import cn.zhumouren.poetryclub.service.RedisUserService;
 import cn.zhumouren.poetryclub.utils.RedisUtil;
 import cn.zhumouren.poetryclub.utils.RoomIdUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+@Slf4j
 @Service
 public class FfoServiceImpl implements FfoService {
 
     private final RedisUtil redisUtil;
     private final RedisUserService redisUserService;
+    private final SimpMessagingTemplate template;
 
-    public FfoServiceImpl(RedisUtil redisUtil, RedisUserService redisUserService) {
+    public FfoServiceImpl(RedisUtil redisUtil, RedisUserService redisUserService, SimpMessagingTemplate template) {
         this.redisUtil = redisUtil;
         this.redisUserService = redisUserService;
+        this.template = template;
     }
 
     /**
@@ -42,6 +50,7 @@ public class FfoServiceImpl implements FfoService {
     @Transactional
     @Override
     public synchronized ResponseResult<Boolean> userEnterGameRoom(UserEntity user, String roomId) {
+
         FfoGameRoomDTO ffoGameRoomDTO = getFfoGameRoomDTO(roomId);
         if (ffoGameRoomDTO.getFfoStateType().equals(FfoStateType.PLAYING)) {
             return ResponseResult.failedWithMsg("游戏进行中，不可加入");
@@ -58,8 +67,21 @@ public class FfoServiceImpl implements FfoService {
         ffoGameRoomDTO.getUsers().add(user.getUsername());
         redisUtil.hset(RedisKey.FFO_GAME_ROOM_KEY.name(), roomId, ffoGameRoomDTO);
         redisUserService.userEnterGameRoom(user, GamesType.FFO, roomId);
+        userEnterGameRoomNotice(user.getUsername(), user.getNickname(), ffoGameRoomDTO.getUsers());
         return ResponseResult.success();
     }
+
+    private void userEnterGameRoomNotice(String username, String nickname, Iterable<String> users) {
+        log.debug("username =  {}, 进入了房间，开始通知其他用户", username);
+        users.forEach(u -> {
+            if (!u.equals(username)) {
+                log.debug("发送给 = {}", u);
+                template.convertAndSendToUser(u, MessageDestinations.USER_GAME_ROOM_MESSAGE_DESTINATION,
+                        new OutputMessageDTO(username, nickname + "进入了房间!", LocalDateTime.now()));
+            }
+        });
+    }
+
 
     /**
      * 1、判断房间是否存在
@@ -138,4 +160,8 @@ public class FfoServiceImpl implements FfoService {
         return redisUtil.hset(RedisKey.FFO_GAME_ROOM_KEY.name(), ffoGameRoomDTO.getId(), ffoGameRoomDTO);
     }
 
+    @Override
+    public void sessionDisconnect(UserEntity user) {
+        userLeaveGameRoom(user);
+    }
 }
