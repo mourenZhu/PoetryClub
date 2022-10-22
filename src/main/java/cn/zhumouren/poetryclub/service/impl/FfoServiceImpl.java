@@ -21,7 +21,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -67,17 +66,23 @@ public class FfoServiceImpl implements FfoService {
         ffoGameRoomDTO.getUsers().add(user.getUsername());
         redisUtil.hset(RedisKey.FFO_GAME_ROOM_KEY.name(), roomId, ffoGameRoomDTO);
         redisUserService.userEnterGameRoom(user, GamesType.FFO, roomId);
-        userEnterGameRoomNotice(user, ffoGameRoomDTO.getUsers());
+        userGameRoomActionNotice(user, user.getNickname() + "进入了房间", ffoGameRoomDTO.getUsers());
         return ResponseResult.success();
     }
 
-    private void userEnterGameRoomNotice(UserEntity user, Iterable<String> users) {
-        log.debug("username =  {}, 进入了房间，开始通知其他用户", user.getUsername());
-        users.forEach(username -> {
+    /**
+     * 用户在房间中的行为通知
+     *
+     * @param user        做出行为的用户
+     * @param msg         要通知的信息
+     * @param noticeUsers 被通知的用户
+     */
+    private void userGameRoomActionNotice(UserEntity user, String msg, Iterable<String> noticeUsers) {
+        noticeUsers.forEach(username -> {
             if (!username.equals(user.getUsername())) {
                 log.debug("发送给 = {}", username);
                 template.convertAndSendToUser(username, MessageDestinations.USER_GAME_ROOM_MESSAGE_DESTINATION,
-                        OutputMessageDTO.getOutputMessageDTO(user, user.getNickname() + "进入了房间!"));
+                        OutputMessageDTO.getOutputMessageDTO(user, msg));
             }
         });
     }
@@ -113,6 +118,7 @@ public class FfoServiceImpl implements FfoService {
             setFfoGameRoomOwner(ffoGameRoomDTO);
         }
         boolean b = saveFfoGameRoomDTO(ffoGameRoomDTO);
+        userGameRoomActionNotice(user, user.getNickname() + "离开了房间!", ffoGameRoomDTO.getUsers());
         return ResponseResult.bool(b);
     }
 
