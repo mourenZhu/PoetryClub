@@ -1,4 +1,4 @@
-package cn.zhumouren.poetryclub.utils;
+package cn.zhumouren.poetryclub.util;
 
 import cn.zhumouren.poetryclub.properties.AppWebImageProperties;
 import org.springframework.beans.factory.annotation.Autowired;

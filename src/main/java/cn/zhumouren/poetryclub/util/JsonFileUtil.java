@@ -1,4 +1,4 @@
-package cn.zhumouren.poetryclub.utils;
+package cn.zhumouren.poetryclub.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.util.ResourceUtils;

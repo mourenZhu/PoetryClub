@@ -4,7 +4,7 @@ import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomReqVO;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomResVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.service.FfoService;
-import cn.zhumouren.poetryclub.utils.SecurityContextUtil;
+import cn.zhumouren.poetryclub.util.SecurityContextUtil;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 

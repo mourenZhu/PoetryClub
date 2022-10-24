@@ -5,7 +5,7 @@ import cn.zhumouren.poetryclub.bean.dto.OutputMessageDTO;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.constants.MessageDestinations;
 import cn.zhumouren.poetryclub.service.RedisUserService;
-import cn.zhumouren.poetryclub.utils.SecurityContextUtil;
+import cn.zhumouren.poetryclub.util.SecurityContextUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;

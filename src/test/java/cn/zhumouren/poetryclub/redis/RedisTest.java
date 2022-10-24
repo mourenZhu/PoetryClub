@@ -2,7 +2,7 @@ package cn.zhumouren.poetryclub.redis;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.dao.UserEntityRepository;
-import cn.zhumouren.poetryclub.utils.RedisUtil;
+import cn.zhumouren.poetryclub.util.RedisUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

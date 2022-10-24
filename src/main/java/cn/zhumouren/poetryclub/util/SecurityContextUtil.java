@@ -1,4 +1,4 @@
-package cn.zhumouren.poetryclub.utils;
+package cn.zhumouren.poetryclub.util;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import org.springframework.security.core.context.SecurityContextHolder;

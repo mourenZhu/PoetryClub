@@ -1,4 +1,4 @@
-package cn.zhumouren.poetryclub.utils;
+package cn.zhumouren.poetryclub.util;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.config.YamlPropertySourceFactory;

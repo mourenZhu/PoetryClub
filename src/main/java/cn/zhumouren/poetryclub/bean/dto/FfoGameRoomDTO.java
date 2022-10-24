@@ -17,6 +17,11 @@ public class FfoGameRoomDTO implements Serializable {
     private String id;
     private String name;
     private FfoType ffoType;
+    private Integer maxPlayers;
+    /**
+     * 单位 秒
+     */
+    private Integer playerPreparationTime;
     private FfoStateType ffoStateType;
     private String homeowner;
     private Set<String> users;

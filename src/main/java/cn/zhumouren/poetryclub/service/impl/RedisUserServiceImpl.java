@@ -7,7 +7,7 @@ import cn.zhumouren.poetryclub.constants.GamesType;
 import cn.zhumouren.poetryclub.constants.RedisKey;
 import cn.zhumouren.poetryclub.constants.TimeSecondConstants;
 import cn.zhumouren.poetryclub.service.RedisUserService;
-import cn.zhumouren.poetryclub.utils.RedisUtil;
+import cn.zhumouren.poetryclub.util.RedisUtil;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 

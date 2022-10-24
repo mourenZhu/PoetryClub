@@ -1,7 +1,7 @@
 package cn.zhumouren.poetryclub.bean.vo;
 
 import cn.zhumouren.poetryclub.bean.entity.RoleEntity;
-import cn.zhumouren.poetryclub.utils.UserUtil;
+import cn.zhumouren.poetryclub.util.UserUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;

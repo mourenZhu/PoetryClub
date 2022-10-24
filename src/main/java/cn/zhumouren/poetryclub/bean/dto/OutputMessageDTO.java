@@ -1,7 +1,7 @@
 package cn.zhumouren.poetryclub.bean.dto;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
-import cn.zhumouren.poetryclub.utils.UserUtil;
+import cn.zhumouren.poetryclub.util.UserUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;

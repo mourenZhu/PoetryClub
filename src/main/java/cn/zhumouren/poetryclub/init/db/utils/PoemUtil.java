@@ -5,7 +5,7 @@ import cn.zhumouren.poetryclub.bean.entity.LiteratureTagEntity;
 import cn.zhumouren.poetryclub.bean.entity.PoemEntity;
 import cn.zhumouren.poetryclub.core.PoemType;
 import cn.zhumouren.poetryclub.dao.AuthorEntityRepository;
-import cn.zhumouren.poetryclub.utils.JsonFileUtil;
+import cn.zhumouren.poetryclub.util.JsonFileUtil;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Component;

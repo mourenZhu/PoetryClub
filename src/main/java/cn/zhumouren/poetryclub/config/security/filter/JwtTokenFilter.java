@@ -1,6 +1,6 @@
 package cn.zhumouren.poetryclub.config.security.filter;
 
-import cn.zhumouren.poetryclub.utils.JwtTokenUtil;
+import cn.zhumouren.poetryclub.util.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

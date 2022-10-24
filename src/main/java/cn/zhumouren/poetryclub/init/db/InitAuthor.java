@@ -4,7 +4,7 @@ import cn.zhumouren.poetryclub.bean.entity.AuthorEntity;
 import cn.zhumouren.poetryclub.dao.AuthorEntityRepository;
 import cn.zhumouren.poetryclub.init.IInitData;
 import cn.zhumouren.poetryclub.properties.AppInitProperties;
-import cn.zhumouren.poetryclub.utils.JsonFileUtil;
+import cn.zhumouren.poetryclub.util.JsonFileUtil;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
