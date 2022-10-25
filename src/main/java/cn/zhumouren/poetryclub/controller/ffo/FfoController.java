@@ -23,7 +23,7 @@ public class FfoController {
     @PostMapping("/room")
     public ResponseResult<String> createGameRoom(@RequestBody @Validated FfoGameRoomReqVO roomReqVO) {
         return ffoService.userCreateGameRoom(
-                SecurityContextUtil.getUserEntity(), roomReqVO.getName(), roomReqVO.getFfoType());
+                SecurityContextUtil.getUserEntity(), roomReqVO);
     }
 
     @PostMapping("/room/{roomId}")

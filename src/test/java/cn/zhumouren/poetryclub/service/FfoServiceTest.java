@@ -1,9 +1,11 @@
 package cn.zhumouren.poetryclub.service;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
+import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomReqVO;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomResVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
-import cn.zhumouren.poetryclub.constants.games.FfoType;
+import cn.zhumouren.poetryclub.constants.games.FfoGamePoemType;
+import cn.zhumouren.poetryclub.constants.games.FfoGameVerseType;
 import cn.zhumouren.poetryclub.dao.UserEntityRepository;
 import cn.zhumouren.poetryclub.service.impl.FfoServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -24,32 +26,34 @@ public class FfoServiceTest {
     @Test
     public void creteGameRoomTest() {
         UserEntity user = userEntityRepository.findByUsername("test00");
-        ffoService.userCreateGameRoom(user, "测试房间", FfoType.FIVE_PLAYER_GAME);
+        FfoGameRoomReqVO ffoGameRoomReqVO = new FfoGameRoomReqVO("测试房间", 5, 30,
+                true, FfoGamePoemType.ALLOW_SELF_CREAT, FfoGameVerseType.ALL);
+        ffoService.userCreateGameRoom(user, ffoGameRoomReqVO);
     }
 
     @Test
     public void enterGameRoomTest() {
-        String roomId = "16KgSK";
+        String roomId = "MX4geQ";
         for (int i = 0; i < 10; i++) {
             UserEntity user = userEntityRepository.findByUsername("test0" + i);
             ResponseResult<Boolean> booleanResponseResult = ffoService.userEnterGameRoom(user, roomId);
-            System.out.println("user " + user.getUsername() + "enter = " + booleanResponseResult.getData());
+            System.out.println("user " + user.getUsername() + "  enter = " + booleanResponseResult.getData());
         }
     }
 
     @Test
     public void multiplePeopleCreateAndEnterGameRoom() {
-        for (int i = 0; i < 9; i++) {
-            UserEntity user = userEntityRepository.findByUsername("test0" + i);
-            String roomId = ffoService
-                    .userCreateGameRoom(user, "test room " + i, FfoType.SEVEN_PLAYER_GAME).getData();
-            System.out.println(user.getUsername() + "创建room " + roomId);
-            for (int j = 0; j < 10; j++) {
-                UserEntity u = userEntityRepository.findByUsername("test" + (i + 1) + j);
-                Boolean b = ffoService.userEnterGameRoom(u, roomId).getData();
-                System.out.println(u.getUsername() + "进入room " + roomId + ": " + b);
-            }
-        }
+//        for (int i = 0; i < 9; i++) {
+//            UserEntity user = userEntityRepository.findByUsername("test0" + i);
+//            String roomId = ffoService
+//                    .userCreateGameRoom(user, "test room " + i).getData();
+//            System.out.println(user.getUsername() + "创建room " + roomId);
+//            for (int j = 0; j < 10; j++) {
+//                UserEntity u = userEntityRepository.findByUsername("test" + (i + 1) + j);
+//                Boolean b = ffoService.userEnterGameRoom(u, roomId).getData();
+//                System.out.println(u.getUsername() + "进入room " + roomId + ": " + b);
+//            }
+//        }
     }
 
     @Test
@@ -60,7 +64,7 @@ public class FfoServiceTest {
 
     @Test
     public void userLeaveGameRoomTest() {
-        UserEntity test01 = userEntityRepository.findByUsername("test01");
+        UserEntity test01 = userEntityRepository.findByUsername("test00");
         ResponseResult<Boolean> booleanResponseResult = ffoService.userLeaveGameRoom(test01);
         System.out.println(booleanResponseResult);
     }

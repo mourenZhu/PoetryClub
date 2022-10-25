@@ -4,13 +4,13 @@ import cn.zhumouren.poetryclub.bean.dto.FfoGameRoomDTO;
 import cn.zhumouren.poetryclub.bean.dto.OutputMessageDTO;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.mapper.FfoGameRoomMapper;
+import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomReqVO;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomResVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constants.GamesType;
 import cn.zhumouren.poetryclub.constants.MessageDestinations;
 import cn.zhumouren.poetryclub.constants.RedisKey;
 import cn.zhumouren.poetryclub.constants.games.FfoStateType;
-import cn.zhumouren.poetryclub.constants.games.FfoType;
 import cn.zhumouren.poetryclub.service.FfoService;
 import cn.zhumouren.poetryclub.service.RedisUserService;
 import cn.zhumouren.poetryclub.util.RedisUtil;
@@ -54,14 +54,8 @@ public class FfoServiceImpl implements FfoService {
         if (ffoGameRoomDTO.getFfoStateType().equals(FfoStateType.PLAYING)) {
             return ResponseResult.failedWithMsg("游戏进行中，不可加入");
         }
-        if (ffoGameRoomDTO.getFfoType().equals(FfoType.FIVE_PLAYER_GAME)) {
-            if (ffoGameRoomDTO.getUsers().size() >= 5) {
-                return ResponseResult.failedWithMsg("房间人数已满");
-            }
-        } else if (ffoGameRoomDTO.getFfoType().equals(FfoType.SEVEN_PLAYER_GAME)) {
-            if (ffoGameRoomDTO.getUsers().size() >= 7) {
-                return ResponseResult.failedWithMsg("房间人数已满");
-            }
+        if (ffoGameRoomDTO.getUsers().size() == ffoGameRoomDTO.getMaxPlayers()) {
+            return ResponseResult.failedWithMsg("房间人数已满");
         }
         ffoGameRoomDTO.getUsers().add(user.getUsername());
         redisUtil.hset(RedisKey.FFO_GAME_ROOM_KEY.name(), roomId, ffoGameRoomDTO);
@@ -143,7 +137,7 @@ public class FfoServiceImpl implements FfoService {
 
     @Transactional
     @Override
-    public ResponseResult<String> userCreateGameRoom(UserEntity user, String roomName, FfoType ffoType) {
+    public ResponseResult<String> userCreateGameRoom(UserEntity user, FfoGameRoomReqVO ffoGameRoomReqVO) {
         if (!redisUtil.hasKey(RedisKey.FFO_GAME_ROOM_KEY.name())) {
             redisUtil.hmset(RedisKey.FFO_GAME_ROOM_KEY.name(), new HashMap<>());
         }
@@ -151,8 +145,8 @@ public class FfoServiceImpl implements FfoService {
         while (redisUtil.hHasKey(RedisKey.FFO_GAME_ROOM_KEY.name(), roomId)) {
             roomId = RoomIdUtil.generateRoomId();
         }
-        FfoGameRoomDTO ffoGameRoomDTO = new FfoGameRoomDTO(
-                roomId, roomName, ffoType, FfoStateType.WAITING, user.getUsername(), user.getUsername());
+        FfoGameRoomDTO ffoGameRoomDTO = FfoGameRoomDTO.creatFfoGameRoomDTO(ffoGameRoomReqVO, roomId,
+                user.getUsername(), user.getUsername());
         saveFfoGameRoomDTO(ffoGameRoomDTO);
         redisUserService.userEnterGameRoom(user, GamesType.FFO, roomId);
         return ResponseResult.success(roomId);
