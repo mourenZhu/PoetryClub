@@ -1,6 +1,7 @@
-package cn.zhumouren.poetryclub.service;
+package cn.zhumouren.poetryclub.listener;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
+import cn.zhumouren.poetryclub.service.UserWebsocketService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
