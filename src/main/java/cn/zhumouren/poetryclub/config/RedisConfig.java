@@ -14,6 +14,12 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfig {
 
+    private final ObjectMapper objectMapper;
+
+    public RedisConfig(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
@@ -22,11 +28,8 @@ public class RedisConfig {
         //使用Jackson2JsonRedisSerializer来序列化和反序列化redis的value值
         Jackson2JsonRedisSerializer serializer = new Jackson2JsonRedisSerializer(Object.class);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-        mapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance,
-                ObjectMapper.DefaultTyping.NON_FINAL);
-        serializer.setObjectMapper(mapper);
+
+        serializer.setObjectMapper(objectMapper);
 
         redisTemplate.setValueSerializer(serializer);
 
