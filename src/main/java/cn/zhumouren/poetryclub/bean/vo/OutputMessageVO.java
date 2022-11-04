@@ -1,4 +1,4 @@
-package cn.zhumouren.poetryclub.bean.dto;
+package cn.zhumouren.poetryclub.bean.vo;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.util.UserUtil;
@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 
 @Data
 @AllArgsConstructor
-public class OutputMessageDTO implements Serializable {
+public class OutputMessageVO implements Serializable {
     private String username;
     private String nickname;
     private String avatar;
@@ -20,8 +20,8 @@ public class OutputMessageDTO implements Serializable {
     private LocalDateTime time;
 
     @JsonIgnore
-    public static OutputMessageDTO getOutputMessageDTO(UserEntity user, String content) {
-        return new OutputMessageDTO(user.getUsername(), user.getNickname(),
+    public static OutputMessageVO getOutputMessageDTO(UserEntity user, String content) {
+        return new OutputMessageVO(user.getUsername(), user.getNickname(),
                 UserUtil.getUserAvatarUrl(user.getAvatarName()), content, LocalDateTime.now());
     }
 
