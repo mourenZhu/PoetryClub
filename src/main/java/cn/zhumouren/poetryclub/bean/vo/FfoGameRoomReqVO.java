@@ -22,6 +22,7 @@ public class FfoGameRoomReqVO implements Serializable {
     @Min(15)
     private Integer playerPreparationSecond;
     private Boolean display;
+    private Boolean allowWordInAny;
     private FfoGamePoemType ffoGamePoemType;
     private FfoGameVerseType ffoGameVerseType;
 }

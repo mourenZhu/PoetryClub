@@ -11,7 +11,7 @@ import cn.zhumouren.poetryclub.util.RedisUtil;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
+import java.util.List;
 
 @Service
 public class RedisUserServiceImpl implements RedisUserService {
@@ -44,7 +44,7 @@ public class RedisUserServiceImpl implements RedisUserService {
     }
 
     @Override
-    public Set<String> listGameRoomUser(String roomId) {
+    public List<String> listGameRoomUser(String roomId) {
         FfoGameRoomDTO ffoGameRoomDTO = (FfoGameRoomDTO) redisUtil.hget(RedisKey.FFO_GAME_ROOM_KEY.name(), roomId);
         return ffoGameRoomDTO.getUsers();
     }

@@ -27,13 +27,13 @@ public class FfoServiceTest {
     public void creteGameRoomTest() {
         UserEntity user = userEntityRepository.findByUsername("test00");
         FfoGameRoomReqVO ffoGameRoomReqVO = new FfoGameRoomReqVO("测试房间", 5, 30,
-                true, FfoGamePoemType.ALLOW_SELF_CREAT, FfoGameVerseType.ALL);
+                true, true, FfoGamePoemType.ALLOW_SELF_CREAT, FfoGameVerseType.ALL);
         ffoService.userCreateGameRoom(user, ffoGameRoomReqVO);
     }
 
     @Test
     public void enterGameRoomTest() {
-        String roomId = "MX4geQ";
+        String roomId = "sZ9ZAz";
         for (int i = 0; i < 10; i++) {
             UserEntity user = userEntityRepository.findByUsername("test0" + i);
             ResponseResult<Boolean> booleanResponseResult = ffoService.userEnterGameRoom(user, roomId);
@@ -76,5 +76,28 @@ public class FfoServiceTest {
             ResponseResult<Boolean> booleanResponseResult1 = ffoService.userLeaveGameRoom(user);
             System.out.println(booleanResponseResult1);
         }
+    }
+
+    @Test
+    public void userStartGameTest() {
+        UserEntity user = userEntityRepository.findByUsername("test00");
+        System.out.println(ffoService.userStartGame(user).getMsg());
+    }
+
+    @Test
+    public void creatGameRoomAndEnterRoomAndStartGameTest() {
+        UserEntity user = userEntityRepository.findByUsername("test00");
+        FfoGameRoomReqVO ffoGameRoomReqVO = new FfoGameRoomReqVO("测试房间", 5, 30,
+                true, true, FfoGamePoemType.ALLOW_SELF_CREAT, FfoGameVerseType.ALL);
+
+        String roomId = ffoService.userCreateGameRoom(user, ffoGameRoomReqVO).getData();
+
+        for (int i = 1; i < 3; i++) {
+            UserEntity u = userEntityRepository.findByUsername("test0" + i);
+            ResponseResult<Boolean> booleanResponseResult = ffoService.userEnterGameRoom(u, roomId);
+            System.out.println("user " + u.getUsername() + "  enter = " + booleanResponseResult.getData());
+        }
+
+        System.out.println(ffoService.userStartGame(user));
     }
 }

@@ -3,7 +3,7 @@ package cn.zhumouren.poetryclub.service;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.constants.GamesType;
 
-import java.util.Set;
+import java.util.List;
 
 public interface RedisUserService {
 
@@ -13,5 +13,5 @@ public interface RedisUserService {
 
     String getUserGameRoomId(UserEntity user, GamesType gamesType);
 
-    Set<String> listGameRoomUser(String roomId);
+    List<String> listGameRoomUser(String roomId);
 }

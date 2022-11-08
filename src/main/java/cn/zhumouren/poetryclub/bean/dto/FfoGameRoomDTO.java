@@ -1,6 +1,6 @@
 package cn.zhumouren.poetryclub.bean.dto;
 
-import cn.zhumouren.poetryclub.bean.mapper.FfoGameRoomMapper;
+import cn.zhumouren.poetryclub.bean.mapper.FfoGameMapper;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomReqVO;
 import cn.zhumouren.poetryclub.constants.games.FfoGamePoemType;
 import cn.zhumouren.poetryclub.constants.games.FfoGameVerseType;
@@ -10,9 +10,8 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -24,19 +23,26 @@ public class FfoGameRoomDTO implements Serializable {
      * 单位 秒
      */
     private Integer playerPreparationSecond;
-
+    /**
+     * 允许字出现在任意位置
+     */
+    private Boolean allowWordInAny;
+    /**
+     * 飞花令的关键字
+     */
+    private Character keyword;
     private Boolean display;
     private FfoGamePoemType ffoGamePoemType;
     private FfoGameVerseType ffoGameVerseType;
     private FfoStateType ffoStateType;
     private String homeowner;
-    private Set<String> users;
+    private List<String> users;
 
     public static FfoGameRoomDTO creatFfoGameRoomDTO(FfoGameRoomReqVO ffoGameRoomReqVO, String id, String homeowner, String... user) {
-        FfoGameRoomDTO ffoGameRoomDTO = FfoGameRoomMapper.INSTANCE.ffoGameRoomReqVOToFfoGameRoomDTO(ffoGameRoomReqVO);
+        FfoGameRoomDTO ffoGameRoomDTO = FfoGameMapper.INSTANCE.ffoGameRoomReqVOToFfoGameRoomDTO(ffoGameRoomReqVO);
         ffoGameRoomDTO.setId(id);
         ffoGameRoomDTO.setHomeowner(homeowner);
-        ffoGameRoomDTO.setUsers(new HashSet<>(Arrays.asList(user)));
+        ffoGameRoomDTO.setUsers(Arrays.asList(user));
         ffoGameRoomDTO.setFfoStateType(FfoStateType.WAITING);
         return ffoGameRoomDTO;
     }

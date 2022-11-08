@@ -17,6 +17,7 @@ public class FfoGameRoomResVO implements Serializable {
     private Integer maxPlayers;
     private Integer playerPreparationSecond;
     private Boolean display;
+    private Boolean allowWordInAny;
     private FfoGamePoemType ffoGamePoemType;
     private FfoGameVerseType ffoGameVerseType;
     private FfoStateType ffoStateType;

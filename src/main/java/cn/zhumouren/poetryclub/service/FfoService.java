@@ -3,6 +3,7 @@ package cn.zhumouren.poetryclub.service;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomReqVO;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomResVO;
+import cn.zhumouren.poetryclub.bean.vo.InputFfoSentenceVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 
 import java.util.Set;
@@ -16,4 +17,8 @@ public interface FfoService extends UserWebsocketService {
     ResponseResult<Boolean> userLeaveGameRoom(UserEntity user);
 
     ResponseResult<Set<FfoGameRoomResVO>> listFfoGameRoom();
+
+    ResponseResult<Boolean> userStartGame(UserEntity user);
+
+    void userSendFfoSentence(String roomId, UserEntity user, InputFfoSentenceVO inputFfoSentenceVO);
 }

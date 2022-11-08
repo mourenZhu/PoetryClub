@@ -1,10 +1,14 @@
 package cn.zhumouren.poetryclub.controller.ffo;
 
+import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomReqVO;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomResVO;
+import cn.zhumouren.poetryclub.bean.vo.InputFfoSentenceVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.service.FfoService;
 import cn.zhumouren.poetryclub.util.SecurityContextUtil;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +43,17 @@ public class FfoController {
     @GetMapping("/")
     public ResponseResult<Set<FfoGameRoomResVO>> listFfoGameRoom() {
         return ffoService.listFfoGameRoom();
+    }
+
+    @PostMapping
+    public ResponseResult<Boolean> startGame() {
+        return null;
+    }
+
+    @MessageMapping("/ffo/{roomID}")
+    public void sendFfoSentence(InputFfoSentenceVO inputFfoSentenceVO, @DestinationVariable("roomID") String roomID) {
+        UserEntity userEntity = SecurityContextUtil.getUserEntity();
+        ffoService.userSendFfoSentence(roomID, userEntity, inputFfoSentenceVO);
     }
 
 
