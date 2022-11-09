@@ -65,7 +65,8 @@ public class InitTag implements IInitData {
         });
 
         log.info("开始保存tags");
-        tagEntityRepository.saveAll(tagEntitySet);
+        List<LiteratureTagEntity> literatureTagEntities = tagEntityRepository.saveAll(tagEntitySet);
+        poemUtil.initTagEntityMap(literatureTagEntities);
         log.info("结束");
     }
 }

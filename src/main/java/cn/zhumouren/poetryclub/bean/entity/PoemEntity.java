@@ -47,9 +47,11 @@ public class PoemEntity implements ILiterature, Serializable {
     @Enumerated(EnumType.STRING)
     private PoemType poemType;
 
-    @ManyToMany
-    @ToString.Exclude
-    private Set<LiteratureTagEntity> tags;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "PoemEntity_tags",
+            joinColumns = @JoinColumn(name = "PoemEntity_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "tags_id", referencedColumnName = "id"))
+    private Set<LiteratureTagEntity> tags = new java.util.LinkedHashSet<>();
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
 

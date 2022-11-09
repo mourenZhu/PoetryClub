@@ -7,12 +7,17 @@ import cn.zhumouren.poetryclub.core.PoemType;
 import cn.zhumouren.poetryclub.dao.AuthorEntityRepository;
 import cn.zhumouren.poetryclub.util.JsonFileUtil;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author mourenZhu
@@ -20,12 +25,13 @@ import java.util.*;
  * @description todo
  * @date 2022/9/14 11:42
  **/
+@Slf4j
 @Component
 public class PoemUtil {
 
     private final AuthorEntityRepository authorEntityRepository;
     private final Map<String, AuthorEntity> authorMap = new HashMap<>();
-    private final Map<String, LiteratureTagEntity> tagMap = new HashMap<>();
+    private final Map<String, LiteratureTagEntity> tagEntityMap = new ConcurrentHashMap<>();
 
     public PoemUtil(AuthorEntityRepository authorEntityRepository) {
         this.authorEntityRepository = authorEntityRepository;
@@ -49,6 +55,18 @@ public class PoemUtil {
         }
     }
 
+    /**
+     * 因为要等InitTag 执行完后，数据库中才有标签数据，
+     * 一开始就初始化map因为数据库中为空，所以map也是空。
+     *
+     * @param literatureTagEntities
+     */
+    public void initTagEntityMap(List<LiteratureTagEntity> literatureTagEntities) {
+        literatureTagEntities.forEach(tagEntity -> {
+            tagEntityMap.put(tagEntity.getTag(), tagEntity);
+        });
+    }
+
     public PoemEntity getPoemByMap(Map map) {
         PoemEntity poemEntity = new PoemEntity();
         // 设置标题
@@ -69,21 +87,20 @@ public class PoemUtil {
                 authorMap.put(author, authorEntity);
             }
         }
+        poemEntity.setAuthor(authorEntity);
 
         // 设置诗文类型
         poemEntity.setPoemType(getPoemTypeByParagraphs((List<String>) map.get("paragraphs")));
 
         // 设置tags
-        Set<LiteratureTagEntity> literatureTagEntitySet = new HashSet<>();
         List<String> tags = (List<String>) map.get("tags");
         if (tags == null) {
             tags = new ArrayList<>();
         }
         for (String tag : tags) {
-            literatureTagEntitySet.add(tagMap.get(tag));
+            LiteratureTagEntity tagEntity = tagEntityMap.get(tag);
+            poemEntity.getTags().add(tagEntity);
         }
-        poemEntity.setTags(literatureTagEntitySet);
-
         return poemEntity;
     }
 

@@ -9,14 +9,12 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -33,12 +31,10 @@ public class InitPoem implements IInitData {
     private final AppInitProperties appInitProperties;
     private final PoemEntityRepository poemEntityRepository;
     private final PoemUtil poemUtil;
-
     private final AsyncInitPoemServer asyncInitPoemServer;
 
     @Autowired
-    public InitPoem(AppInitProperties appInitProperties, PoemEntityRepository poemEntityRepository,
-                    PoemUtil poemUtil, AsyncInitPoemServer asyncInitPoemServer) {
+    public InitPoem(AppInitProperties appInitProperties, PoemEntityRepository poemEntityRepository, PoemUtil poemUtil, AsyncInitPoemServer asyncInitPoemServer) {
         this.appInitProperties = appInitProperties;
         this.poemEntityRepository = poemEntityRepository;
         this.poemUtil = poemUtil;
