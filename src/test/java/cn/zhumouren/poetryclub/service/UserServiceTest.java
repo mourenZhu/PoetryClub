@@ -18,6 +18,7 @@ public class UserServiceTest {
     @Autowired
     private UserService userService;
 
+//    @Rollback(value = false)
     @Transactional
     @Test
     public void createUserTest() {

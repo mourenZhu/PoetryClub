@@ -77,6 +77,9 @@ public class UserServiceImpl implements UserService {
             log.debug("roles = {}", roles);
             userEntity.setRoles(roles);
         }
+        if (ObjectUtils.isEmpty(userEntity.getNickname())) {
+            userEntity.setNickname(userEntity.getUsername());
+        }
         log.debug("user = {}", userEntity);
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
         UserEntity save = userEntityRepository.save(userEntity);
