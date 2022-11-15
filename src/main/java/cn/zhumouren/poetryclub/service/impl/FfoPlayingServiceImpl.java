@@ -18,7 +18,7 @@ import cn.zhumouren.poetryclub.dao.PoemEntityRepository;
 import cn.zhumouren.poetryclub.notice.StompFfoGameNotice;
 import cn.zhumouren.poetryclub.service.FfoPlayingService;
 import cn.zhumouren.poetryclub.service.RedisUserService;
-import cn.zhumouren.poetryclub.service.TaskSchedulingService;
+import cn.zhumouren.poetryclub.service.FfoTaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
@@ -35,17 +35,17 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
     private final FfoGameRoomRedisDAO ffoGameRoomRedisDao;
     private final FfoGameRedisDAO ffoGameRedisDao;
     private final StompFfoGameNotice ffoGameNotice;
-    private final TaskSchedulingService taskSchedulingService;
+    private final FfoTaskService ffoTaskService;
 
     public FfoPlayingServiceImpl(RedisUserService redisUserService, PoemEntityRepository poemEntityRepository,
                                  FfoGameRoomRedisDAO ffoGameRoomRedisDao, FfoGameRedisDAO ffoGameRedisDao,
-                                 StompFfoGameNotice ffoGameNotice, TaskSchedulingService taskSchedulingService) {
+                                 StompFfoGameNotice ffoGameNotice, FfoTaskService ffoTaskService) {
         this.redisUserService = redisUserService;
         this.poemEntityRepository = poemEntityRepository;
         this.ffoGameRoomRedisDao = ffoGameRoomRedisDao;
         this.ffoGameRedisDao = ffoGameRedisDao;
         this.ffoGameNotice = ffoGameNotice;
-        this.taskSchedulingService = taskSchedulingService;
+        this.ffoTaskService = ffoTaskService;
     }
 
     /**
@@ -120,7 +120,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
             return;
         }
         // 2. 取消该用户的超时任务
-        taskSchedulingService.removeTask("ffo_" + roomId);
+        ffoTaskService.removeSpeakTimeOutTask(roomId);
         // 创建 FfoGameUserSentenceDTO，除了句子判断，其他的属性都一样
         FfoGameUserSentenceDTO ffoGameUserSentenceDTO = new FfoGameUserSentenceDTO(userEntity.getUsername(), sentence, LocalDateTime.now());
         // 3. 检测句子是否符合本局设置
@@ -230,7 +230,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
 
     private void addUserSendFfoSentenceTimeoutTask(FfoGameDTO ffoGameDTO) {
         LocalDateTime timeout = getFfoSpeakerNextEndTime(ffoGameDTO);
-        taskSchedulingService.addTask("ffo_" + ffoGameDTO.getRoomId(), getFfoSentenceTimeoutCron(timeout), () -> {
+        ffoTaskService.addSpeakTimeOutTask(ffoGameDTO.getRoomId(), getFfoSentenceTimeoutCron(timeout), () -> {
 
         });
     }
