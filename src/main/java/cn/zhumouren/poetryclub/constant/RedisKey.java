@@ -1,4 +1,4 @@
-package cn.zhumouren.poetryclub.constants;
+package cn.zhumouren.poetryclub.constant;
 
 import lombok.Getter;
 

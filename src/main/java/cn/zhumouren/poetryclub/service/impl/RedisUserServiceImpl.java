@@ -3,9 +3,9 @@ package cn.zhumouren.poetryclub.service.impl;
 import cn.zhumouren.poetryclub.bean.dto.FfoGameRoomDTO;
 import cn.zhumouren.poetryclub.bean.dto.UserGameStateDTO;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
-import cn.zhumouren.poetryclub.constants.GamesType;
-import cn.zhumouren.poetryclub.constants.RedisKey;
-import cn.zhumouren.poetryclub.constants.TimeSecondConstants;
+import cn.zhumouren.poetryclub.constant.GamesType;
+import cn.zhumouren.poetryclub.constant.RedisKey;
+import cn.zhumouren.poetryclub.constant.TimeSecondConstant;
 import cn.zhumouren.poetryclub.service.RedisUserService;
 import cn.zhumouren.poetryclub.util.RedisUtil;
 import org.apache.commons.lang3.ObjectUtils;
@@ -25,7 +25,7 @@ public class RedisUserServiceImpl implements RedisUserService {
     @Override
     public boolean userEnterGameRoom(UserEntity user, GamesType gamesType, String roomId) {
         UserGameStateDTO userGameStateDTO = new UserGameStateDTO(roomId, gamesType);
-        return redisUtil.hset(RedisKey.USER_GAME_STATE.name(), user.getUsername(), userGameStateDTO, TimeSecondConstants.HOUR_SECOND * 12);
+        return redisUtil.hset(RedisKey.USER_GAME_STATE.name(), user.getUsername(), userGameStateDTO, TimeSecondConstant.HOUR_SECOND * 12);
     }
 
     @Override

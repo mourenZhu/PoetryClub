@@ -1,6 +1,6 @@
 package cn.zhumouren.poetryclub.controller;
 
-import cn.zhumouren.poetryclub.properties.GitHubOauth2Properties;
+import cn.zhumouren.poetryclub.property.GitHubOauth2Property;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -28,9 +28,9 @@ public class Oauth2Controller {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    private final GitHubOauth2Properties gitHubOauth2Properties;
+    private final GitHubOauth2Property gitHubOauth2Properties;
 
-    public Oauth2Controller(GitHubOauth2Properties gitHubOauth2Properties) {
+    public Oauth2Controller(GitHubOauth2Property gitHubOauth2Properties) {
         this.gitHubOauth2Properties = gitHubOauth2Properties;
     }
 

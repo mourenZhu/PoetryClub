@@ -1,6 +1,6 @@
 package cn.zhumouren.poetryclub.bean.vo;
 
-import cn.zhumouren.poetryclub.constants.games.FfoGameSentenceJudgeType;
+import cn.zhumouren.poetryclub.constant.games.FfoGameSentenceJudgeType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

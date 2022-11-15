@@ -4,7 +4,7 @@ import cn.zhumouren.poetryclub.bean.entity.PoemEntity;
 import cn.zhumouren.poetryclub.dao.PoemEntityRepository;
 import cn.zhumouren.poetryclub.init.IInitData;
 import cn.zhumouren.poetryclub.init.db.utils.PoemUtil;
-import cn.zhumouren.poetryclub.properties.AppInitProperties;
+import cn.zhumouren.poetryclub.property.AppInitProperty;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -28,14 +28,14 @@ import java.util.stream.Collectors;
 @Slf4j
 public class InitPoem implements IInitData {
 
-    private final AppInitProperties appInitProperties;
+    private final AppInitProperty appInitProperty;
     private final PoemEntityRepository poemEntityRepository;
     private final PoemUtil poemUtil;
     private final AsyncInitPoemServer asyncInitPoemServer;
 
     @Autowired
-    public InitPoem(AppInitProperties appInitProperties, PoemEntityRepository poemEntityRepository, PoemUtil poemUtil, AsyncInitPoemServer asyncInitPoemServer) {
-        this.appInitProperties = appInitProperties;
+    public InitPoem(AppInitProperty appInitProperty, PoemEntityRepository poemEntityRepository, PoemUtil poemUtil, AsyncInitPoemServer asyncInitPoemServer) {
+        this.appInitProperty = appInitProperty;
         this.poemEntityRepository = poemEntityRepository;
         this.poemUtil = poemUtil;
         this.asyncInitPoemServer = asyncInitPoemServer;
@@ -86,7 +86,7 @@ public class InitPoem implements IInitData {
     }
 
     public List<File> getPoemFileList() {
-        File files = new File(appInitProperties.getPoemFilesPath());
+        File files = new File(appInitProperty.getPoemFilesPath());
         return Arrays.stream(Objects.requireNonNull(files.listFiles()))
                 .filter(file -> file.getName().matches("poet.*")).collect(Collectors.toList());
     }

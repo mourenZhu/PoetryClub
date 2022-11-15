@@ -3,7 +3,7 @@ package cn.zhumouren.poetryclub.init.db;
 import cn.zhumouren.poetryclub.bean.entity.AuthorEntity;
 import cn.zhumouren.poetryclub.dao.AuthorEntityRepository;
 import cn.zhumouren.poetryclub.init.IInitData;
-import cn.zhumouren.poetryclub.properties.AppInitProperties;
+import cn.zhumouren.poetryclub.property.AppInitProperty;
 import cn.zhumouren.poetryclub.util.JsonFileUtil;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -29,12 +29,12 @@ public class InitAuthor implements IInitData {
     private static final String SONG_AUTHORS_FILE_PATH = "classpath:authors/authors.song.json";
     private static final String SONG_CI_AUTHORS_FILE_PATH = "classpath:authors/ci_author.song.json";
     private static final String TANG_AUTHORS_FILE_PATH = "classpath:authors/authors.tang.json";
-    private final AppInitProperties appInitProperties;
+    private final AppInitProperty appInitProperty;
 
     private final AuthorEntityRepository authorEntityRepository;
 
-    public InitAuthor(AppInitProperties appInitProperties, AuthorEntityRepository authorEntityRepository) {
-        this.appInitProperties = appInitProperties;
+    public InitAuthor(AppInitProperty appInitProperty, AuthorEntityRepository authorEntityRepository) {
+        this.appInitProperty = appInitProperty;
         this.authorEntityRepository = authorEntityRepository;
     }
 
@@ -58,7 +58,7 @@ public class InitAuthor implements IInitData {
     }
 
     private List<File> getAuthorsFileList() {
-        File files = new File(appInitProperties.getPoemFilesPath());
+        File files = new File(appInitProperty.getPoemFilesPath());
         return Arrays.stream(Objects.requireNonNull(files.listFiles()))
                 .filter(file -> file.getName().matches("authors.*")).collect(Collectors.toList());
     }

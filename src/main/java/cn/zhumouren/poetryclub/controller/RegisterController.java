@@ -4,7 +4,7 @@ import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.mapper.UserMapper;
 import cn.zhumouren.poetryclub.bean.vo.UserRegisterVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
-import cn.zhumouren.poetryclub.constants.DBRoleType;
+import cn.zhumouren.poetryclub.constant.DBRoleType;
 import cn.zhumouren.poetryclub.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;

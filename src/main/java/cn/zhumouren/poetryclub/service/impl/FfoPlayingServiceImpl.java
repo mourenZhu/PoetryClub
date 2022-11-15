@@ -8,17 +8,19 @@ import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.vo.InputFfoSentenceVO;
 import cn.zhumouren.poetryclub.bean.vo.OutputFfoSpeakInfoVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
-import cn.zhumouren.poetryclub.constants.GamesType;
-import cn.zhumouren.poetryclub.constants.games.FfoGamePoemType;
-import cn.zhumouren.poetryclub.constants.games.FfoGameSentenceJudgeType;
-import cn.zhumouren.poetryclub.constants.games.FfoStateType;
+import cn.zhumouren.poetryclub.constant.GamesType;
+import cn.zhumouren.poetryclub.constant.games.FfoGamePoemType;
+import cn.zhumouren.poetryclub.constant.games.FfoGameSentenceJudgeType;
+import cn.zhumouren.poetryclub.constant.games.FfoStateType;
 import cn.zhumouren.poetryclub.dao.FfoGameRedisDAO;
 import cn.zhumouren.poetryclub.dao.FfoGameRoomRedisDAO;
 import cn.zhumouren.poetryclub.dao.PoemEntityRepository;
 import cn.zhumouren.poetryclub.notice.StompFfoGameNotice;
 import cn.zhumouren.poetryclub.service.FfoPlayingService;
-import cn.zhumouren.poetryclub.service.RedisUserService;
 import cn.zhumouren.poetryclub.service.FfoTaskService;
+import cn.zhumouren.poetryclub.service.RedisUserService;
+import cn.zhumouren.poetryclub.util.FfoGameUtil;
+import com.google.common.collect.Iterables;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
@@ -85,7 +87,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
         outputFfoSpeakInfoVO.setNextSpeaker(ffoGameDTO.getNextSpeaker());
         ffoGameNotice.ffoSpeakNotice(ffoGameDTO.getUsers(), outputFfoSpeakInfoVO);
         // 添加玩家超时发言任务
-        addUserSendFfoSentenceTimeoutTask(ffoGameDTO);
+        addUserSendSentenceTimeoutTask(ffoGameDTO);
         return ResponseResult.success();
     }
 
@@ -115,7 +117,11 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
             log.debug("next speaker = {}, 但是 user = {}, 不满足条件", ffoGameDTO.getNextSpeaker(), userEntity.getUsername());
             return;
         }
-        if (LocalDateTime.now().isAfter(getFfoSpeakerNextEndTime(ffoGameDTO))) {
+        if (Iterables.getLast(ffoGameDTO.getUserSentences())
+                .getSentenceJudgeType().equals(FfoGameSentenceJudgeType.WAITING_USERS_VOTE)) {
+            log.debug("用户在等待投票，不允许回答");
+        }
+        if (LocalDateTime.now().isAfter(FfoGameUtil.getFfoSpeakerNextEndTime(ffoGameDTO))) {
             log.debug("user = {}, 超时作答，等待超时任务自动处理", userEntity.getUsername());
             return;
         }
@@ -129,7 +135,10 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
         FfoGameSentenceJudgeType sentenceJudgeType = ffoGameUserSentenceDTO.getSentenceJudgeType();
         // 4. 如果允许用户自创作，并满足本局设置，然后通知玩家进行投票
         if (sentenceJudgeType.equals(FfoGameSentenceJudgeType.WAITING_USERS_VOTE)) {
+            ffoGameDTO.getUserSentences().add(ffoGameUserSentenceDTO);
+            ffoGameRedisDao.saveFfoGameDTO(ffoGameDTO);
 
+            return;
         }
         // 5. 把本回合数据存入ffoGameDTO中
         String user = ffoGameDTO.getPlayingUsers().poll();
@@ -149,8 +158,6 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
             ffoGameDTO.getRanking().push(u);
             ffoGameDTO.setEndTime(LocalDateTime.now());
         }
-
-
         userFfoSpeakNotice(ffoGameDTO, ffoGameUserSentenceDTO);
     }
 
@@ -228,22 +235,19 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
         ffoGameUserSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.SUCCESS);
     }
 
-    private void addUserSendFfoSentenceTimeoutTask(FfoGameDTO ffoGameDTO) {
-        LocalDateTime timeout = getFfoSpeakerNextEndTime(ffoGameDTO);
-        ffoTaskService.addSpeakTimeOutTask(ffoGameDTO.getRoomId(), getFfoSentenceTimeoutCron(timeout), () -> {
+    /**
+     * 添加用户发送飞花令超时要做的任务
+     * @param ffoGameDTO
+     */
+    private void addUserSendSentenceTimeoutTask(FfoGameDTO ffoGameDTO) {
+        LocalDateTime timeout = FfoGameUtil.getFfoSpeakerNextEndTime(ffoGameDTO);
+        ffoTaskService.addSpeakTimeOutTask(ffoGameDTO.getRoomId(), FfoGameUtil.getFfoSentenceTimeoutCron(timeout), () -> {
 
         });
     }
 
-    /**
-     * 通过 LocalDateTime 来获取 cron 表达式
-     *
-     * @param timeout
-     * @return
-     */
-    private String getFfoSentenceTimeoutCron(LocalDateTime timeout) {
-        return timeout.getSecond() + " " + timeout.getMinute() + " " + timeout.getHour() + " "
-                + " " + timeout.getDayOfMonth() + " " + timeout.getMonthValue() + " ? " + timeout.getYear();
+    private void addUserVoteTimeoutTask(FfoGameDTO ffoGameDTO) {
+
     }
 
     /**
@@ -260,25 +264,9 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
         outputFfoSpeakInfoVO.setCurrentSentence(ffoGameUserSentenceDTO.getSentence());
         outputFfoSpeakInfoVO.setCurrentSentenceJudgeType(ffoGameUserSentenceDTO.getSentenceJudgeType());
         outputFfoSpeakInfoVO.setSpeakingTime(ffoGameUserSentenceDTO.getCreateTime());
-        outputFfoSpeakInfoVO.setNextEndTime(getFfoSpeakerNextEndTime(ffoGameDTO));
+        outputFfoSpeakInfoVO.setNextEndTime(FfoGameUtil.getFfoSpeakerNextEndTime(ffoGameDTO));
         ffoGameNotice.ffoSpeakNotice(ffoGameDTO.getUsers(), outputFfoSpeakInfoVO);
     }
 
-    /**
-     * 获取飞花令下一个发言者超时发言的时间
-     *
-     * @param ffoGameDTO
-     * @return
-     */
-    private LocalDateTime getFfoSpeakerNextEndTime(FfoGameDTO ffoGameDTO) {
-        LocalDateTime timeout;
-        if (ffoGameDTO.getUserSentences().size() == 0) {
-            timeout = ffoGameDTO.getCreateTime().plusSeconds(ffoGameDTO.getPlayerPreparationSecond());
-        } else {
-            timeout = ffoGameDTO.getUserSentences()
-                    .get(ffoGameDTO.getUserSentences().size() - 1)
-                    .getCreateTime().plusSeconds(ffoGameDTO.getPlayerPreparationSecond());
-        }
-        return timeout;
-    }
+
 }

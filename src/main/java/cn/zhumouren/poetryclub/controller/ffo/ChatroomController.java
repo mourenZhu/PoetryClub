@@ -3,7 +3,7 @@ package cn.zhumouren.poetryclub.controller.ffo;
 import cn.zhumouren.poetryclub.bean.vo.InputTextMessageVO;
 import cn.zhumouren.poetryclub.bean.vo.OutputMessageVO;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
-import cn.zhumouren.poetryclub.constants.MessageDestinations;
+import cn.zhumouren.poetryclub.constant.MessageDestinations;
 import cn.zhumouren.poetryclub.service.RedisUserService;
 import cn.zhumouren.poetryclub.util.SecurityContextUtil;
 import lombok.extern.slf4j.Slf4j;

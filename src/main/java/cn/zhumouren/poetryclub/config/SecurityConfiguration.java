@@ -3,7 +3,7 @@ package cn.zhumouren.poetryclub.config;
 
 import cn.zhumouren.poetryclub.config.security.filter.JwtTokenFilter;
 import cn.zhumouren.poetryclub.config.security.handle.AuthenticationSuccessHandlerImpl;
-import cn.zhumouren.poetryclub.constants.RoleType;
+import cn.zhumouren.poetryclub.constant.RoleType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

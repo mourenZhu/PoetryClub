@@ -3,10 +3,10 @@ package cn.zhumouren.poetryclub.service.impl;
 import cn.zhumouren.poetryclub.bean.entity.RoleEntity;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
-import cn.zhumouren.poetryclub.constants.DBRoleType;
+import cn.zhumouren.poetryclub.constant.DBRoleType;
 import cn.zhumouren.poetryclub.dao.RoleEntityRepository;
 import cn.zhumouren.poetryclub.dao.UserEntityRepository;
-import cn.zhumouren.poetryclub.properties.AppWebImageProperties;
+import cn.zhumouren.poetryclub.property.AppWebImageProperty;
 import cn.zhumouren.poetryclub.service.UserService;
 import cn.zhumouren.poetryclub.util.FileUtil;
 import cn.zhumouren.poetryclub.util.SecurityContextUtil;
@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserEntityRepository userEntityRepository;
 
-    private final AppWebImageProperties appWebImageProperties;
+    private final AppWebImageProperty appWebImageProperty;
 
     private final RoleEntityRepository roleEntityRepository;
     private final PasswordEncoder passwordEncoder;
@@ -41,9 +41,9 @@ public class UserServiceImpl implements UserService {
     @Value("${app.files-path}")
     private String appFilesPath;
 
-    public UserServiceImpl(UserEntityRepository userEntityRepository, AppWebImageProperties appWebImageProperties, RoleEntityRepository roleEntityRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserEntityRepository userEntityRepository, AppWebImageProperty appWebImageProperty, RoleEntityRepository roleEntityRepository, PasswordEncoder passwordEncoder) {
         this.userEntityRepository = userEntityRepository;
-        this.appWebImageProperties = appWebImageProperties;
+        this.appWebImageProperty = appWebImageProperty;
         this.roleEntityRepository = roleEntityRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -97,6 +97,6 @@ public class UserServiceImpl implements UserService {
     }
 
     private String getUserAvatarSystemFilePath() {
-        return appFilesPath + appWebImageProperties.getUserAvatarPath();
+        return appFilesPath + appWebImageProperty.getUserAvatarPath();
     }
 }

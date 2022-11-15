@@ -1,6 +1,6 @@
 package cn.zhumouren.poetryclub.bean.dto;
 
-import cn.zhumouren.poetryclub.constants.GamesType;
+import cn.zhumouren.poetryclub.constant.GamesType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

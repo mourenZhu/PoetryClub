@@ -1,4 +1,4 @@
-package cn.zhumouren.poetryclub.constants.games;
+package cn.zhumouren.poetryclub.constant.games;
 
 /**
  * 飞花令回答时，可选的诗类型

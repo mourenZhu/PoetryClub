@@ -3,7 +3,7 @@ package cn.zhumouren.poetryclub.service;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomReqVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
-import cn.zhumouren.poetryclub.constants.games.FfoGamePoemType;
+import cn.zhumouren.poetryclub.constant.games.FfoGamePoemType;
 import cn.zhumouren.poetryclub.dao.UserEntityRepository;
 import cn.zhumouren.poetryclub.service.impl.FfoServiceImpl;
 import org.junit.jupiter.api.Test;

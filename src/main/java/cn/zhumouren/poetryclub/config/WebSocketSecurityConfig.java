@@ -1,6 +1,6 @@
 package cn.zhumouren.poetryclub.config;
 
-import cn.zhumouren.poetryclub.constants.RoleType;
+import cn.zhumouren.poetryclub.constant.RoleType;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.messaging.MessageSecurityMetadataSourceRegistry;
 import org.springframework.security.config.annotation.web.socket.AbstractSecurityWebSocketMessageBrokerConfigurer;

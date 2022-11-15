@@ -1,6 +1,6 @@
 package cn.zhumouren.poetryclub.bean.entity;
 
-import cn.zhumouren.poetryclub.constants.games.FfoGameSentenceJudgeType;
+import cn.zhumouren.poetryclub.constant.games.FfoGameSentenceJudgeType;
 import lombok.Data;
 
 import javax.persistence.*;

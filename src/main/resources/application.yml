@@ -33,4 +33,7 @@ app:
       url: http://localhost:${server.port}
       user-avatar-path: /user_avatar # 与 mvc.static-path-pattern 对应
 
+games:
+  ffo:
+    vote-time: 30
 

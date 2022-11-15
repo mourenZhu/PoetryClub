@@ -1,6 +1,6 @@
 package cn.zhumouren.poetryclub.bean.entity;
 
-import cn.zhumouren.poetryclub.constants.games.FfoGamePoemType;
+import cn.zhumouren.poetryclub.constant.games.FfoGamePoemType;
 import lombok.Data;
 
 import javax.persistence.*;

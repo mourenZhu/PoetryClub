@@ -1,7 +1,7 @@
 package cn.zhumouren.poetryclub.service;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
-import cn.zhumouren.poetryclub.constants.GamesType;
+import cn.zhumouren.poetryclub.constant.GamesType;
 
 import java.util.List;
 

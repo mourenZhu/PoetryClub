@@ -1,7 +1,7 @@
 package cn.zhumouren.poetryclub.bean.vo;
 
-import cn.zhumouren.poetryclub.constants.games.FfoGamePoemType;
-import cn.zhumouren.poetryclub.constants.games.FfoStateType;
+import cn.zhumouren.poetryclub.constant.games.FfoGamePoemType;
+import cn.zhumouren.poetryclub.constant.games.FfoStateType;
 import lombok.Data;
 import lombok.ToString;
 

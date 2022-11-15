@@ -1,4 +1,4 @@
-package cn.zhumouren.poetryclub.properties;
+package cn.zhumouren.poetryclub.property;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -13,6 +13,6 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 @ConfigurationProperties(prefix = "app.init")
-public class AppInitProperties {
+public class AppInitProperty {
     private String poemFilesPath;
 }

@@ -2,7 +2,7 @@ package cn.zhumouren.poetryclub.service;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
-import cn.zhumouren.poetryclub.constants.DBRoleType;
+import cn.zhumouren.poetryclub.constant.DBRoleType;
 import org.springframework.web.multipart.MultipartFile;
 
 /**

@@ -1,4 +1,4 @@
-package cn.zhumouren.poetryclub.constants.games;
+package cn.zhumouren.poetryclub.constant.games;
 
 public enum FfoStateType {
     PLAYING,

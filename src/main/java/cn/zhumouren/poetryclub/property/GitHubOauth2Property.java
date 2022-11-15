@@ -1,4 +1,4 @@
-package cn.zhumouren.poetryclub.properties;
+package cn.zhumouren.poetryclub.property;
 
 import cn.zhumouren.poetryclub.config.YamlPropertySourceFactory;
 import lombok.Data;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Data
 @PropertySource(value = "classpath:privacy/oauth2-github.yml", factory = YamlPropertySourceFactory.class)
 @ConfigurationProperties(prefix = "oauth2-github")
-public class GitHubOauth2Properties {
+public class GitHubOauth2Property {
     private String clientId;
     private String clientSecret;
     private String authorizeUrl;

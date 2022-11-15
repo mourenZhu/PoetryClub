@@ -1,7 +1,7 @@
 package cn.zhumouren.poetryclub.bean.dto;
 
 import cn.zhumouren.poetryclub.bean.mapper.FfoGameMapper;
-import cn.zhumouren.poetryclub.constants.games.FfoGamePoemType;
+import cn.zhumouren.poetryclub.constant.games.FfoGamePoemType;
 import lombok.Data;
 
 import java.io.Serializable;

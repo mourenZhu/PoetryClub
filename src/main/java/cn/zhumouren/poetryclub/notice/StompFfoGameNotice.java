@@ -3,7 +3,7 @@ package cn.zhumouren.poetryclub.notice;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.vo.OutputFfoSpeakInfoVO;
 import cn.zhumouren.poetryclub.bean.vo.OutputMessageVO;
-import cn.zhumouren.poetryclub.constants.MessageDestinations;
+import cn.zhumouren.poetryclub.constant.MessageDestinations;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
