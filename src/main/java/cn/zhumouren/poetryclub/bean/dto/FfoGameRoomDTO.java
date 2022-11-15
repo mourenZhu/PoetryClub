@@ -3,7 +3,6 @@ package cn.zhumouren.poetryclub.bean.dto;
 import cn.zhumouren.poetryclub.bean.mapper.FfoGameMapper;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomReqVO;
 import cn.zhumouren.poetryclub.constants.games.FfoGamePoemType;
-import cn.zhumouren.poetryclub.constants.games.FfoGameVerseType;
 import cn.zhumouren.poetryclub.constants.games.FfoStateType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,20 +19,29 @@ public class FfoGameRoomDTO implements Serializable {
     private String name;
     private Integer maxPlayers;
     /**
-     * 单位 秒
+     * 飞花令的关键字
      */
-    private Integer playerPreparationSecond;
+    private Character keyword;
     /**
      * 允许字出现在任意位置
      */
     private Boolean allowWordInAny;
     /**
-     * 飞花令的关键字
+     * 单位 秒
      */
-    private Character keyword;
+    private Integer playerPreparationSecond;
+    /**
+     * 飞花令句子的最大长度
+     */
+    private Integer maxSentenceLength;
+    /**
+     * 本局游戏飞花令句子长度是否可变
+     * 如果不可变，则每回合的句子长度 等于 句子的最大长度
+     * 如果可变，则每回合的句子长度 小于等于 句子的最大长度
+     */
+    private Boolean constantSentenceLength;
     private Boolean display;
     private FfoGamePoemType ffoGamePoemType;
-    private FfoGameVerseType ffoGameVerseType;
     private FfoStateType ffoStateType;
     private String homeowner;
     private List<String> users;

@@ -9,7 +9,11 @@ public enum FfoGamePoemType {
      */
     ONLY_ANCIENTS_POEM,
     /**
-     * 可以说自己现场创作的诗（也可以说古诗）
+     * 只允许自己创作
      */
-    ALLOW_SELF_CREAT
+    ONLY_SELF_CREAT,
+    /**
+     * 可以说古诗，也可以自己创作。先检索古诗，没找到算自己创作的
+     */
+    ALL
 }

@@ -18,7 +18,4 @@ public interface FfoService extends UserWebsocketService {
 
     ResponseResult<Set<FfoGameRoomResVO>> listFfoGameRoom();
 
-    ResponseResult<Boolean> userStartGame(UserEntity user);
-
-    void userSendFfoSentence(String roomId, UserEntity user, InputFfoSentenceVO inputFfoSentenceVO);
 }

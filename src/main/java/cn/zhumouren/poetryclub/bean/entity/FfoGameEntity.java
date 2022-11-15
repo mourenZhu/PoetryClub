@@ -1,7 +1,6 @@
 package cn.zhumouren.poetryclub.bean.entity;
 
 import cn.zhumouren.poetryclub.constants.games.FfoGamePoemType;
-import cn.zhumouren.poetryclub.constants.games.FfoGameVerseType;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -24,9 +23,6 @@ public class FfoGameEntity {
 
     @Enumerated(EnumType.STRING)
     private FfoGamePoemType ffoGamePoemType;
-
-    @Enumerated(EnumType.STRING)
-    private FfoGameVerseType ffoGameVerseType;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<FfoGameUserInfoEntity> userInfoEntities = new java.util.LinkedHashSet<>();

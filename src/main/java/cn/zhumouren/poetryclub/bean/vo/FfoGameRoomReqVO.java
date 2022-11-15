@@ -1,7 +1,6 @@
 package cn.zhumouren.poetryclub.bean.vo;
 
 import cn.zhumouren.poetryclub.constants.games.FfoGamePoemType;
-import cn.zhumouren.poetryclub.constants.games.FfoGameVerseType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,5 +23,4 @@ public class FfoGameRoomReqVO implements Serializable {
     private Boolean display;
     private Boolean allowWordInAny;
     private FfoGamePoemType ffoGamePoemType;
-    private FfoGameVerseType ffoGameVerseType;
 }
