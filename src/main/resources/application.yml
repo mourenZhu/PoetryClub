@@ -35,5 +35,5 @@ app:
 
 games:
   ffo:
-    vote-time: 30
+    users-vote-second: 30
 

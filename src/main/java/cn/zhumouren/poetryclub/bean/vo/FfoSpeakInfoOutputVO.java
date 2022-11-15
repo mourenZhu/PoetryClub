@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OutputFfoSpeakInfoVO implements Serializable {
+public class FfoSpeakInfoOutputVO implements Serializable {
 
     private String currentSpeaker;
 

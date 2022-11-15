@@ -5,6 +5,6 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class InputFfoSentenceVO implements Serializable {
+public class FfoSentenceInputVO implements Serializable {
     String sentence;
 }

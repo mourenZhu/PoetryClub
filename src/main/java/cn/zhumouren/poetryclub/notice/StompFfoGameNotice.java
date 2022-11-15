@@ -1,8 +1,8 @@
 package cn.zhumouren.poetryclub.notice;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
-import cn.zhumouren.poetryclub.bean.vo.OutputFfoSpeakInfoVO;
-import cn.zhumouren.poetryclub.bean.vo.OutputMessageVO;
+import cn.zhumouren.poetryclub.bean.vo.FfoSpeakInfoOutputVO;
+import cn.zhumouren.poetryclub.bean.vo.MessageOutputVO;
 import cn.zhumouren.poetryclub.constant.MessageDestinations;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -32,15 +32,15 @@ public class StompFfoGameNotice {
             if (!username.equals(user.getUsername())) {
                 log.debug("发送给 = {}", username);
                 messagingTemplate.convertAndSendToUser(username, MessageDestinations.USER_GAME_ROOM_MESSAGE_DESTINATION,
-                        OutputMessageVO.getOutputMessageDTO(user, msg));
+                        MessageOutputVO.getOutputMessageDTO(user, msg));
             }
         });
     }
 
-    public void ffoSpeakNotice(List<String> usernames, OutputFfoSpeakInfoVO outputFfoSpeakInfoVO) {
+    public void ffoSpeakNotice(List<String> usernames, FfoSpeakInfoOutputVO ffoSpeakInfoOutputVO) {
         usernames.forEach(username -> {
             messagingTemplate.convertAndSendToUser(username, MessageDestinations.USER_GAME_FFO_INFO_MESSAGE_DESTINATION,
-                    outputFfoSpeakInfoVO);
+                    ffoSpeakInfoOutputVO);
         });
     }
 }

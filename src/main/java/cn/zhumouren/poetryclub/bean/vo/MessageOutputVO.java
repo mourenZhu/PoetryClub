@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 
 @Data
 @AllArgsConstructor
-public class OutputMessageVO implements Serializable {
+public class MessageOutputVO implements Serializable {
     private String username;
     private String nickname;
     private String avatar;
@@ -20,8 +20,8 @@ public class OutputMessageVO implements Serializable {
     private LocalDateTime time;
 
     @JsonIgnore
-    public static OutputMessageVO getOutputMessageDTO(UserEntity user, String content) {
-        return new OutputMessageVO(user.getUsername(), user.getNickname(),
+    public static MessageOutputVO getOutputMessageDTO(UserEntity user, String content) {
+        return new MessageOutputVO(user.getUsername(), user.getNickname(),
                 UserUtil.getUserAvatarUrl(user.getAvatarName()), content, LocalDateTime.now());
     }
 

@@ -3,7 +3,6 @@ package cn.zhumouren.poetryclub.service;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomReqVO;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomResVO;
-import cn.zhumouren.poetryclub.bean.vo.InputFfoSentenceVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 
 import java.util.Set;

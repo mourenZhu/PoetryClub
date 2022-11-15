@@ -1,7 +1,7 @@
 package cn.zhumouren.poetryclub.controller.ffo;
 
-import cn.zhumouren.poetryclub.bean.vo.InputTextMessageVO;
-import cn.zhumouren.poetryclub.bean.vo.OutputMessageVO;
+import cn.zhumouren.poetryclub.bean.vo.TextMessageInputVO;
+import cn.zhumouren.poetryclub.bean.vo.MessageOutputVO;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.constant.MessageDestinations;
 import cn.zhumouren.poetryclub.service.RedisUserService;
@@ -33,13 +33,13 @@ public class ChatroomController {
 
     @MessageMapping("/chatroom/{roomID}")
 //    @SendTo("/topic/messages")
-    public void send(InputTextMessageVO inputTextMessageVO, @DestinationVariable("roomID") String roomID) {
+    public void send(TextMessageInputVO textMessageInputVO, @DestinationVariable("roomID") String roomID) {
         UserEntity user = SecurityContextUtil.getUserEntity();
         log.debug("room id = {}", roomID);
         redisUserService.listGameRoomUser(roomID).forEach(u -> {
             simpMessagingTemplate
                     .convertAndSendToUser(u, MessageDestinations.USER_GAME_ROOM_MESSAGE_DESTINATION,
-                            OutputMessageVO.getOutputMessageDTO(user, inputTextMessageVO.getContent()));
+                            MessageOutputVO.getOutputMessageDTO(user, textMessageInputVO.getContent()));
         });
     }
 

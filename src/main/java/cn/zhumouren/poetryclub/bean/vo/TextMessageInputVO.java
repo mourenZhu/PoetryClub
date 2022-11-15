@@ -5,6 +5,6 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class InputTextMessageVO implements Serializable {
+public class TextMessageInputVO implements Serializable {
     private String content;
 }

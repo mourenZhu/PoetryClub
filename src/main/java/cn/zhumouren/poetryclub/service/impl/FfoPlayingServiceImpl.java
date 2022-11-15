@@ -5,8 +5,8 @@ import cn.zhumouren.poetryclub.bean.dto.FfoGameRoomDTO;
 import cn.zhumouren.poetryclub.bean.dto.FfoGameUserSentenceDTO;
 import cn.zhumouren.poetryclub.bean.entity.PoemEntity;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
-import cn.zhumouren.poetryclub.bean.vo.InputFfoSentenceVO;
-import cn.zhumouren.poetryclub.bean.vo.OutputFfoSpeakInfoVO;
+import cn.zhumouren.poetryclub.bean.vo.FfoSentenceInputVO;
+import cn.zhumouren.poetryclub.bean.vo.FfoSpeakInfoOutputVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constant.GamesType;
 import cn.zhumouren.poetryclub.constant.games.FfoGamePoemType;
@@ -83,9 +83,9 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
         FfoGameDTO ffoGameDTO = FfoGameDTO.getFfoGameDTOByFfoGameRoomDTO(ffoGameRoomDTO);
         ffoGameRedisDao.saveFfoGameDTO(ffoGameDTO);
         // 开始通知用户游戏开始
-        OutputFfoSpeakInfoVO outputFfoSpeakInfoVO = new OutputFfoSpeakInfoVO();
-        outputFfoSpeakInfoVO.setNextSpeaker(ffoGameDTO.getNextSpeaker());
-        ffoGameNotice.ffoSpeakNotice(ffoGameDTO.getUsers(), outputFfoSpeakInfoVO);
+        FfoSpeakInfoOutputVO ffoSpeakInfoOutputVO = new FfoSpeakInfoOutputVO();
+        ffoSpeakInfoOutputVO.setNextSpeaker(ffoGameDTO.getNextSpeaker());
+        ffoGameNotice.ffoSpeakNotice(ffoGameDTO.getUsers(), ffoSpeakInfoOutputVO);
         // 添加玩家超时发言任务
         addUserSendSentenceTimeoutTask(ffoGameDTO);
         return ResponseResult.success();
@@ -102,11 +102,11 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
      *
      * @param roomId
      * @param userEntity
-     * @param inputFfoSentenceVO
+     * @param ffoSentenceInputVO
      */
     @Override
-    public void userSendFfoSentence(String roomId, UserEntity userEntity, InputFfoSentenceVO inputFfoSentenceVO) {
-        String sentence = inputFfoSentenceVO.getSentence();
+    public void userSendFfoSentence(String roomId, UserEntity userEntity, FfoSentenceInputVO ffoSentenceInputVO) {
+        String sentence = ffoSentenceInputVO.getSentence();
         FfoGameDTO ffoGameDTO = ffoGameRedisDao.getFfoGameDTO(roomId);
         // 1. 检测该用户是否满足发送句子的条件
         if (ObjectUtils.isEmpty(ffoGameDTO)) {
@@ -138,6 +138,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
             ffoGameDTO.getUserSentences().add(ffoGameUserSentenceDTO);
             ffoGameRedisDao.saveFfoGameDTO(ffoGameDTO);
 
+            addUserVoteTimeoutTask(ffoGameDTO);
             return;
         }
         // 5. 把本回合数据存入ffoGameDTO中
@@ -158,7 +159,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
             ffoGameDTO.getRanking().push(u);
             ffoGameDTO.setEndTime(LocalDateTime.now());
         }
-        userFfoSpeakNotice(ffoGameDTO, ffoGameUserSentenceDTO);
+        userFfoSpeakNotice(ffoGameDTO);
     }
 
     /**
@@ -241,13 +242,16 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
      */
     private void addUserSendSentenceTimeoutTask(FfoGameDTO ffoGameDTO) {
         LocalDateTime timeout = FfoGameUtil.getFfoSpeakerNextEndTime(ffoGameDTO);
-        ffoTaskService.addSpeakTimeOutTask(ffoGameDTO.getRoomId(), FfoGameUtil.getFfoSentenceTimeoutCron(timeout), () -> {
+        ffoTaskService.addSpeakTimeOutTask(ffoGameDTO.getRoomId(), FfoGameUtil.getTimeoutCron(timeout), () -> {
 
         });
     }
 
     private void addUserVoteTimeoutTask(FfoGameDTO ffoGameDTO) {
+        LocalDateTime timeout = FfoGameUtil.getFfoVoteEndTime(ffoGameDTO);
+        ffoTaskService.addVoteTimeOutTask(ffoGameDTO.getRoomId(), FfoGameUtil.getTimeoutCron(timeout), () -> {
 
+        });
     }
 
     /**
@@ -255,17 +259,21 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
      * 发送当前用户发送的句子，并通知下一个用户要发言了
      *
      * @param ffoGameDTO
-     * @param ffoGameUserSentenceDTO
      */
-    private void userFfoSpeakNotice(FfoGameDTO ffoGameDTO, FfoGameUserSentenceDTO ffoGameUserSentenceDTO) {
-        OutputFfoSpeakInfoVO outputFfoSpeakInfoVO = new OutputFfoSpeakInfoVO();
-        outputFfoSpeakInfoVO.setNextSpeaker(ffoGameDTO.getNextSpeaker());
-        outputFfoSpeakInfoVO.setCurrentSpeaker(ffoGameUserSentenceDTO.getUser());
-        outputFfoSpeakInfoVO.setCurrentSentence(ffoGameUserSentenceDTO.getSentence());
-        outputFfoSpeakInfoVO.setCurrentSentenceJudgeType(ffoGameUserSentenceDTO.getSentenceJudgeType());
-        outputFfoSpeakInfoVO.setSpeakingTime(ffoGameUserSentenceDTO.getCreateTime());
-        outputFfoSpeakInfoVO.setNextEndTime(FfoGameUtil.getFfoSpeakerNextEndTime(ffoGameDTO));
-        ffoGameNotice.ffoSpeakNotice(ffoGameDTO.getUsers(), outputFfoSpeakInfoVO);
+    private void userFfoSpeakNotice(FfoGameDTO ffoGameDTO) {
+        FfoGameUserSentenceDTO ffoGameUserSentenceDTO = Iterables.getLast(ffoGameDTO.getUserSentences());
+        FfoSpeakInfoOutputVO ffoSpeakInfoOutputVO = new FfoSpeakInfoOutputVO();
+        ffoSpeakInfoOutputVO.setNextSpeaker(ffoGameDTO.getNextSpeaker());
+        ffoSpeakInfoOutputVO.setCurrentSpeaker(ffoGameUserSentenceDTO.getUser());
+        ffoSpeakInfoOutputVO.setCurrentSentence(ffoGameUserSentenceDTO.getSentence());
+        ffoSpeakInfoOutputVO.setCurrentSentenceJudgeType(ffoGameUserSentenceDTO.getSentenceJudgeType());
+        ffoSpeakInfoOutputVO.setSpeakingTime(ffoGameUserSentenceDTO.getCreateTime());
+        ffoSpeakInfoOutputVO.setNextEndTime(FfoGameUtil.getFfoSpeakerNextEndTime(ffoGameDTO));
+        ffoGameNotice.ffoSpeakNotice(ffoGameDTO.getUsers(), ffoSpeakInfoOutputVO);
+    }
+
+    private void userFfoVoteNotice(FfoGameDTO ffoGameDTO) {
+
     }
 
 

@@ -1,6 +1,7 @@
 package cn.zhumouren.poetryclub.util;
 
 import cn.zhumouren.poetryclub.bean.dto.FfoGameDTO;
+import cn.zhumouren.poetryclub.property.FfoGameProperty;
 import com.google.common.collect.Iterables;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -11,13 +12,21 @@ import java.time.LocalDateTime;
 @Component
 public class FfoGameUtil {
 
+    private static int usersVoteSecond = 30;
+    private final FfoGameProperty ffoGameProperty;
+
+    public FfoGameUtil(FfoGameProperty ffoGameProperty) {
+        this.ffoGameProperty = ffoGameProperty;
+        usersVoteSecond = ffoGameProperty.getUsersVoteSecond();
+    }
+
     /**
      * 通过 LocalDateTime 来获取 cron 表达式
      *
      * @param timeout
      * @return
      */
-    public static String getFfoSentenceTimeoutCron(LocalDateTime timeout) {
+    public static String getTimeoutCron(LocalDateTime timeout) {
         return timeout.getSecond() + " " + timeout.getMinute() + " " + timeout.getHour() + " "
                 + " " + timeout.getDayOfMonth() + " " + timeout.getMonthValue() + " ? " + timeout.getYear();
     }
@@ -38,4 +47,17 @@ public class FfoGameUtil {
         }
         return timeout;
     }
+
+    public static LocalDateTime getFfoVoteEndTime(FfoGameDTO ffoGameDTO) {
+        LocalDateTime timeout;
+        if (ffoGameDTO.getUserSentences().size() == 0) {
+            timeout = ffoGameDTO.getCreateTime().plusSeconds(usersVoteSecond);
+        } else {
+            timeout = Iterables.getLast(ffoGameDTO.getUserSentences())
+                    .getCreateTime().plusSeconds(usersVoteSecond);
+        }
+        return timeout;
+    }
+
+
 }
