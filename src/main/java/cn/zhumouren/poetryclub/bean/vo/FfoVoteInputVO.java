@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-public class FfoSentenceInputVO implements Serializable {
-    String sentence;
-    LocalDateTime createTime;
+public class FfoVoteInputVO implements Serializable {
+    private Boolean isPass;
+    private LocalDateTime createTime;
 }

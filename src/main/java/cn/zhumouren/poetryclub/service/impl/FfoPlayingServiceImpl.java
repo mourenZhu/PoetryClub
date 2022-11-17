@@ -2,11 +2,13 @@ package cn.zhumouren.poetryclub.service.impl;
 
 import cn.zhumouren.poetryclub.bean.dto.FfoGameDTO;
 import cn.zhumouren.poetryclub.bean.dto.FfoGameRoomDTO;
-import cn.zhumouren.poetryclub.bean.dto.FfoGameUserSentenceDTO;
+import cn.zhumouren.poetryclub.bean.dto.FfoGameSentenceDTO;
 import cn.zhumouren.poetryclub.bean.entity.PoemEntity;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.vo.FfoSentenceInputVO;
 import cn.zhumouren.poetryclub.bean.vo.FfoSpeakInfoOutputVO;
+import cn.zhumouren.poetryclub.bean.vo.FfoVoteInputVO;
+import cn.zhumouren.poetryclub.bean.vo.FfoVoteOutputVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constant.GamesType;
 import cn.zhumouren.poetryclub.constant.games.FfoGamePoemType;
@@ -96,9 +98,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
      * 1. 检测该用户是否满足发送句子的条件
      * 2. 取消该用户的超时任务
      * 3. 检测句子是否符合本局设置
-     * 4. 如果允许用户自创作，并满足本局设置，然后通知玩家进行投票
-     * 5. 把本回合数据存入ffoGameDTO中
-     * 6. 如果只剩一个人，则游戏结束
+     * 4. 如果允许用户自创作，并满足本局设置，存入redis，然后通知玩家进行投票，结束
      *
      * @param roomId
      * @param userEntity
@@ -128,38 +128,74 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
         // 2. 取消该用户的超时任务
         ffoTaskService.removeSpeakTimeOutTask(roomId);
         // 创建 FfoGameUserSentenceDTO，除了句子判断，其他的属性都一样
-        FfoGameUserSentenceDTO ffoGameUserSentenceDTO = new FfoGameUserSentenceDTO(userEntity.getUsername(), sentence, LocalDateTime.now());
+        FfoGameSentenceDTO ffoGameSentenceDTO = new FfoGameSentenceDTO(userEntity.getUsername(), sentence,
+                ffoSentenceInputVO.getCreateTime());
         // 3. 检测句子是否符合本局设置
         log.debug("{} 本轮发送的句子为 {}", userEntity.getUsername(), sentence);
-        setSentenceJudgeType(ffoGameDTO, ffoGameUserSentenceDTO);
-        FfoGameSentenceJudgeType sentenceJudgeType = ffoGameUserSentenceDTO.getSentenceJudgeType();
-        // 4. 如果允许用户自创作，并满足本局设置，然后通知玩家进行投票
+        setSentenceJudgeType(ffoGameDTO, ffoGameSentenceDTO);
+        FfoGameSentenceJudgeType sentenceJudgeType = ffoGameSentenceDTO.getSentenceJudgeType();
+        // 4. 如果允许用户自创作，并满足本局设置，存入redis，然后通知玩家进行投票
         if (sentenceJudgeType.equals(FfoGameSentenceJudgeType.WAITING_USERS_VOTE)) {
-            ffoGameDTO.getUserSentences().add(ffoGameUserSentenceDTO);
+            ffoGameDTO.getUserSentences().add(ffoGameSentenceDTO);
             ffoGameRedisDao.saveFfoGameDTO(ffoGameDTO);
-
-            addUserVoteTimeoutTask(ffoGameDTO);
+            userFfoVoteNotice(ffoGameDTO);
+            LocalDateTime voteTimeout = FfoGameUtil.getFfoVoteEndTime(ffoGameDTO);
+            addUserVoteTimeoutTask(ffoGameDTO.getRoomId(), voteTimeout);
             return;
         }
+        // 如果不用投票，就进入通用流程
+        ffoSentenceHandle(ffoGameDTO, ffoGameSentenceDTO);
+    }
+
+    /**
+     * 玩家投票
+     *
+     * @param roomId
+     * @param userEntity
+     * @param ffoVoteInputVO
+     */
+    @Override
+    public void userVoteFfoSentence(String roomId, UserEntity userEntity, FfoVoteInputVO ffoVoteInputVO) {
+
+    }
+
+    /**
+     * 飞花令 通用的最后几步
+     * 5. 把本回合数据存入ffoGameDTO中
+     * 6. 如果只剩一个人，则游戏结束
+     * 7. 通知用户的发言
+     * 8. 存入redis
+     *
+     * @param ffoGameDTO
+     * @param ffoGameSentenceDTO
+     */
+    private void ffoSentenceHandle(FfoGameDTO ffoGameDTO, FfoGameSentenceDTO ffoGameSentenceDTO) {
         // 5. 把本回合数据存入ffoGameDTO中
         String user = ffoGameDTO.getPlayingUsers().poll();
         // 用户这句诗满足本局所有条件
-        if (sentenceJudgeType.equals(FfoGameSentenceJudgeType.SUCCESS)) {
+        if (ffoGameSentenceDTO.getSentenceJudgeType().equals(FfoGameSentenceJudgeType.SUCCESS)) {
             ffoGameDTO.getPlayingUsers().offer(user);
-
+            // 如果只允许令在指定地方，则当前用户回答正确，令出现的位置到下一个
+            if (!ffoGameDTO.getAllowWordInAny()) {
+                ffoGameDTO.setKeywordIndex((ffoGameDTO.getKeywordIndex() + 1) % ffoGameDTO.getMaxSentenceLength());
+            }
         }
         // 用户这句诗不满足本局条件
         else {
             ffoGameDTO.getRanking().push(user);
         }
-        ffoGameDTO.getUserSentences().add(ffoGameUserSentenceDTO);
+        ffoGameDTO.getUserSentences().add(ffoGameSentenceDTO);
         // 6. 如果只剩一个人，则游戏结束
         if (ffoGameDTO.getPlayingUsers().size() == 1) {
             String u = ffoGameDTO.getPlayingUsers().poll();
             ffoGameDTO.getRanking().push(u);
             ffoGameDTO.setEndTime(LocalDateTime.now());
+            ffoGameOver(ffoGameDTO);
+            return;
         }
+        // 7、8 步 通知用户，存入redis
         userFfoSpeakNotice(ffoGameDTO);
+        ffoGameRedisDao.saveFfoGameDTO(ffoGameDTO);
     }
 
     /**
@@ -167,21 +203,21 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
      * 先一步步判断不满足的情况，能走到最后就是成功
      *
      * @param ffoGameDTO
-     * @param ffoGameUserSentenceDTO
+     * @param ffoGameSentenceDTO
      */
-    private void setSentenceJudgeType(FfoGameDTO ffoGameDTO, FfoGameUserSentenceDTO ffoGameUserSentenceDTO) {
-        String user = ffoGameUserSentenceDTO.getUser();
-        String sentence = ffoGameUserSentenceDTO.getSentence();
+    private void setSentenceJudgeType(FfoGameDTO ffoGameDTO, FfoGameSentenceDTO ffoGameSentenceDTO) {
+        String user = ffoGameSentenceDTO.getUser();
+        String sentence = ffoGameSentenceDTO.getSentence();
         // 3.1 检测句子长度
         // 飞花令为空
         if (ObjectUtils.isEmpty(sentence)) {
-            ffoGameUserSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.NULL_CONTENT);
+            ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.NULL_CONTENT);
             return;
         }
         // 飞花令长度与本句设置不匹配
         if (ffoGameDTO.getConstantSentenceLength()) {
             if (!ffoGameDTO.getMaxSentenceLength().equals(sentence.length())) {
-                ffoGameUserSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.LENGTH_NOT_MATCH);
+                ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.LENGTH_NOT_MATCH);
                 return;
             }
         }
@@ -189,7 +225,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
         // 允许 令 在任意位置，但句子中不含 令
         if (!ffoGameDTO.getAllowWordInAny() && sentence.contains(ffoGameDTO.getKeyword().toString())) {
             log.debug("句子中不含 令， {} 本轮结束", user);
-            ffoGameUserSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.NO_KEYWORD);
+            ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.NO_KEYWORD);
             return;
         }
         // 令 要处于指定位置，但不处于指定位置
@@ -197,7 +233,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
                 sentence.matches(String.format("^[\\u4e00-\\u9fa5]{%d}%c.*",
                         ffoGameDTO.getKeywordIndex(), ffoGameDTO.getKeyword())))) {
             log.debug("令 要处于指定位置，但不处于指定位置，{} 本轮结束", user);
-            ffoGameUserSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.KEYWORD_NOT_IN_CORRECT_POSITION);
+            ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.KEYWORD_NOT_IN_CORRECT_POSITION);
             return;
         }
         // 3.3 检查允许说什么样类型的诗句
@@ -206,17 +242,17 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
             log.debug("只允许古诗，但没有找到古诗了，{} 本轮结束", user);
             PoemEntity poemEntity = poemEntityRepository.findByContentContains(sentence);
             if (ObjectUtils.isEmpty(poemEntity)) {
-                ffoGameUserSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.KEYWORD_NOT_IN_CORRECT_POSITION);
+                ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.KEYWORD_NOT_IN_CORRECT_POSITION);
                 return;
             }
         } else if (ffoGamePoemType.equals(FfoGamePoemType.ONLY_SELF_CREAT)) {
             PoemEntity poemEntity = poemEntityRepository.findByContentContains(sentence);
             if (ObjectUtils.isNotEmpty(poemEntity)) {
                 log.debug("只允许自创作，但找到了古诗，{} 本轮结束", user);
-                ffoGameUserSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.ONLY_SELF_CREAT_BUT_FIND);
+                ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.ONLY_SELF_CREAT_BUT_FIND);
             } else {
                 log.debug("只允许自创作，没有找到古诗，开启投票");
-                ffoGameUserSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.WAITING_USERS_VOTE);
+                ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.WAITING_USERS_VOTE);
             }
             return;
         }
@@ -226,31 +262,39 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
             PoemEntity poemEntity = poemEntityRepository.findByContentContains(sentence);
             if (ObjectUtils.isNotEmpty(poemEntity)) {
                 log.debug("数据库中找到诗 {}", poemEntity);
-                ffoGameUserSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.SUCCESS);
+                ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.SUCCESS);
             } else {
                 log.debug("没有在数据库中找到诗，开启投票");
-                ffoGameUserSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.WAITING_USERS_VOTE);
+                ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.WAITING_USERS_VOTE);
             }
             return;
         }
-        ffoGameUserSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.SUCCESS);
+        ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.SUCCESS);
     }
 
     /**
      * 添加用户发送飞花令超时要做的任务
+     *
      * @param ffoGameDTO
      */
     private void addUserSendSentenceTimeoutTask(FfoGameDTO ffoGameDTO) {
         LocalDateTime timeout = FfoGameUtil.getFfoSpeakerNextEndTime(ffoGameDTO);
         ffoTaskService.addSpeakTimeOutTask(ffoGameDTO.getRoomId(), FfoGameUtil.getTimeoutCron(timeout), () -> {
-
+            FfoGameSentenceDTO ffoGameSentenceDTO = new FfoGameSentenceDTO(
+                    ffoGameDTO.getNextSpeaker(), "", FfoGameSentenceJudgeType.NULL_CONTENT, timeout);
+            ffoSentenceHandle(ffoGameDTO, ffoGameSentenceDTO);
         });
     }
 
-    private void addUserVoteTimeoutTask(FfoGameDTO ffoGameDTO) {
-        LocalDateTime timeout = FfoGameUtil.getFfoVoteEndTime(ffoGameDTO);
-        ffoTaskService.addVoteTimeOutTask(ffoGameDTO.getRoomId(), FfoGameUtil.getTimeoutCron(timeout), () -> {
-
+    /**
+     * 添加用户投票超时后要做的事
+     *
+     * @param roomId
+     * @param timeout
+     */
+    private void addUserVoteTimeoutTask(String roomId, LocalDateTime timeout) {
+        ffoTaskService.addVoteTimeOutTask(roomId, FfoGameUtil.getTimeoutCron(timeout), () -> {
+            FfoGameDTO ffoGameDTO = ffoGameRedisDao.getFfoGameDTO(roomId);
         });
     }
 
@@ -261,20 +305,30 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
      * @param ffoGameDTO
      */
     private void userFfoSpeakNotice(FfoGameDTO ffoGameDTO) {
-        FfoGameUserSentenceDTO ffoGameUserSentenceDTO = Iterables.getLast(ffoGameDTO.getUserSentences());
-        FfoSpeakInfoOutputVO ffoSpeakInfoOutputVO = new FfoSpeakInfoOutputVO();
-        ffoSpeakInfoOutputVO.setNextSpeaker(ffoGameDTO.getNextSpeaker());
-        ffoSpeakInfoOutputVO.setCurrentSpeaker(ffoGameUserSentenceDTO.getUser());
-        ffoSpeakInfoOutputVO.setCurrentSentence(ffoGameUserSentenceDTO.getSentence());
-        ffoSpeakInfoOutputVO.setCurrentSentenceJudgeType(ffoGameUserSentenceDTO.getSentenceJudgeType());
-        ffoSpeakInfoOutputVO.setSpeakingTime(ffoGameUserSentenceDTO.getCreateTime());
-        ffoSpeakInfoOutputVO.setNextEndTime(FfoGameUtil.getFfoSpeakerNextEndTime(ffoGameDTO));
+        FfoSpeakInfoOutputVO ffoSpeakInfoOutputVO = new FfoSpeakInfoOutputVO(ffoGameDTO);
         ffoGameNotice.ffoSpeakNotice(ffoGameDTO.getUsers(), ffoSpeakInfoOutputVO);
     }
 
+    /**
+     * 当前用户说的飞花令需要玩家投票，通知这句游戏的玩家投票
+     *
+     * @param ffoGameDTO
+     */
     private void userFfoVoteNotice(FfoGameDTO ffoGameDTO) {
-
+        FfoGameSentenceDTO ffoGameSentenceDTO = Iterables.getLast(ffoGameDTO.getUserSentences());
+        FfoVoteOutputVO ffoVoteOutputVO = new FfoVoteOutputVO(
+                ffoGameSentenceDTO.getUser(), ffoGameSentenceDTO.getSentence(),
+                ffoGameSentenceDTO.getCreateTime(), FfoGameUtil.getFfoVoteEndTime(ffoGameDTO));
+        ffoGameNotice.ffoVoteNotice(ffoGameDTO.getUsers(), ffoVoteOutputVO);
     }
 
+    /**
+     * 飞花令游戏结束
+     *
+     * @param ffoGameDTO
+     */
+    private void ffoGameOver(FfoGameDTO ffoGameDTO) {
+
+    }
 
 }

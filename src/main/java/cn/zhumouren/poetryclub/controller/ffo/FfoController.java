@@ -4,6 +4,7 @@ import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomReqVO;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomResVO;
 import cn.zhumouren.poetryclub.bean.vo.FfoSentenceInputVO;
+import cn.zhumouren.poetryclub.bean.vo.FfoVoteInputVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.service.FfoPlayingService;
 import cn.zhumouren.poetryclub.service.FfoService;
@@ -13,6 +14,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @RestController
@@ -54,10 +56,18 @@ public class FfoController {
         return null;
     }
 
-    @MessageMapping("/ffo/{roomID}")
-    public void sendFfoSentence(FfoSentenceInputVO ffoSentenceInputVO, @DestinationVariable("roomID") String roomID) {
+    @MessageMapping("/ffo/{roomId}/sentence")
+    public void sendFfoSentence(FfoSentenceInputVO ffoSentenceInputVO, @DestinationVariable("roomId") String roomId) {
         UserEntity userEntity = SecurityContextUtil.getUserEntity();
-        ffoPlayingService.userSendFfoSentence(roomID, userEntity, ffoSentenceInputVO);
+        ffoSentenceInputVO.setCreateTime(LocalDateTime.now());
+        ffoPlayingService.userSendFfoSentence(roomId, userEntity, ffoSentenceInputVO);
+    }
+
+    @MessageMapping("/ffo/{roomId}/vote")
+    public void voteFfoSentence(FfoVoteInputVO ffoVoteInputVO, @DestinationVariable("roomId") String roomId) {
+        UserEntity userEntity = SecurityContextUtil.getUserEntity();
+        ffoVoteInputVO.setCreateTime(LocalDateTime.now());
+        ffoPlayingService.userVoteFfoSentence(roomId, userEntity, ffoVoteInputVO);
     }
 
 

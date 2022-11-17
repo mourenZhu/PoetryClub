@@ -26,6 +26,7 @@ public class FfoGameDTO implements Serializable {
 
     /**
      * 飞花令的字现在到到哪个位置了
+     * 从0开始
      */
     private Integer keywordIndex;
 
@@ -46,7 +47,7 @@ public class FfoGameDTO implements Serializable {
 
     private FfoGamePoemType ffoGamePoemType;
 
-    private List<FfoGameUserSentenceDTO> userSentences;
+    private List<FfoGameSentenceDTO> userSentences;
 
     private Deque<String> ranking;
 
