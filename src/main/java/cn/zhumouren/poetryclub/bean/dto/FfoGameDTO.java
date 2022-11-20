@@ -2,6 +2,7 @@ package cn.zhumouren.poetryclub.bean.dto;
 
 import cn.zhumouren.poetryclub.bean.mapper.FfoGameMapper;
 import cn.zhumouren.poetryclub.constant.games.FfoGamePoemType;
+import com.google.common.collect.Iterables;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -73,6 +74,10 @@ public class FfoGameDTO implements Serializable {
 
     public String getNextSpeaker() {
         return playingUsers.peek();
+    }
+
+    public FfoGameSentenceDTO getLastSentenceDTO() {
+        return Iterables.getLast(userSentences);
     }
 }
 

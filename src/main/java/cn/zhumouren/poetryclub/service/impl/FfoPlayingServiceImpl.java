@@ -3,26 +3,25 @@ package cn.zhumouren.poetryclub.service.impl;
 import cn.zhumouren.poetryclub.bean.dto.FfoGameDTO;
 import cn.zhumouren.poetryclub.bean.dto.FfoGameRoomDTO;
 import cn.zhumouren.poetryclub.bean.dto.FfoGameSentenceDTO;
+import cn.zhumouren.poetryclub.bean.dto.FfoGameVoteDTO;
 import cn.zhumouren.poetryclub.bean.entity.PoemEntity;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
-import cn.zhumouren.poetryclub.bean.vo.FfoSentenceInputVO;
-import cn.zhumouren.poetryclub.bean.vo.FfoSpeakInfoOutputVO;
-import cn.zhumouren.poetryclub.bean.vo.FfoVoteInputVO;
-import cn.zhumouren.poetryclub.bean.vo.FfoVoteOutputVO;
+import cn.zhumouren.poetryclub.bean.vo.*;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constant.GamesType;
 import cn.zhumouren.poetryclub.constant.games.FfoGamePoemType;
 import cn.zhumouren.poetryclub.constant.games.FfoGameSentenceJudgeType;
 import cn.zhumouren.poetryclub.constant.games.FfoStateType;
+import cn.zhumouren.poetryclub.constant.games.FfoVoteType;
 import cn.zhumouren.poetryclub.dao.FfoGameRedisDAO;
 import cn.zhumouren.poetryclub.dao.FfoGameRoomRedisDAO;
 import cn.zhumouren.poetryclub.dao.PoemEntityRepository;
 import cn.zhumouren.poetryclub.notice.StompFfoGameNotice;
 import cn.zhumouren.poetryclub.service.FfoPlayingService;
+import cn.zhumouren.poetryclub.service.FfoService;
 import cn.zhumouren.poetryclub.service.FfoTaskService;
 import cn.zhumouren.poetryclub.service.RedisUserService;
 import cn.zhumouren.poetryclub.util.FfoGameUtil;
-import com.google.common.collect.Iterables;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
@@ -38,18 +37,22 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
     private final PoemEntityRepository poemEntityRepository;
     private final FfoGameRoomRedisDAO ffoGameRoomRedisDao;
     private final FfoGameRedisDAO ffoGameRedisDao;
+    private final FfoGameRoomRedisDAO ffoGameRoomRedisDAO;
     private final StompFfoGameNotice ffoGameNotice;
     private final FfoTaskService ffoTaskService;
+    private final FfoService ffoService;
 
     public FfoPlayingServiceImpl(RedisUserService redisUserService, PoemEntityRepository poemEntityRepository,
                                  FfoGameRoomRedisDAO ffoGameRoomRedisDao, FfoGameRedisDAO ffoGameRedisDao,
-                                 StompFfoGameNotice ffoGameNotice, FfoTaskService ffoTaskService) {
+                                 FfoGameRoomRedisDAO ffoGameRoomRedisDAO, StompFfoGameNotice ffoGameNotice, FfoTaskService ffoTaskService, FfoService ffoService) {
         this.redisUserService = redisUserService;
         this.poemEntityRepository = poemEntityRepository;
         this.ffoGameRoomRedisDao = ffoGameRoomRedisDao;
         this.ffoGameRedisDao = ffoGameRedisDao;
+        this.ffoGameRoomRedisDAO = ffoGameRoomRedisDAO;
         this.ffoGameNotice = ffoGameNotice;
         this.ffoTaskService = ffoTaskService;
+        this.ffoService = ffoService;
     }
 
     /**
@@ -89,7 +92,8 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
         ffoSpeakInfoOutputVO.setNextSpeaker(ffoGameDTO.getNextSpeaker());
         ffoGameNotice.ffoSpeakNotice(ffoGameDTO.getUsers(), ffoSpeakInfoOutputVO);
         // 添加玩家超时发言任务
-        addUserSendSentenceTimeoutTask(ffoGameDTO);
+        LocalDateTime timeout = FfoGameUtil.getFfoSpeakerNextEndTime(ffoGameDTO);
+        addUserSendSentenceTimeoutTask(ffoGameDTO.getRoomId(), timeout);
         return ResponseResult.success();
     }
 
@@ -117,7 +121,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
             log.debug("next speaker = {}, 但是 user = {}, 不满足条件", ffoGameDTO.getNextSpeaker(), userEntity.getUsername());
             return;
         }
-        if (Iterables.getLast(ffoGameDTO.getUserSentences())
+        if (ffoGameDTO.getLastSentenceDTO()
                 .getSentenceJudgeType().equals(FfoGameSentenceJudgeType.WAITING_USERS_VOTE)) {
             log.debug("用户在等待投票，不允许回答");
         }
@@ -134,9 +138,10 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
         log.debug("{} 本轮发送的句子为 {}", userEntity.getUsername(), sentence);
         setSentenceJudgeType(ffoGameDTO, ffoGameSentenceDTO);
         FfoGameSentenceJudgeType sentenceJudgeType = ffoGameSentenceDTO.getSentenceJudgeType();
+        // 将本轮的飞花令存入对象
+        ffoGameDTO.getUserSentences().add(ffoGameSentenceDTO);
         // 4. 如果允许用户自创作，并满足本局设置，存入redis，然后通知玩家进行投票
         if (sentenceJudgeType.equals(FfoGameSentenceJudgeType.WAITING_USERS_VOTE)) {
-            ffoGameDTO.getUserSentences().add(ffoGameSentenceDTO);
             ffoGameRedisDao.saveFfoGameDTO(ffoGameDTO);
             userFfoVoteNotice(ffoGameDTO);
             LocalDateTime voteTimeout = FfoGameUtil.getFfoVoteEndTime(ffoGameDTO);
@@ -144,19 +149,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
             return;
         }
         // 如果不用投票，就进入通用流程
-        ffoSentenceHandle(ffoGameDTO, ffoGameSentenceDTO);
-    }
-
-    /**
-     * 玩家投票
-     *
-     * @param roomId
-     * @param userEntity
-     * @param ffoVoteInputVO
-     */
-    @Override
-    public void userVoteFfoSentence(String roomId, UserEntity userEntity, FfoVoteInputVO ffoVoteInputVO) {
-
+        ffoSentenceHandle(ffoGameDTO);
     }
 
     /**
@@ -167,12 +160,12 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
      * 8. 存入redis
      *
      * @param ffoGameDTO
-     * @param ffoGameSentenceDTO
      */
-    private void ffoSentenceHandle(FfoGameDTO ffoGameDTO, FfoGameSentenceDTO ffoGameSentenceDTO) {
+    private void ffoSentenceHandle(FfoGameDTO ffoGameDTO) {
         // 5. 把本回合数据存入ffoGameDTO中
         String user = ffoGameDTO.getPlayingUsers().poll();
         // 用户这句诗满足本局所有条件
+        FfoGameSentenceDTO ffoGameSentenceDTO = ffoGameDTO.getLastSentenceDTO();
         if (ffoGameSentenceDTO.getSentenceJudgeType().equals(FfoGameSentenceJudgeType.SUCCESS)) {
             ffoGameDTO.getPlayingUsers().offer(user);
             // 如果只允许令在指定地方，则当前用户回答正确，令出现的位置到下一个
@@ -184,7 +177,6 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
         else {
             ffoGameDTO.getRanking().push(user);
         }
-        ffoGameDTO.getUserSentences().add(ffoGameSentenceDTO);
         // 6. 如果只剩一个人，则游戏结束
         if (ffoGameDTO.getPlayingUsers().size() == 1) {
             String u = ffoGameDTO.getPlayingUsers().poll();
@@ -197,6 +189,61 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
         userFfoSpeakNotice(ffoGameDTO);
         ffoGameRedisDao.saveFfoGameDTO(ffoGameDTO);
     }
+
+    /**
+     * 玩家投票
+     *
+     * @param roomId
+     * @param userEntity
+     * @param ffoVoteInputVO
+     */
+    @Override
+    public void userVoteFfoSentence(String roomId, UserEntity userEntity, FfoVoteInputVO ffoVoteInputVO) {
+        FfoGameDTO ffoGameDTO = ffoGameRedisDao.getFfoGameDTO(roomId);
+        if (ObjectUtils.isEmpty(ffoGameDTO)) {
+            log.debug("游戏 {} 不存在", roomId);
+            return;
+        }
+        if (!ffoGameDTO.getUsers().contains(userEntity.getUsername())) {
+            log.debug("用户 {} 不在 {} 房间中", userEntity.getUsername(), roomId);
+            return;
+        }
+        if (ffoGameDTO.getRanking().contains(userEntity.getUsername())) {
+            log.debug("用户 {} 已被淘汰，不能投票", userEntity.getUsername());
+            return;
+        }
+        FfoGameSentenceDTO ffoGameSentenceDTO = ffoGameDTO.getLastSentenceDTO();
+        boolean voted = ffoGameSentenceDTO.sentenceVote(new FfoGameVoteDTO(userEntity.getUsername(),
+                ffoVoteInputVO.getFfoVoteType(), ffoVoteInputVO.getCreateTime()));
+        if (!voted) {
+            return;
+        }
+        // 最后一个用户投票，进入最后投票处理阶段
+        if (ffoGameSentenceDTO.getUserVotes().size() == ffoGameDTO.getUsers().size()) {
+            ffoTaskService.removeVoteTimeOutTask(roomId);
+            ffoVoteHandle(ffoGameDTO);
+            return;
+        }
+        ffoGameRedisDao.saveFfoGameDTO(ffoGameDTO);
+    }
+
+    /**
+     * 所有玩家完成投票后，要做的事
+     * 有可能是全部用户都投票完了，也有可能是投票超时定时任务启动
+     *
+     * @param ffoGameDTO
+     */
+    private void ffoVoteHandle(FfoGameDTO ffoGameDTO) {
+        FfoGameSentenceDTO ffoGameSentenceDTO = ffoGameDTO.getLastSentenceDTO();
+        // 只要没被淘汰的人投票有一半及以上的人通过，则算成功
+        if (ffoGameSentenceDTO.getUserVotes().size() >= ffoGameDTO.getPlayingUsers().size() / 2) {
+            ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.SUCCESS);
+        } else {
+            ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.VOTE_FAILED);
+        }
+        ffoSentenceHandle(ffoGameDTO);
+    }
+
 
     /**
      * 设置句子的状态
@@ -275,14 +322,16 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
     /**
      * 添加用户发送飞花令超时要做的任务
      *
-     * @param ffoGameDTO
+     * @param roomId
+     * @param timeout
      */
-    private void addUserSendSentenceTimeoutTask(FfoGameDTO ffoGameDTO) {
-        LocalDateTime timeout = FfoGameUtil.getFfoSpeakerNextEndTime(ffoGameDTO);
-        ffoTaskService.addSpeakTimeOutTask(ffoGameDTO.getRoomId(), FfoGameUtil.getTimeoutCron(timeout), () -> {
+    private void addUserSendSentenceTimeoutTask(String roomId, LocalDateTime timeout) {
+        ffoTaskService.addSpeakTimeOutTask(roomId, FfoGameUtil.getTimeoutCron(timeout), () -> {
+            FfoGameDTO ffoGameDTO = ffoGameRedisDao.getFfoGameDTO(roomId);
             FfoGameSentenceDTO ffoGameSentenceDTO = new FfoGameSentenceDTO(
                     ffoGameDTO.getNextSpeaker(), "", FfoGameSentenceJudgeType.NULL_CONTENT, timeout);
-            ffoSentenceHandle(ffoGameDTO, ffoGameSentenceDTO);
+            ffoGameDTO.getUserSentences().add(ffoGameSentenceDTO);
+            ffoSentenceHandle(ffoGameDTO);
         });
     }
 
@@ -295,6 +344,16 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
     private void addUserVoteTimeoutTask(String roomId, LocalDateTime timeout) {
         ffoTaskService.addVoteTimeOutTask(roomId, FfoGameUtil.getTimeoutCron(timeout), () -> {
             FfoGameDTO ffoGameDTO = ffoGameRedisDao.getFfoGameDTO(roomId);
+            FfoGameSentenceDTO ffoGameSentenceDTO = ffoGameDTO.getLastSentenceDTO();
+            ffoGameDTO.getPlayingUsers().forEach(user -> {
+                // 不是当前发言的用户并且还没有投票的用户去添加弃权
+                if (!user.equals(ffoGameSentenceDTO.getUser()) &&
+                        !ffoGameSentenceDTO.getVotedUsers().contains(user)
+                ) {
+                    ffoGameSentenceDTO.sentenceVote(new FfoGameVoteDTO(user, FfoVoteType.ABSTAIN));
+                }
+            });
+            ffoVoteHandle(ffoGameDTO);
         });
     }
 
@@ -315,7 +374,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
      * @param ffoGameDTO
      */
     private void userFfoVoteNotice(FfoGameDTO ffoGameDTO) {
-        FfoGameSentenceDTO ffoGameSentenceDTO = Iterables.getLast(ffoGameDTO.getUserSentences());
+        FfoGameSentenceDTO ffoGameSentenceDTO = ffoGameDTO.getLastSentenceDTO();
         FfoVoteOutputVO ffoVoteOutputVO = new FfoVoteOutputVO(
                 ffoGameSentenceDTO.getUser(), ffoGameSentenceDTO.getSentence(),
                 ffoGameSentenceDTO.getCreateTime(), FfoGameUtil.getFfoVoteEndTime(ffoGameDTO));
@@ -324,11 +383,17 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
 
     /**
      * 飞花令游戏结束
+     * 1、将ffoGameDTO 转化为为Entity对象，存入持久层数据库
+     * 2、通知玩家游戏结束，并发送本局游戏数据
+     * 3、删除redis中的ffoGameDTO，修改游戏房间状态
      *
      * @param ffoGameDTO
      */
     private void ffoGameOver(FfoGameDTO ffoGameDTO) {
-
+        ffoService.saveFfoGame(ffoGameDTO);
+        ffoGameNotice.ffoGameOverNotice(ffoGameDTO.getUsers(), new FfoGameOverOutputVO(ffoGameDTO));
+        ffoGameRedisDao.delFfoGameDTO(ffoGameDTO.getRoomId());
+        ffoGameRoomRedisDao.updateFfoGameRoomState(ffoGameDTO.getRoomId(), FfoStateType.WAITING);
     }
 
 }

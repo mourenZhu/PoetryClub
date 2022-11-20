@@ -1,5 +1,6 @@
 package cn.zhumouren.poetryclub.service.impl;
 
+import cn.zhumouren.poetryclub.bean.dto.FfoGameDTO;
 import cn.zhumouren.poetryclub.bean.dto.FfoGameRoomDTO;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.mapper.FfoGameMapper;
@@ -125,6 +126,11 @@ public class FfoServiceImpl implements FfoService {
             ffoGameRoomResVOs.add(FfoGameMapper.INSTANCE.ffoGameRoomDTOToFfoGameRoomResVO(ffoGameRoomDTO));
         });
         return ResponseResult.success(ffoGameRoomResVOs);
+    }
+
+    @Override
+    public void saveFfoGame(FfoGameDTO ffoGameDTO) {
+
     }
 
 

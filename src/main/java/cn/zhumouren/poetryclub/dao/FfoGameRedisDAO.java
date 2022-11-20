@@ -23,4 +23,8 @@ public class FfoGameRedisDAO {
     public FfoGameDTO getFfoGameDTO(String roomId) {
         return (FfoGameDTO) redisUtil.hget(RedisKey.FFO_GAME_KEY.name(), roomId);
     }
+
+    public void delFfoGameDTO(String roomId) {
+        redisUtil.hdel(RedisKey.FFO_GAME_KEY.name(), roomId);
+    }
 }

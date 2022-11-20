@@ -1,5 +1,6 @@
 package cn.zhumouren.poetryclub.service;
 
+import cn.zhumouren.poetryclub.bean.dto.FfoGameDTO;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomReqVO;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomResVO;
@@ -16,5 +17,7 @@ public interface FfoService extends UserWebsocketService {
     ResponseResult<Boolean> userLeaveGameRoom(UserEntity user);
 
     ResponseResult<Set<FfoGameRoomResVO>> listFfoGameRoom();
+
+    void saveFfoGame(FfoGameDTO ffoGameDTO);
 
 }
