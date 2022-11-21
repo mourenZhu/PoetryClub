@@ -4,8 +4,8 @@ import cn.zhumouren.poetryclub.bean.entity.RoleEntity;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constant.DBRoleType;
-import cn.zhumouren.poetryclub.dao.RoleEntityRepository;
-import cn.zhumouren.poetryclub.dao.UserEntityRepository;
+import cn.zhumouren.poetryclub.dao.RoleRepository;
+import cn.zhumouren.poetryclub.dao.UserRepository;
 import cn.zhumouren.poetryclub.property.AppWebImageProperty;
 import cn.zhumouren.poetryclub.service.UserService;
 import cn.zhumouren.poetryclub.util.FileUtil;
@@ -31,26 +31,26 @@ import java.util.Set;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    private final UserEntityRepository userEntityRepository;
+    private final UserRepository userRepository;
 
     private final AppWebImageProperty appWebImageProperty;
 
-    private final RoleEntityRepository roleEntityRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Value("${app.files-path}")
     private String appFilesPath;
 
-    public UserServiceImpl(UserEntityRepository userEntityRepository, AppWebImageProperty appWebImageProperty, RoleEntityRepository roleEntityRepository, PasswordEncoder passwordEncoder) {
-        this.userEntityRepository = userEntityRepository;
+    public UserServiceImpl(UserRepository userRepository, AppWebImageProperty appWebImageProperty, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
         this.appWebImageProperty = appWebImageProperty;
-        this.roleEntityRepository = roleEntityRepository;
+        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public ResponseResult<Boolean> isUsernameAvailable(String username) {
-        UserEntity user = userEntityRepository.findByUsername(username);
+        UserEntity user = userRepository.findByUsername(username);
         return ResponseResult.success(ObjectUtils.isEmpty(user));
     }
 
@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
         String fileName = FileUtil.saveFileGetFileName(file, getUserAvatarSystemFilePath(),
                 UserUtil.getUserAvatarName(userEntity.getUsername()));
         userEntity.setAvatarName(fileName);
-        userEntityRepository.save(userEntity);
+        userRepository.save(userEntity);
         return ResponseResult.success();
     }
 
@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
         }
         if (ObjectUtils.isEmpty(userEntity.getRoles()) || userEntity.getRoles().size() == 0) {
             Set<RoleEntity> roles = new HashSet<>();
-            roles.add(roleEntityRepository.findByRole(DBRoleType.ROLE_USER.getRole()));
+            roles.add(roleRepository.findByRole(DBRoleType.ROLE_USER.getRole()));
             log.debug("roles = {}", roles);
             userEntity.setRoles(roles);
         }
@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
         }
         log.debug("user = {}", userEntity);
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
-        UserEntity save = userEntityRepository.save(userEntity);
+        UserEntity save = userRepository.save(userEntity);
         return ResponseResult.success(ObjectUtils.isNotEmpty(save));
     }
 
@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
     public ResponseResult<Boolean> createUser(UserEntity userEntity, DBRoleType... dbRoleType) {
         Set<RoleEntity> roles = new HashSet<>();
         for (DBRoleType roleType : dbRoleType) {
-            roles.add(roleEntityRepository.findByRole(roleType.getRole()));
+            roles.add(roleRepository.findByRole(roleType.getRole()));
         }
         userEntity.setRoles(roles);
         return createUser(userEntity);

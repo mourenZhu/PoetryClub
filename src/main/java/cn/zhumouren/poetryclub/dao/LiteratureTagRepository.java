@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "literature-tag")
-public interface LiteratureTagEntityRepository extends JpaRepository<LiteratureTagEntity, Long> {
+public interface LiteratureTagRepository extends JpaRepository<LiteratureTagEntity, Long> {
 }

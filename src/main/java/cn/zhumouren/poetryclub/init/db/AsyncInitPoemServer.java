@@ -1,7 +1,7 @@
 package cn.zhumouren.poetryclub.init.db;
 
 import cn.zhumouren.poetryclub.bean.entity.PoemEntity;
-import cn.zhumouren.poetryclub.dao.PoemEntityRepository;
+import cn.zhumouren.poetryclub.dao.PoemRepository;
 import cn.zhumouren.poetryclub.init.db.utils.PoemUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -23,12 +23,12 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 public class AsyncInitPoemServer {
 
-    private final PoemEntityRepository poemEntityRepository;
+    private final PoemRepository poemRepository;
     private final PoemUtil poemUtil;
 
 
-    public AsyncInitPoemServer(PoemEntityRepository poemEntityRepository, PoemUtil poemUtil) {
-        this.poemEntityRepository = poemEntityRepository;
+    public AsyncInitPoemServer(PoemRepository poemRepository, PoemUtil poemUtil) {
+        this.poemRepository = poemRepository;
         this.poemUtil = poemUtil;
     }
 
@@ -57,7 +57,7 @@ public class AsyncInitPoemServer {
             log.info("线程: {}, 共有 {} 个文件， 还有 {} 个文件需要初始化，文件: {}, 共有 {} 首诗",
                     t.getName(), poemFileList.size(), poemFileList.size() - currentIndex,
                     poemFile.getName(), poemEntityList.size());
-            poemEntityRepository.saveAll(poemEntityList);
+            poemRepository.saveAll(poemEntityList);
         }
         log.info("线程: {} 结束。", t.getName());
         return CompletableFuture.completedFuture(true);

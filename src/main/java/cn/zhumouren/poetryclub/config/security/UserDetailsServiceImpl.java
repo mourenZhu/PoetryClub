@@ -1,13 +1,11 @@
 package cn.zhumouren.poetryclub.config.security;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
-import cn.zhumouren.poetryclub.dao.UserEntityRepository;
+import cn.zhumouren.poetryclub.dao.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 
 /**
@@ -20,16 +18,16 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserEntityRepository userEntityRepository;
+    private final UserRepository userRepository;
 
-    public UserDetailsServiceImpl(UserEntityRepository userEntityRepository) {
-        this.userEntityRepository = userEntityRepository;
+    public UserDetailsServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
     public UserEntity loadUserByUsername(String username) throws UsernameNotFoundException {
 //        log.info("username = {}, login", username);
-        UserEntity userEntity = userEntityRepository.findByUsername(username);
+        UserEntity userEntity = userRepository.findByUsername(username);
         if (ObjectUtils.isEmpty(userEntity)) {
             throw new UsernameNotFoundException("user " + username + " not found");
         }

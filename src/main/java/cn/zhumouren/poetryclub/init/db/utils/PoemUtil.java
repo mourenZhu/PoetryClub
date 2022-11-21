@@ -4,7 +4,7 @@ import cn.zhumouren.poetryclub.bean.entity.AuthorEntity;
 import cn.zhumouren.poetryclub.bean.entity.LiteratureTagEntity;
 import cn.zhumouren.poetryclub.bean.entity.PoemEntity;
 import cn.zhumouren.poetryclub.core.PoemType;
-import cn.zhumouren.poetryclub.dao.AuthorEntityRepository;
+import cn.zhumouren.poetryclub.dao.AuthorRepository;
 import cn.zhumouren.poetryclub.util.JsonFileUtil;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -29,12 +29,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class PoemUtil {
 
-    private final AuthorEntityRepository authorEntityRepository;
+    private final AuthorRepository authorRepository;
     private final Map<String, AuthorEntity> authorMap = new HashMap<>();
     private final Map<String, LiteratureTagEntity> tagEntityMap = new ConcurrentHashMap<>();
 
-    public PoemUtil(AuthorEntityRepository authorEntityRepository) {
-        this.authorEntityRepository = authorEntityRepository;
+    public PoemUtil(AuthorRepository authorRepository) {
+        this.authorRepository = authorRepository;
     }
 
     public List<Map> getPoemMaps(File file) throws IOException {
@@ -82,7 +82,7 @@ public class PoemUtil {
             authorEntity = new AuthorEntity();
             authorEntity.setEra((String) map.get("era"));
             authorEntity.setName(author);
-            authorEntity = authorEntityRepository.save(authorEntity);
+            authorEntity = authorRepository.save(authorEntity);
             if (ObjectUtils.isNotEmpty(authorEntity.getEra())) {
                 authorMap.put(author, authorEntity);
             }

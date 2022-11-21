@@ -1,7 +1,7 @@
 package cn.zhumouren.poetryclub.init.db;
 
 import cn.zhumouren.poetryclub.bean.entity.LiteratureTagEntity;
-import cn.zhumouren.poetryclub.dao.LiteratureTagEntityRepository;
+import cn.zhumouren.poetryclub.dao.LiteratureTagRepository;
 import cn.zhumouren.poetryclub.init.IInitData;
 import cn.zhumouren.poetryclub.init.db.utils.PoemUtil;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
@@ -26,11 +26,11 @@ import java.util.Set;
 @Slf4j
 public class InitTag implements IInitData {
 
-    private final LiteratureTagEntityRepository tagEntityRepository;
+    private final LiteratureTagRepository tagEntityRepository;
     private final InitPoem initPoem;
     private final PoemUtil poemUtil;
 
-    public InitTag(LiteratureTagEntityRepository tagEntityRepository, InitPoem initPoem, PoemUtil poemUtil) {
+    public InitTag(LiteratureTagRepository tagEntityRepository, InitPoem initPoem, PoemUtil poemUtil) {
 
         this.tagEntityRepository = tagEntityRepository;
         this.initPoem = initPoem;

@@ -9,7 +9,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import java.util.List;
 
 @RepositoryRestResource(collectionResourceRel = "poem")
-public interface PoemEntityRepository extends JpaRepository<PoemEntity, Long> {
+public interface PoemRepository extends JpaRepository<PoemEntity, Long> {
     PoemEntity findByContentContains(String content);
 
     List<PoemEntity> findByAuthor_NameContains(String name);

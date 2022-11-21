@@ -2,7 +2,7 @@ package cn.zhumouren.poetryclub.util;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.config.YamlPropertySourceFactory;
-import cn.zhumouren.poetryclub.dao.UserEntityRepository;
+import cn.zhumouren.poetryclub.dao.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -29,15 +29,15 @@ import java.util.Date;
 public class JwtTokenUtil {
     private static final long EXPIRE_DURATION = 24 * 60 * 60 * 1000; // 24 hour
 
-    private final UserEntityRepository userEntityRepository;
+    private final UserRepository userRepository;
 
     @Value("${jwt.secret-key}")
     private String SECRET_KEY;
     @Value("${jwt.issuer}")
     private String issuer;
 
-    public JwtTokenUtil(UserEntityRepository userEntityRepository) {
-        this.userEntityRepository = userEntityRepository;
+    public JwtTokenUtil(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Bean
@@ -93,7 +93,7 @@ public class JwtTokenUtil {
     }
 
     public UserEntity getUserDetails(String token) {
-        return userEntityRepository.findByUsername(getUsername(token));
+        return userRepository.findByUsername(getUsername(token));
     }
 
     public String getUsername(String token) {

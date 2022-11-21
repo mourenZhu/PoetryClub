@@ -1,7 +1,7 @@
 package cn.zhumouren.poetryclub.init.db;
 
 import cn.zhumouren.poetryclub.bean.entity.AuthorEntity;
-import cn.zhumouren.poetryclub.dao.AuthorEntityRepository;
+import cn.zhumouren.poetryclub.dao.AuthorRepository;
 import cn.zhumouren.poetryclub.init.IInitData;
 import cn.zhumouren.poetryclub.property.AppInitProperty;
 import cn.zhumouren.poetryclub.util.JsonFileUtil;
@@ -31,11 +31,11 @@ public class InitAuthor implements IInitData {
     private static final String TANG_AUTHORS_FILE_PATH = "classpath:authors/authors.tang.json";
     private final AppInitProperty appInitProperty;
 
-    private final AuthorEntityRepository authorEntityRepository;
+    private final AuthorRepository authorRepository;
 
-    public InitAuthor(AppInitProperty appInitProperty, AuthorEntityRepository authorEntityRepository) {
+    public InitAuthor(AppInitProperty appInitProperty, AuthorRepository authorRepository) {
         this.appInitProperty = appInitProperty;
-        this.authorEntityRepository = authorEntityRepository;
+        this.authorRepository = authorRepository;
     }
 
     @Override
@@ -73,7 +73,7 @@ public class InitAuthor implements IInitData {
             authorEntityList.add(author);
         });
         log.info("开始存入数据库");
-        authorEntityRepository.saveAll(authorEntityList);
+        authorRepository.saveAll(authorEntityList);
         log.info("{} 结束", era);
     }
 

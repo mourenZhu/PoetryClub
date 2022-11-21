@@ -1,7 +1,7 @@
 package cn.zhumouren.poetryclub.init.db;
 
 import cn.zhumouren.poetryclub.bean.entity.PoemEntity;
-import cn.zhumouren.poetryclub.dao.PoemEntityRepository;
+import cn.zhumouren.poetryclub.dao.PoemRepository;
 import cn.zhumouren.poetryclub.init.IInitData;
 import cn.zhumouren.poetryclub.init.db.utils.PoemUtil;
 import cn.zhumouren.poetryclub.property.AppInitProperty;
@@ -29,14 +29,14 @@ import java.util.stream.Collectors;
 public class InitPoem implements IInitData {
 
     private final AppInitProperty appInitProperty;
-    private final PoemEntityRepository poemEntityRepository;
+    private final PoemRepository poemRepository;
     private final PoemUtil poemUtil;
     private final AsyncInitPoemServer asyncInitPoemServer;
 
     @Autowired
-    public InitPoem(AppInitProperty appInitProperty, PoemEntityRepository poemEntityRepository, PoemUtil poemUtil, AsyncInitPoemServer asyncInitPoemServer) {
+    public InitPoem(AppInitProperty appInitProperty, PoemRepository poemRepository, PoemUtil poemUtil, AsyncInitPoemServer asyncInitPoemServer) {
         this.appInitProperty = appInitProperty;
-        this.poemEntityRepository = poemEntityRepository;
+        this.poemRepository = poemRepository;
         this.poemUtil = poemUtil;
         this.asyncInitPoemServer = asyncInitPoemServer;
     }
@@ -80,7 +80,7 @@ public class InitPoem implements IInitData {
             }
             log.info("文件: {}, 共有 {} 首诗, 还有 {} 个文件需要处理",
                     file.getName(), poemFileList.size(), poemFileList.size() - (++poemFileIndex[0]));
-            poemEntityRepository.saveAll(poemEntityList);
+            poemRepository.saveAll(poemEntityList);
         });
         log.info("最大诗词长度为: {}", contentMaxLen[0]);
     }

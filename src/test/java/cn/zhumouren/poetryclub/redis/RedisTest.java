@@ -1,7 +1,7 @@
 package cn.zhumouren.poetryclub.redis;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
-import cn.zhumouren.poetryclub.dao.UserEntityRepository;
+import cn.zhumouren.poetryclub.dao.UserRepository;
 import cn.zhumouren.poetryclub.util.RedisUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +14,11 @@ public class RedisTest {
     private RedisUtil redisUtil;
 
     @Autowired
-    private UserEntityRepository userEntityRepository;
+    private UserRepository userRepository;
 
     @Test
     public void test() {
-        UserEntity zhumouren = userEntityRepository.findByUsername("zhumouren");
+        UserEntity zhumouren = userRepository.findByUsername("zhumouren");
         redisUtil.set(zhumouren.getId().toString(), zhumouren);
     }
 }
