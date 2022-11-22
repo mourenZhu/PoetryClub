@@ -31,14 +31,14 @@ public class InitPoem implements IInitData {
     private final AppInitProperty appInitProperty;
     private final PoemRepository poemRepository;
     private final PoemUtil poemUtil;
-    private final AsyncInitPoemServer asyncInitPoemServer;
+    private final AsyncInitPoemService asyncInitPoemService;
 
     @Autowired
-    public InitPoem(AppInitProperty appInitProperty, PoemRepository poemRepository, PoemUtil poemUtil, AsyncInitPoemServer asyncInitPoemServer) {
+    public InitPoem(AppInitProperty appInitProperty, PoemRepository poemRepository, PoemUtil poemUtil, AsyncInitPoemService asyncInitPoemService) {
         this.appInitProperty = appInitProperty;
         this.poemRepository = poemRepository;
         this.poemUtil = poemUtil;
-        this.asyncInitPoemServer = asyncInitPoemServer;
+        this.asyncInitPoemService = asyncInitPoemService;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class InitPoem implements IInitData {
         List<File> poemFileList = getPoemFileList();
         List<List<File>> partition = Lists.partition(poemFileList, 10);
         for (List<File> files : partition) {
-            asyncInitPoemServer.InitPoemList(files);
+            asyncInitPoemService.initPoemList(files);
         }
         log.info("等待异步......");
     }

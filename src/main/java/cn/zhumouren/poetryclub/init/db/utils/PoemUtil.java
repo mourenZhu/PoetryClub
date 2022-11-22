@@ -104,7 +104,7 @@ public class PoemUtil {
         return poemEntity;
     }
 
-    private String getPoemContentByList(List<String> strings) {
+    public static String getPoemContentByList(List<String> strings) {
         StringBuilder content = new StringBuilder();
         for (String s : strings) {
             content.append(s);

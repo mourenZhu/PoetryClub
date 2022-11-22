@@ -21,19 +21,19 @@ import java.util.concurrent.CompletableFuture;
  **/
 @Service
 @Slf4j
-public class AsyncInitPoemServer {
+public class AsyncInitPoemService {
 
     private final PoemRepository poemRepository;
     private final PoemUtil poemUtil;
 
 
-    public AsyncInitPoemServer(PoemRepository poemRepository, PoemUtil poemUtil) {
+    public AsyncInitPoemService(PoemRepository poemRepository, PoemUtil poemUtil) {
         this.poemRepository = poemRepository;
         this.poemUtil = poemUtil;
     }
 
-    @Async("pgsqlExecutor")
-    public CompletableFuture<Boolean> InitPoemList(List<File> poemFileList) {
+    @Async("initExecutor")
+    public CompletableFuture<Boolean> initPoemList(List<File> poemFileList) {
         Thread t = Thread.currentThread();
         int currentIndex = 0;
         for (File poemFile : poemFileList) {
