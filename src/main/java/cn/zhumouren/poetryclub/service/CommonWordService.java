@@ -1,5 +1,9 @@
 package cn.zhumouren.poetryclub.service;
 
+import cn.zhumouren.poetryclub.bean.entity.CommonWordEntity;
+
+import java.util.List;
+
 public interface CommonWordService {
 
     /**
@@ -7,5 +11,14 @@ public interface CommonWordService {
      *
      * @return
      */
-    char getCommonlyUsedWordRandom();
+    CommonWordEntity getCommonWordRandom();
+
+    /**
+     * 获取指定数量的常用字
+     * @param top
+     * @return
+     */
+    List<CommonWordEntity> topCommonWords(int top);
+
+
 }
