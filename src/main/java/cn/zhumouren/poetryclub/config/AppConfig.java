@@ -43,8 +43,8 @@ public class AppConfig {
 
         objectMapper.registerModule(javaTimeModule);
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-        objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance,
-                ObjectMapper.DefaultTyping.NON_FINAL);
+//        objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance,
+//                ObjectMapper.DefaultTyping.NON_FINAL);
         return objectMapper;
     }
 
