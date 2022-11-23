@@ -79,6 +79,10 @@ public class FfoGameDTO implements Serializable {
     public FfoGameSentenceDTO getLastSentenceDTO() {
         return Iterables.getLast(userSentences);
     }
+
+    public int getUserSequence(String user) {
+        return this.users.indexOf(user) + 1;
+    }
 }
 
 

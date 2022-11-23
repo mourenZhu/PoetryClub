@@ -2,7 +2,7 @@ package cn.zhumouren.poetryclub.service.impl;
 
 import cn.zhumouren.poetryclub.bean.dto.FfoGameDTO;
 import cn.zhumouren.poetryclub.bean.dto.FfoGameRoomDTO;
-import cn.zhumouren.poetryclub.bean.entity.UserEntity;
+import cn.zhumouren.poetryclub.bean.entity.*;
 import cn.zhumouren.poetryclub.bean.mapper.FfoGameMapper;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomReqVO;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomResVO;
@@ -10,7 +10,9 @@ import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constant.GamesType;
 import cn.zhumouren.poetryclub.constant.RedisKey;
 import cn.zhumouren.poetryclub.constant.games.FfoStateType;
+import cn.zhumouren.poetryclub.dao.FfoGameRepository;
 import cn.zhumouren.poetryclub.dao.FfoGameRoomRedisDAO;
+import cn.zhumouren.poetryclub.dao.UserRepository;
 import cn.zhumouren.poetryclub.notice.StompFfoGameNotice;
 import cn.zhumouren.poetryclub.service.FfoService;
 import cn.zhumouren.poetryclub.service.RedisUserService;
@@ -31,16 +33,19 @@ public class FfoServiceImpl implements FfoService {
 
     private final RedisUtil redisUtil;
     private final RedisUserService redisUserService;
-
     private final FfoGameRoomRedisDAO ffoGameRoomRedisDao;
     private final StompFfoGameNotice ffoGameNotice;
+    private final FfoGameRepository ffoGameRepository;
+    private final UserRepository userRepository;
 
     public FfoServiceImpl(RedisUtil redisUtil, RedisUserService redisUserService,
-                          FfoGameRoomRedisDAO ffoGameRoomRedisDao, StompFfoGameNotice ffoGameNotice) {
+                          FfoGameRoomRedisDAO ffoGameRoomRedisDao, StompFfoGameNotice ffoGameNotice, FfoGameRepository ffoGameRepository, UserRepository userRepository) {
         this.redisUtil = redisUtil;
         this.redisUserService = redisUserService;
         this.ffoGameRoomRedisDao = ffoGameRoomRedisDao;
         this.ffoGameNotice = ffoGameNotice;
+        this.ffoGameRepository = ffoGameRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -128,9 +133,40 @@ public class FfoServiceImpl implements FfoService {
         return ResponseResult.success(ffoGameRoomResVOs);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void saveFfoGame(FfoGameDTO ffoGameDTO) {
+        FfoGameEntity ffoGameEntity = new FfoGameEntity();
+        ffoGameEntity.setKeyword(ffoGameDTO.getKeyword());
+        ffoGameEntity.setPlayerPreparationSecond(ffoGameDTO.getPlayerPreparationSecond());
+        ffoGameEntity.setAllowWordInAny(ffoGameDTO.getAllowWordInAny());
+        ffoGameEntity.setMaxSentenceLength(ffoGameDTO.getMaxSentenceLength());
+        ffoGameEntity.setConstantSentenceLength(ffoGameDTO.getConstantSentenceLength());
+        // 开始添加用户在本局中的信息（第几名，和说飞花令的序号）
+        int ranking = 0;
+        while (!ffoGameDTO.getRanking().isEmpty()) {
+            ranking++;
+            String user = ffoGameDTO.getRanking().pop();
+            UserEntity userEntity = userRepository.findByUsername(user);
+            ffoGameEntity.addUserInfo(new FfoGameUserInfoEntity(userEntity, ranking, ffoGameDTO.getUserSequence(user)));
+        }
+        // 添加用户发的飞花令句子
+        ffoGameDTO.getUserSentences().forEach(sentence -> {
+            UserEntity user = userRepository.findByUsername(sentence.getUser());
+            FfoGameUserSentenceEntity ffoGameUserSentenceEntity =
+                    new FfoGameUserSentenceEntity(user, sentence.getSentence(), sentence.getSentenceJudgeType(),
+                            sentence.getCreateTime());
+            // 添加本个句子的投票
+            sentence.getUserVotes().forEach(vote -> {
+                UserEntity voteUser = userRepository.findByUsername(vote.getUser());
+                ffoGameUserSentenceEntity.addUserVote(new FfoGameUserVoteEntity(voteUser,
+                        vote.getFfoVoteType(), vote.getCreateTime()));
+            });
+        });
 
+        ffoGameEntity.setCreateTime(ffoGameDTO.getCreateTime());
+        ffoGameEntity.setEndTime(ffoGameDTO.getEndTime());
+        ffoGameRepository.save(ffoGameEntity);
     }
 
 
