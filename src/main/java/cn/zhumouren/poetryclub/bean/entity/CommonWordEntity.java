@@ -15,7 +15,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @Entity
-public class WordRankingEntity {
+public class CommonWordEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +28,7 @@ public class WordRankingEntity {
     @Min(0)
     private Integer usageCount;
 
-    public WordRankingEntity(char word, int usageCount) {
+    public CommonWordEntity(char word, int usageCount) {
         this.word = word;
         this.usageCount = usageCount;
     }
@@ -37,7 +37,7 @@ public class WordRankingEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        WordRankingEntity that = (WordRankingEntity) o;
+        CommonWordEntity that = (CommonWordEntity) o;
         return getWord().equals(that.getWord());
     }
 

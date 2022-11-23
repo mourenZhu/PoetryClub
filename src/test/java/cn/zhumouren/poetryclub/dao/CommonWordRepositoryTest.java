@@ -1,19 +1,19 @@
 package cn.zhumouren.poetryclub.dao;
 
-import cn.zhumouren.poetryclub.bean.entity.WordRankingEntity;
+import cn.zhumouren.poetryclub.bean.entity.CommonWordEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class WordRankingRepositoryTest {
+public class CommonWordRepositoryTest {
 
     @Autowired
-    private WordRankingRepository wordRankingRepository;
+    private CommonWordRepository commonWordRepository;
 
     @Test
     public void findCommonlyUsedWordTest() {
-        WordRankingEntity commonlyUsedWord = wordRankingRepository.findCommonlyUsedWord(2);
+        CommonWordEntity commonlyUsedWord = commonWordRepository.findCommonlyUsedWord(2);
         System.out.println(commonlyUsedWord);
     }
 }

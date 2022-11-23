@@ -1,7 +1,7 @@
 package cn.zhumouren.poetryclub.init.db;
 
-import cn.zhumouren.poetryclub.bean.entity.WordRankingEntity;
-import cn.zhumouren.poetryclub.dao.WordRankingRepository;
+import cn.zhumouren.poetryclub.bean.entity.CommonWordEntity;
+import cn.zhumouren.poetryclub.dao.CommonWordRepository;
 import cn.zhumouren.poetryclub.init.IInitData;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -18,17 +18,17 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Order(4)
 @Component("initWordRanking")
-public class InitWordRanking implements IInitData {
+public class InitCommonWord implements IInitData {
 
-    private final WordRankingRepository wordRankingRepository;
+    private final CommonWordRepository commonWordRepository;
     private final InitPoem initPoem;
-    private final AsyncInitWordRankingService asyncInitWordRankingService;
+    private final AsyncInitCommonWordService asyncInitCommonWordService;
     private Map<Character, Integer> wordRankingMap;
 
-    public InitWordRanking(WordRankingRepository wordRankingRepository, InitPoem initPoem, AsyncInitWordRankingService asyncInitWordRankingService) {
-        this.wordRankingRepository = wordRankingRepository;
+    public InitCommonWord(CommonWordRepository commonWordRepository, InitPoem initPoem, AsyncInitCommonWordService asyncInitCommonWordService) {
+        this.commonWordRepository = commonWordRepository;
         this.initPoem = initPoem;
-        this.asyncInitWordRankingService = asyncInitWordRankingService;
+        this.asyncInitCommonWordService = asyncInitCommonWordService;
         wordRankingMap = new ConcurrentHashMap<>();
     }
 
@@ -39,7 +39,7 @@ public class InitWordRanking implements IInitData {
         List<List<File>> partition = Lists.partition(poemFileList, 10);
         List<CompletableFuture<Map<Character, Integer>>> completableFutures = new ArrayList<>();
         for (List<File> files : partition) {
-            CompletableFuture<Map<Character, Integer>> future = asyncInitWordRankingService.getWordRankingMap(files);
+            CompletableFuture<Map<Character, Integer>> future = asyncInitCommonWordService.getWordRankingMap(files);
             completableFutures.add(future);
         }
         log.info("开始等待 futures");
@@ -62,8 +62,8 @@ public class InitWordRanking implements IInitData {
         log.info("共有字 {} 个", wordRankingMap.size());
         log.info("开始把使用字排行存入数据库");
         wordRankingMap.forEach((key, val) -> {
-            if (!wordRankingRepository.existsByWord(key)) {
-                wordRankingRepository.save(new WordRankingEntity(key, val));
+            if (!commonWordRepository.existsByWord(key)) {
+                commonWordRepository.save(new CommonWordEntity(key, val));
             }
         });
         log.info("字 排行 已初始化完成");

@@ -1,6 +1,6 @@
 package cn.zhumouren.poetryclub.service;
 
-public interface WordRankingService {
+public interface CommonWordService {
 
     /**
      * 随机获取一个常用字

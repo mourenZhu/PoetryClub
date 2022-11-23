@@ -16,7 +16,7 @@ import cn.zhumouren.poetryclub.constant.games.FfoVoteType;
 import cn.zhumouren.poetryclub.dao.FfoGameRedisDAO;
 import cn.zhumouren.poetryclub.dao.FfoGameRoomRedisDAO;
 import cn.zhumouren.poetryclub.dao.PoemRepository;
-import cn.zhumouren.poetryclub.dao.WordRankingRepository;
+import cn.zhumouren.poetryclub.dao.CommonWordRepository;
 import cn.zhumouren.poetryclub.notice.StompFfoGameNotice;
 import cn.zhumouren.poetryclub.service.FfoPlayingService;
 import cn.zhumouren.poetryclub.service.FfoService;
@@ -41,11 +41,11 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
     private final StompFfoGameNotice ffoGameNotice;
     private final FfoTaskService ffoTaskService;
     private final FfoService ffoService;
-    private final WordRankingRepository wordRankingRepository;
+    private final CommonWordRepository commonWordRepository;
 
     public FfoPlayingServiceImpl(RedisUserService redisUserService, PoemRepository poemRepository,
                                  FfoGameRoomRedisDAO ffoGameRoomRedisDao, FfoGameRedisDAO ffoGameRedisDao,
-                                 StompFfoGameNotice ffoGameNotice, FfoTaskService ffoTaskService, FfoService ffoService, WordRankingRepository wordRankingRepository) {
+                                 StompFfoGameNotice ffoGameNotice, FfoTaskService ffoTaskService, FfoService ffoService, CommonWordRepository commonWordRepository) {
         this.redisUserService = redisUserService;
         this.poemRepository = poemRepository;
         this.ffoGameRoomRedisDao = ffoGameRoomRedisDao;
@@ -53,7 +53,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
         this.ffoGameNotice = ffoGameNotice;
         this.ffoTaskService = ffoTaskService;
         this.ffoService = ffoService;
-        this.wordRankingRepository = wordRankingRepository;
+        this.commonWordRepository = commonWordRepository;
     }
 
     /**
@@ -83,7 +83,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
         if (ffoGameRoomDTO.getUsers().size() == 1) {
             return ResponseResult.failedWithMsg("至少需要两位玩家才能开始游戏!");
         }
-        if (!wordRankingRepository.existsByWord(ffoGameRoomDTO.getKeyword())) {
+        if (!commonWordRepository.existsByWord(ffoGameRoomDTO.getKeyword())) {
             return ResponseResult.failedWithMsg("令: " + ffoGameRoomDTO.getKeyword() + "，不存在数据库中，请换一个字");
         }
         // 开启游戏

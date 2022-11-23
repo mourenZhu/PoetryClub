@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
-public class AsyncInitWordRankingService {
+public class AsyncInitCommonWordService {
 
     @Async("initExecutor")
     public CompletableFuture<Map<Character, Integer>> getWordRankingMap(List<File> poemFileList) {
