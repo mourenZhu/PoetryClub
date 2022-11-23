@@ -37,7 +37,7 @@ public class FfoController {
     }
 
     @PostMapping("/room/{roomId}")
-    public ResponseResult<Boolean> EnterGameRoom(@PathVariable("roomId") String roomId) {
+    public ResponseResult<Boolean> enterGameRoom(@PathVariable("roomId") String roomId) {
         return ffoService.userEnterGameRoom(SecurityContextUtil.getUserEntity(), roomId);
     }
 

@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
 @Data
@@ -18,6 +19,11 @@ public class FfoGameRoomReqVO implements Serializable {
     private String name;
     @Range(max = 10, min = 1)
     private Integer maxPlayers;
+    /**
+     * 飞花令的字
+     */
+    @NotEmpty
+    private Character keyword;
     /**
      * 允许字出现在任意位置
      */
@@ -35,6 +41,5 @@ public class FfoGameRoomReqVO implements Serializable {
      */
     private Boolean constantSentenceLength;
     private Boolean display;
-
     private FfoGamePoemType ffoGamePoemType;
 }
