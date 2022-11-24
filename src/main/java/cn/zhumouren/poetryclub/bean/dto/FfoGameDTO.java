@@ -9,19 +9,20 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
 
 @Data
 public class FfoGameDTO implements Serializable {
 
     private String roomId;
 
-    private List<String> users;
+    private List<UserDTO> users;
 
     /**
      * 正在玩游戏的玩家（即没有被淘汰的人）
      * 队首的就是当前回合要说飞花令的人
      */
-    private Queue<String> playingUsers;
+    private Queue<UserDTO> playingUsers;
 
     private Character keyword;
 
@@ -50,7 +51,7 @@ public class FfoGameDTO implements Serializable {
 
     private List<FfoGameSentenceDTO> userSentences;
 
-    private Deque<String> ranking;
+    private Deque<UserDTO> ranking;
 
     private LocalDateTime createTime;
 
@@ -72,7 +73,7 @@ public class FfoGameDTO implements Serializable {
         return ffoGameDTO;
     }
 
-    public String getNextSpeaker() {
+    public UserDTO getNextSpeaker() {
         return playingUsers.peek();
     }
 
@@ -80,8 +81,12 @@ public class FfoGameDTO implements Serializable {
         return Iterables.getLast(userSentences);
     }
 
-    public int getUserSequence(String user) {
-        return this.users.indexOf(user) + 1;
+    public int getUserSequence(UserDTO userDTO) {
+        return this.users.indexOf(userDTO) + 1;
+    }
+
+    public List<String> getUsernames() {
+        return users.stream().map(UserDTO::getUsername).collect(Collectors.toList());
     }
 }
 

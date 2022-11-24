@@ -1,5 +1,6 @@
 package cn.zhumouren.poetryclub.service;
 
+import cn.zhumouren.poetryclub.bean.dto.UserDTO;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.constant.GamesType;
 
@@ -13,5 +14,5 @@ public interface RedisUserService {
 
     String getUserGameRoomId(UserEntity user, GamesType gamesType);
 
-    List<String> listGameRoomUser(String roomId);
+    List<UserDTO> listGameRoomUser(String roomId);
 }

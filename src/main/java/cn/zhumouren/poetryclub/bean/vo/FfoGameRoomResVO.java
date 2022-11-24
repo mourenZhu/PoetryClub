@@ -1,5 +1,6 @@
 package cn.zhumouren.poetryclub.bean.vo;
 
+import cn.zhumouren.poetryclub.bean.dto.UserDTO;
 import cn.zhumouren.poetryclub.constant.games.FfoGamePoemType;
 import cn.zhumouren.poetryclub.constant.games.FfoStateType;
 import lombok.Data;
@@ -19,8 +20,8 @@ public class FfoGameRoomResVO implements Serializable {
     private Boolean allowWordInAny;
     private FfoGamePoemType ffoGamePoemType;
     private FfoStateType ffoStateType;
-    private String homeowner;
-    private Set<String> users;
+    private UserDTO homeowner;
+    private Set<UserDTO> users;
 
     public int getRemainingSeats() {
         return maxPlayers - users.size();

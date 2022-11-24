@@ -2,6 +2,7 @@ package cn.zhumouren.poetryclub.service.impl;
 
 import cn.zhumouren.poetryclub.bean.dto.FfoGameDTO;
 import cn.zhumouren.poetryclub.bean.dto.FfoGameRoomDTO;
+import cn.zhumouren.poetryclub.bean.dto.UserDTO;
 import cn.zhumouren.poetryclub.bean.dto.UserGameStateDTO;
 import cn.zhumouren.poetryclub.bean.entity.*;
 import cn.zhumouren.poetryclub.bean.mapper.FfoGameMapper;
@@ -70,10 +71,11 @@ public class FfoServiceImpl implements FfoService {
         if (ffoGameRoomDTO.getUsers().size() == ffoGameRoomDTO.getMaxPlayers()) {
             return ResponseResult.failedWithMsg("房间人数已满");
         }
-        if (ffoGameRoomDTO.getUsers().contains(user.getUsername())) {
+        UserDTO userDTO = new UserDTO(user);
+        if (ffoGameRoomDTO.getUsers().contains(userDTO)) {
             return ResponseResult.failedWithMsg("用户已在房间中");
         }
-        ffoGameRoomDTO.getUsers().add(user.getUsername());
+        ffoGameRoomDTO.getUsers().add(userDTO);
         redisUtil.hset(RedisKey.FFO_GAME_ROOM_KEY.name(), roomId, ffoGameRoomDTO);
         redisUserService.userEnterGameRoom(user, GamesType.FFO, roomId);
         return ResponseResult.success();
@@ -102,7 +104,7 @@ public class FfoServiceImpl implements FfoService {
         if (ffoGameRoomDTO.getFfoStateType().equals(FfoStateType.PLAYING)) {
             return ResponseResult.failedWithMsg("游戏进行中，不能离开游戏");
         }
-        ffoGameRoomDTO.getUsers().remove(user.getUsername());
+        ffoGameRoomDTO.removeUser(new UserDTO(user));
         redisUserService.userLeaveGameRoom(user);
         // 如果users 长度为0，则删除房间
         // 否则从新设置房主
@@ -113,7 +115,7 @@ public class FfoServiceImpl implements FfoService {
             setFfoGameRoomOwner(ffoGameRoomDTO);
         }
         boolean b = ffoGameRoomRedisDao.saveFfoGameRoomDTO(ffoGameRoomDTO);
-        ffoGameNotice.userGameRoomActionNotice(user, user.getNickname() + "离开了房间!", ffoGameRoomDTO.getUsers());
+        ffoGameNotice.userGameRoomActionNotice(user, user.getNickname() + "离开了房间!", ffoGameRoomDTO.getUsernames());
         return ResponseResult.bool(b);
     }
 
@@ -122,8 +124,8 @@ public class FfoServiceImpl implements FfoService {
     }
 
     private void setFfoGameRoomOwner(FfoGameRoomDTO ffoGameRoomDTO) {
-        String u = ffoGameRoomDTO.getUsers().iterator().next();
-        ffoGameRoomDTO.setHomeowner(u);
+        UserDTO next = ffoGameRoomDTO.getUsers().iterator().next();
+        ffoGameRoomDTO.setHomeowner(next);
     }
 
     @Override
@@ -149,19 +151,20 @@ public class FfoServiceImpl implements FfoService {
         int ranking = 0;
         while (!ffoGameDTO.getRanking().isEmpty()) {
             ranking++;
-            String user = ffoGameDTO.getRanking().pop();
-            UserEntity userEntity = userRepository.findByUsername(user);
-            ffoGameEntity.addUserInfo(new FfoGameUserInfoEntity(userEntity, ranking, ffoGameDTO.getUserSequence(user)));
+            UserDTO userDTO = ffoGameDTO.getRanking().pop();
+            UserEntity userEntity = userRepository.findByUsername(userDTO.getUsername());
+            ffoGameEntity.addUserInfo(new FfoGameUserInfoEntity(userEntity, ranking,
+                    ffoGameDTO.getUserSequence(userDTO)));
         }
         // 添加用户发的飞花令句子
         ffoGameDTO.getUserSentences().forEach(sentence -> {
-            UserEntity user = userRepository.findByUsername(sentence.getUser());
+            UserEntity user = userRepository.findByUsername(sentence.getUser().getUsername());
             FfoGameUserSentenceEntity ffoGameUserSentenceEntity =
                     new FfoGameUserSentenceEntity(user, sentence.getSentence(), sentence.getSentenceJudgeType(),
                             sentence.getCreateTime());
             // 添加本个句子的投票
             sentence.getUserVotes().forEach(vote -> {
-                UserEntity voteUser = userRepository.findByUsername(vote.getUser());
+                UserEntity voteUser = userRepository.findByUsername(vote.getUser().getUsername());
                 ffoGameUserSentenceEntity.addUserVote(new FfoGameUserVoteEntity(voteUser,
                         vote.getFfoVoteType(), vote.getCreateTime()));
             });
@@ -183,8 +186,9 @@ public class FfoServiceImpl implements FfoService {
         while (redisUtil.hHasKey(RedisKey.FFO_GAME_ROOM_KEY.name(), roomId)) {
             roomId = RoomIdUtil.generateRoomId();
         }
+        UserDTO userDTO = new UserDTO(user);
         FfoGameRoomDTO ffoGameRoomDTO = FfoGameRoomDTO.creatFfoGameRoomDTO(ffoGameRoomReqVO, roomId,
-                user.getUsername(), user.getUsername());
+                userDTO, userDTO);
         ffoGameRoomRedisDao.saveFfoGameRoomDTO(ffoGameRoomDTO);
         redisUserService.userEnterGameRoom(user, GamesType.FFO, roomId);
         return ResponseResult.success(roomId);
@@ -198,8 +202,11 @@ public class FfoServiceImpl implements FfoService {
     @Override
     public void userSubscribeChatroom(UserEntity userEntity) {
         UserGameStateDTO userGameStateDTO = userGameStateDAO.getUserGameStateDTO(userEntity.getUsername());
+        if (ObjectUtils.isEmpty(userGameStateDTO)) {
+            return;
+        }
         FfoGameRoomDTO ffoGameRoomDTO = ffoGameRoomRedisDao.getFfoGameRoomDTO(userGameStateDTO.getRoomId());
         ffoGameNotice.userGameRoomActionNotice(userEntity, userEntity.getNickname() + "进入了房间",
-                ffoGameRoomDTO.getUsers());
+                ffoGameRoomDTO.getUsernames());
     }
 }

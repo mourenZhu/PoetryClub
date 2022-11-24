@@ -4,6 +4,7 @@ import cn.zhumouren.poetryclub.bean.mapper.FfoGameMapper;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomReqVO;
 import cn.zhumouren.poetryclub.constant.games.FfoGamePoemType;
 import cn.zhumouren.poetryclub.constant.games.FfoStateType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -43,10 +45,10 @@ public class FfoGameRoomDTO implements Serializable {
     private Boolean display;
     private FfoGamePoemType ffoGamePoemType;
     private FfoStateType ffoStateType;
-    private String homeowner;
-    private List<String> users;
+    private UserDTO homeowner;
+    private List<UserDTO> users;
 
-    public static FfoGameRoomDTO creatFfoGameRoomDTO(FfoGameRoomReqVO ffoGameRoomReqVO, String id, String homeowner, String... user) {
+    public static FfoGameRoomDTO creatFfoGameRoomDTO(FfoGameRoomReqVO ffoGameRoomReqVO, String id, UserDTO homeowner, UserDTO... user) {
         FfoGameRoomDTO ffoGameRoomDTO = FfoGameMapper.INSTANCE.ffoGameRoomReqVOToFfoGameRoomDTO(ffoGameRoomReqVO);
         ffoGameRoomDTO.setId(id);
         ffoGameRoomDTO.setHomeowner(homeowner);
@@ -66,5 +68,14 @@ public class FfoGameRoomDTO implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(getId());
+    }
+
+    @JsonIgnore
+    public List<String> getUsernames() {
+        return users.stream().map(UserDTO::getUsername).collect(Collectors.toList());
+    }
+
+    public boolean removeUser(UserDTO userDTO) {
+        return users.remove(userDTO);
     }
 }

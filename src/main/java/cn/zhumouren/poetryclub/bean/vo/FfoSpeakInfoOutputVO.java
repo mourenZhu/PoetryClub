@@ -2,6 +2,7 @@ package cn.zhumouren.poetryclub.bean.vo;
 
 import cn.zhumouren.poetryclub.bean.dto.FfoGameDTO;
 import cn.zhumouren.poetryclub.bean.dto.FfoGameSentenceDTO;
+import cn.zhumouren.poetryclub.bean.dto.UserDTO;
 import cn.zhumouren.poetryclub.constant.games.FfoGameSentenceJudgeType;
 import cn.zhumouren.poetryclub.util.FfoGameUtil;
 import com.google.common.collect.Iterables;
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class FfoSpeakInfoOutputVO implements Serializable {
 
-    private String currentSpeaker;
+    private UserDTO currentSpeaker;
 
     private String currentSentence;
 
@@ -25,7 +26,7 @@ public class FfoSpeakInfoOutputVO implements Serializable {
 
     private LocalDateTime speakingTime;
 
-    private String nextSpeaker;
+    private UserDTO nextSpeaker;
 
     private LocalDateTime nextEndTime;
 

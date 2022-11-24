@@ -17,20 +17,20 @@ import java.util.List;
 @AllArgsConstructor
 public class FfoGameSentenceDTO implements Serializable {
 
-    private String user;
+    private UserDTO user;
     private String sentence;
     private FfoGameSentenceJudgeType sentenceJudgeType;
     private List<FfoGameVoteDTO> userVotes;
     private LocalDateTime createTime;
 
-    public FfoGameSentenceDTO(String user, String sentence, LocalDateTime createTime) {
+    public FfoGameSentenceDTO(UserDTO user, String sentence, LocalDateTime createTime) {
         this.user = user;
         this.sentence = sentence;
         this.createTime = createTime;
         this.userVotes = new ArrayList<>();
     }
 
-    public FfoGameSentenceDTO(String user, String sentence, FfoGameSentenceJudgeType sentenceJudgeType,
+    public FfoGameSentenceDTO(UserDTO user, String sentence, FfoGameSentenceJudgeType sentenceJudgeType,
                               LocalDateTime createTime) {
         this.user = user;
         this.sentence = sentence;
@@ -52,8 +52,8 @@ public class FfoGameSentenceDTO implements Serializable {
         return true;
     }
 
-    public List<String> getVotedUsers() {
-        List<String> votedUsers = new ArrayList<>();
+    public List<UserDTO> getVotedUsers() {
+        List<UserDTO> votedUsers = new ArrayList<>();
         userVotes.forEach(voteDTO -> votedUsers.add(voteDTO.getUser()));
         return votedUsers;
     }

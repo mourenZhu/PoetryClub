@@ -38,7 +38,7 @@ public class ChatroomController {
         log.debug("room id = {}", roomID);
         redisUserService.listGameRoomUser(roomID).forEach(u -> {
             simpMessagingTemplate
-                    .convertAndSendToUser(u, MessageDestinations.USER_GAME_ROOM_MESSAGE_DESTINATION,
+                    .convertAndSendToUser(u.getUsername(), MessageDestinations.USER_GAME_ROOM_MESSAGE_DESTINATION,
                             MessageOutputVO.getOutputMessageDTO(user, textMessageInputVO.getContent()));
         });
     }

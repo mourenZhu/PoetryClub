@@ -37,17 +37,17 @@ public class StompFfoGameNotice {
         });
     }
 
-    public void ffoSpeakNotice(List<String> users, FfoSpeakInfoOutputVO ffoSpeakInfoOutputVO) {
+    public void ffoSpeakNotice(Iterable<String> users, FfoSpeakInfoOutputVO ffoSpeakInfoOutputVO) {
         users.forEach(user -> messagingTemplate.convertAndSendToUser(
                 user, MessageDestinations.USER_GAME_FFO_INFO_MESSAGE_DESTINATION, ffoSpeakInfoOutputVO));
     }
 
-    public void ffoVoteNotice(List<String> users, FfoVoteOutputVO ffoVoteOutputVO) {
+    public void ffoVoteNotice(Iterable<String> users, FfoVoteOutputVO ffoVoteOutputVO) {
         users.forEach(user -> messagingTemplate.convertAndSendToUser(
                 user, MessageDestinations.USER_GAME_FFO_USERS_VOTE_MESSAGE_DESTINATION, ffoVoteOutputVO));
     }
 
-    public void ffoGameOverNotice(List<String> users, FfoGameOverOutputVO ffoGameOverOutputVO) {
+    public void ffoGameOverNotice(Iterable<String> users, FfoGameOverOutputVO ffoGameOverOutputVO) {
         users.forEach(user -> messagingTemplate.convertAndSendToUser(
                 user, MessageDestinations.USER_GAME_FFO_OVER_MESSAGE_DESTINATION, ffoGameOverOutputVO));
     }

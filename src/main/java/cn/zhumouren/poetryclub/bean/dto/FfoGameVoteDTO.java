@@ -12,11 +12,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FfoGameVoteDTO implements Serializable {
-    private String user;
+    private UserDTO user;
     private FfoVoteType ffoVoteType;
     private LocalDateTime createTime;
 
-    public FfoGameVoteDTO(String user, FfoVoteType ffoVoteType) {
+    public FfoGameVoteDTO(UserDTO user, FfoVoteType ffoVoteType) {
         this.user = user;
         this.ffoVoteType = ffoVoteType;
         this.createTime = LocalDateTime.now();
