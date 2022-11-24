@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
@@ -22,7 +22,7 @@ public class FfoGameRoomReqVO implements Serializable {
     /**
      * 飞花令的字
      */
-    @NotEmpty
+    @NotNull
     private Character keyword;
     /**
      * 允许字出现在任意位置
