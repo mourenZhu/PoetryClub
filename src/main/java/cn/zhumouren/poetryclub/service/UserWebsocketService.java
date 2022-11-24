@@ -6,4 +6,6 @@ public interface UserWebsocketService {
 
     void sessionDisconnect(UserEntity user);
 
+    void userSubscribeChatroom(UserEntity userEntity);
+
 }

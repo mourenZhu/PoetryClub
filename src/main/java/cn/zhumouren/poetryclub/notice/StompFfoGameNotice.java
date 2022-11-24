@@ -31,11 +31,9 @@ public class StompFfoGameNotice {
      */
     public void userGameRoomActionNotice(UserEntity user, String msg, Iterable<String> noticeUsers) {
         noticeUsers.forEach(username -> {
-            if (!username.equals(user.getUsername())) {
-                log.debug("发送给 = {}", username);
-                messagingTemplate.convertAndSendToUser(username, MessageDestinations.USER_GAME_ROOM_MESSAGE_DESTINATION,
-                        MessageOutputVO.getOutputMessageDTO(user, msg));
-            }
+            log.debug("发送给 = {}", username);
+            messagingTemplate.convertAndSendToUser(username, MessageDestinations.USER_GAME_ROOM_MESSAGE_DESTINATION,
+                    MessageOutputVO.getOutputMessageDTO(user, msg));
         });
     }
 

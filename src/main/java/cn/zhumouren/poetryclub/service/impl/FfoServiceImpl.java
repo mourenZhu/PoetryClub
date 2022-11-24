@@ -2,6 +2,7 @@ package cn.zhumouren.poetryclub.service.impl;
 
 import cn.zhumouren.poetryclub.bean.dto.FfoGameDTO;
 import cn.zhumouren.poetryclub.bean.dto.FfoGameRoomDTO;
+import cn.zhumouren.poetryclub.bean.dto.UserGameStateDTO;
 import cn.zhumouren.poetryclub.bean.entity.*;
 import cn.zhumouren.poetryclub.bean.mapper.FfoGameMapper;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomReqVO;
@@ -12,6 +13,7 @@ import cn.zhumouren.poetryclub.constant.RedisKey;
 import cn.zhumouren.poetryclub.constant.games.FfoStateType;
 import cn.zhumouren.poetryclub.dao.FfoGameRepository;
 import cn.zhumouren.poetryclub.dao.FfoGameRoomRedisDAO;
+import cn.zhumouren.poetryclub.dao.UserGameStateDAO;
 import cn.zhumouren.poetryclub.dao.UserRepository;
 import cn.zhumouren.poetryclub.notice.StompFfoGameNotice;
 import cn.zhumouren.poetryclub.service.FfoService;
@@ -34,15 +36,17 @@ public class FfoServiceImpl implements FfoService {
     private final RedisUtil redisUtil;
     private final RedisUserService redisUserService;
     private final FfoGameRoomRedisDAO ffoGameRoomRedisDao;
+    private final UserGameStateDAO userGameStateDAO;
     private final StompFfoGameNotice ffoGameNotice;
     private final FfoGameRepository ffoGameRepository;
     private final UserRepository userRepository;
 
     public FfoServiceImpl(RedisUtil redisUtil, RedisUserService redisUserService,
-                          FfoGameRoomRedisDAO ffoGameRoomRedisDao, StompFfoGameNotice ffoGameNotice, FfoGameRepository ffoGameRepository, UserRepository userRepository) {
+                          FfoGameRoomRedisDAO ffoGameRoomRedisDao, UserGameStateDAO userGameStateDAO, StompFfoGameNotice ffoGameNotice, FfoGameRepository ffoGameRepository, UserRepository userRepository) {
         this.redisUtil = redisUtil;
         this.redisUserService = redisUserService;
         this.ffoGameRoomRedisDao = ffoGameRoomRedisDao;
+        this.userGameStateDAO = userGameStateDAO;
         this.ffoGameNotice = ffoGameNotice;
         this.ffoGameRepository = ffoGameRepository;
         this.userRepository = userRepository;
@@ -72,7 +76,6 @@ public class FfoServiceImpl implements FfoService {
         ffoGameRoomDTO.getUsers().add(user.getUsername());
         redisUtil.hset(RedisKey.FFO_GAME_ROOM_KEY.name(), roomId, ffoGameRoomDTO);
         redisUserService.userEnterGameRoom(user, GamesType.FFO, roomId);
-        ffoGameNotice.userGameRoomActionNotice(user, user.getNickname() + "进入了房间", ffoGameRoomDTO.getUsers());
         return ResponseResult.success();
     }
 
@@ -190,5 +193,13 @@ public class FfoServiceImpl implements FfoService {
     @Override
     public void sessionDisconnect(UserEntity user) {
         userLeaveGameRoom(user);
+    }
+
+    @Override
+    public void userSubscribeChatroom(UserEntity userEntity) {
+        UserGameStateDTO userGameStateDTO = userGameStateDAO.getUserGameStateDTO(userEntity.getUsername());
+        FfoGameRoomDTO ffoGameRoomDTO = ffoGameRoomRedisDao.getFfoGameRoomDTO(userGameStateDTO.getRoomId());
+        ffoGameNotice.userGameRoomActionNotice(userEntity, userEntity.getNickname() + "进入了房间",
+                ffoGameRoomDTO.getUsers());
     }
 }
