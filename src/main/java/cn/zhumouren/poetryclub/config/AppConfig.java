@@ -26,7 +26,7 @@ import java.time.format.DateTimeFormatter;
 @EnableScheduling
 public class AppConfig {
 
-    @Bean
+//    @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
 
