@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -68,6 +69,12 @@ public class FfoController {
         UserEntity userEntity = SecurityContextUtil.getUserEntity();
         ffoVoteInputVO.setCreateTime(LocalDateTime.now());
         ffoPlayingService.userVoteFfoSentence(roomId, userEntity, ffoVoteInputVO);
+    }
+
+    @MessageMapping("/ffo/{roomId}/users")
+    public void putUsersSequence(List<String> users, @DestinationVariable("roomId") String roomId)  {
+        UserEntity userEntity = SecurityContextUtil.getUserEntity();
+        ffoService.updateUsersSequence(roomId, userEntity, users);
     }
 
 

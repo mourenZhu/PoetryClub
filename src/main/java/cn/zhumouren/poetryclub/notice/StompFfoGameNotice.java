@@ -1,5 +1,6 @@
 package cn.zhumouren.poetryclub.notice;
 
+import cn.zhumouren.poetryclub.bean.dto.UserDTO;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameOverOutputVO;
 import cn.zhumouren.poetryclub.bean.vo.FfoSpeakInfoOutputVO;
@@ -50,5 +51,10 @@ public class StompFfoGameNotice {
     public void ffoGameOverNotice(Iterable<String> users, FfoGameOverOutputVO ffoGameOverOutputVO) {
         users.forEach(user -> messagingTemplate.convertAndSendToUser(
                 user, MessageDestinations.USER_GAME_FFO_OVER_MESSAGE_DESTINATION, ffoGameOverOutputVO));
+    }
+
+    public void ffoGameRoomUsersNotice(List<UserDTO> users) {
+        users.forEach(user -> messagingTemplate.convertAndSendToUser(user.getUsername(),
+                MessageDestinations.USER_GAME_FFO_USERS_MESSAGE_DESTINATION, user));
     }
 }

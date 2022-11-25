@@ -19,6 +19,7 @@ import cn.zhumouren.poetryclub.dao.UserRepository;
 import cn.zhumouren.poetryclub.notice.StompFfoGameNotice;
 import cn.zhumouren.poetryclub.service.FfoService;
 import cn.zhumouren.poetryclub.service.RedisUserService;
+import cn.zhumouren.poetryclub.util.FfoGameUtil;
 import cn.zhumouren.poetryclub.util.RedisUtil;
 import cn.zhumouren.poetryclub.util.RoomIdUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Slf4j
@@ -116,6 +118,7 @@ public class FfoServiceImpl implements FfoService {
         }
         boolean b = ffoGameRoomRedisDao.saveFfoGameRoomDTO(ffoGameRoomDTO);
         ffoGameNotice.userGameRoomActionNotice(user, user.getNickname() + "离开了房间!", ffoGameRoomDTO.getUsernames());
+        ffoGameNotice.ffoGameRoomUsersNotice(ffoGameRoomDTO.getUsers());
         return ResponseResult.bool(b);
     }
 
@@ -173,6 +176,23 @@ public class FfoServiceImpl implements FfoService {
         ffoGameEntity.setCreateTime(ffoGameDTO.getCreateTime());
         ffoGameEntity.setEndTime(ffoGameDTO.getEndTime());
         ffoGameRepository.save(ffoGameEntity);
+    }
+
+    @Override
+    public void updateUsersSequence(String roomId, UserEntity homeowner, List<String> users) {
+        FfoGameRoomDTO ffoGameRoomDTO = ffoGameRoomRedisDao.getFfoGameRoomDTO(roomId);
+        if (ObjectUtils.isEmpty(ffoGameRoomDTO)) {
+            log.info("房间 {} 不存在", roomId);
+            return;
+        }
+        UserDTO userDTO = new UserDTO(homeowner);
+        if (!ffoGameRoomDTO.getHomeowner().equals(userDTO)) {
+            log.info("{} 不是房间 {} 的房主", userDTO, roomId);
+            return;
+        }
+        FfoGameUtil.usersSequenceSort(ffoGameRoomDTO.getUsers(), users);
+        ffoGameNotice.ffoGameRoomUsersNotice(ffoGameRoomDTO.getUsers());
+        ffoGameRoomRedisDao.saveFfoGameRoomDTO(ffoGameRoomDTO);
     }
 
 

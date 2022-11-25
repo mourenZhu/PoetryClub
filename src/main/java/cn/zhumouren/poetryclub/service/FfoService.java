@@ -6,6 +6,7 @@ import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomReqVO;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomResVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 
+import java.util.List;
 import java.util.Set;
 
 public interface FfoService extends UserWebsocketService {
@@ -19,5 +20,7 @@ public interface FfoService extends UserWebsocketService {
     ResponseResult<Set<FfoGameRoomResVO>> listFfoGameRoom();
 
     void saveFfoGame(FfoGameDTO ffoGameDTO);
+
+    void updateUsersSequence(String roomId, UserEntity homeowner, List<String> users);
 
 }
