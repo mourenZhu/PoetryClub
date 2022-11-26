@@ -54,7 +54,8 @@ public class StompFfoGameNotice {
     }
 
     public void ffoGameRoomUsersNotice(List<UserDTO> users) {
+        log.debug("users = {}", users);
         users.forEach(user -> messagingTemplate.convertAndSendToUser(user.getUsername(),
-                MessageDestinations.USER_GAME_FFO_USERS_MESSAGE_DESTINATION, user));
+                MessageDestinations.USER_GAME_FFO_USERS_MESSAGE_DESTINATION, users));
     }
 }
