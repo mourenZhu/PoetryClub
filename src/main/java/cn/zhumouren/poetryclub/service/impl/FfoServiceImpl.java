@@ -10,6 +10,7 @@ import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomReqVO;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomResVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constant.GamesType;
+import cn.zhumouren.poetryclub.constant.MessageDestinations;
 import cn.zhumouren.poetryclub.constant.RedisKey;
 import cn.zhumouren.poetryclub.constant.games.FfoStateType;
 import cn.zhumouren.poetryclub.dao.FfoGameRepository;
@@ -215,18 +216,23 @@ public class FfoServiceImpl implements FfoService {
     }
 
     @Override
-    public void sessionDisconnect(UserEntity user) {
+    public void disconnect(UserEntity user) {
         userLeaveGameRoom(user);
     }
 
     @Override
-    public void userSubscribeChatroom(UserEntity userEntity) {
+    public void subscribe(String destination, UserEntity userEntity) {
         UserGameStateDTO userGameStateDTO = userGameStateDAO.getUserGameStateDTO(userEntity.getUsername());
         if (ObjectUtils.isEmpty(userGameStateDTO)) {
             return;
         }
         FfoGameRoomDTO ffoGameRoomDTO = ffoGameRoomRedisDao.getFfoGameRoomDTO(userGameStateDTO.getRoomId());
-        ffoGameNotice.userGameRoomActionNotice(userEntity, userEntity.getNickname() + "进入了房间",
-                ffoGameRoomDTO.getUsernames());
+        if (destination.contains(MessageDestinations.USER_GAME_ROOM_MESSAGE_DESTINATION)) {
+            ffoGameNotice.userGameRoomActionNotice(userEntity, userEntity.getNickname() + "进入了房间",
+                    ffoGameRoomDTO.getUsernames());
+        }
+        if (destination.contains(MessageDestinations.USER_GAME_FFO_USERS_MESSAGE_DESTINATION)) {
+            ffoGameNotice.ffoGameRoomUsersNotice(ffoGameRoomDTO.getUsers());
+        }
     }
 }

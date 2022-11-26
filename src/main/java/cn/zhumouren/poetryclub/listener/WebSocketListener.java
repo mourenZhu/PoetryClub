@@ -1,7 +1,6 @@
 package cn.zhumouren.poetryclub.listener;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
-import cn.zhumouren.poetryclub.constant.MessageDestinations;
 import cn.zhumouren.poetryclub.service.UserWebsocketService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.*;
 
 import java.util.List;
-import java.util.Objects;
 
 @Component
 @Slf4j
@@ -44,7 +42,7 @@ public class WebSocketListener {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(sessionDisconnectEvent.getMessage());
         UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) headerAccessor.getUser();
         userWebsocketServiceList.forEach(userWebsocketService ->
-                userWebsocketService.sessionDisconnect((UserEntity) authenticationToken.getPrincipal()));
+                userWebsocketService.disconnect((UserEntity) authenticationToken.getPrincipal()));
         log.debug("disconnect, session id = {}, username = {}", sessionDisconnectEvent.getSessionId(),
                 headerAccessor.getUser().getName());
     }
@@ -53,12 +51,9 @@ public class WebSocketListener {
     public void handleWebSocketSubscribeEvent(SessionSubscribeEvent sessionSubscribeEvent) {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(sessionSubscribeEvent.getMessage());
         UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) headerAccessor.getUser();
-        if (Objects.requireNonNull(headerAccessor.getDestination()).
-                contains(MessageDestinations.USER_GAME_ROOM_MESSAGE_DESTINATION)) {
-            userWebsocketServiceList.forEach(userWebsocketService -> {
-                userWebsocketService.userSubscribeChatroom((UserEntity) authenticationToken.getPrincipal());
-            });
-        }
+        userWebsocketServiceList.forEach(userWebsocketService ->
+                userWebsocketService.subscribe(headerAccessor.getDestination(),
+                        (UserEntity) authenticationToken.getPrincipal()));
         log.debug("subscribe, sessionId = {}, username = {}",
                 headerAccessor.getSessionId(), headerAccessor.getUser().getName());
     }
