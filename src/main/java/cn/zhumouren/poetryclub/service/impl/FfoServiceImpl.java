@@ -231,8 +231,11 @@ public class FfoServiceImpl implements FfoService {
             ffoGameNotice.userGameRoomActionNotice(userEntity, userEntity.getNickname() + "进入了房间",
                     ffoGameRoomDTO.getUsernames());
         }
-        if (destination.contains(MessageDestinations.USER_GAME_FFO_USERS_MESSAGE_DESTINATION)) {
+        if (destination.contains(MessageDestinations.USER_GAME_FFO_USERS_DESTINATION)) {
             ffoGameNotice.ffoGameRoomUsersNotice(ffoGameRoomDTO.getUsers());
+        }
+        if (destination.contains(MessageDestinations.USER_GAME_FFO_ROOM_DESTINATION)) {
+            ffoGameNotice.ffoGameRoomNotice(ffoGameRoomDTO);
         }
     }
 }

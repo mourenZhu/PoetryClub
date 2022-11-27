@@ -1,5 +1,6 @@
 package cn.zhumouren.poetryclub.notice;
 
+import cn.zhumouren.poetryclub.bean.dto.FfoGameRoomDTO;
 import cn.zhumouren.poetryclub.bean.dto.UserDTO;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameOverOutputVO;
@@ -40,22 +41,28 @@ public class StompFfoGameNotice {
 
     public void ffoSpeakNotice(Iterable<String> users, FfoSpeakInfoOutputVO ffoSpeakInfoOutputVO) {
         users.forEach(user -> messagingTemplate.convertAndSendToUser(
-                user, MessageDestinations.USER_GAME_FFO_INFO_MESSAGE_DESTINATION, ffoSpeakInfoOutputVO));
+                user, MessageDestinations.USER_GAME_FFO_INFO_DESTINATION, ffoSpeakInfoOutputVO));
     }
 
     public void ffoVoteNotice(Iterable<String> users, FfoVoteOutputVO ffoVoteOutputVO) {
         users.forEach(user -> messagingTemplate.convertAndSendToUser(
-                user, MessageDestinations.USER_GAME_FFO_USERS_VOTE_MESSAGE_DESTINATION, ffoVoteOutputVO));
+                user, MessageDestinations.USER_GAME_FFO_USERS_VOTE_DESTINATION, ffoVoteOutputVO));
     }
 
     public void ffoGameOverNotice(Iterable<String> users, FfoGameOverOutputVO ffoGameOverOutputVO) {
         users.forEach(user -> messagingTemplate.convertAndSendToUser(
-                user, MessageDestinations.USER_GAME_FFO_OVER_MESSAGE_DESTINATION, ffoGameOverOutputVO));
+                user, MessageDestinations.USER_GAME_FFO_OVER_DESTINATION, ffoGameOverOutputVO));
     }
 
     public void ffoGameRoomUsersNotice(List<UserDTO> users) {
         log.debug("users = {}", users);
         users.forEach(user -> messagingTemplate.convertAndSendToUser(user.getUsername(),
-                MessageDestinations.USER_GAME_FFO_USERS_MESSAGE_DESTINATION, users));
+                MessageDestinations.USER_GAME_FFO_USERS_DESTINATION, users));
+    }
+
+    public void ffoGameRoomNotice(FfoGameRoomDTO ffoGameRoomDTO) {
+        ffoGameRoomDTO.getUsernames().forEach(user ->
+                messagingTemplate.convertAndSendToUser(user,
+                        MessageDestinations.USER_GAME_FFO_ROOM_DESTINATION, ffoGameRoomDTO));
     }
 }
