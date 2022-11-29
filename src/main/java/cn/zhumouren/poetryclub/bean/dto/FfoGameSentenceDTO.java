@@ -20,6 +20,7 @@ public class FfoGameSentenceDTO implements Serializable {
     private UserDTO user;
     private String sentence;
     private FfoGameSentenceJudgeType sentenceJudgeType;
+    private Long poemId;
     private List<FfoGameVoteDTO> userVotes;
     private LocalDateTime createTime;
 

@@ -13,10 +13,7 @@ import cn.zhumouren.poetryclub.constant.GamesType;
 import cn.zhumouren.poetryclub.constant.MessageDestinations;
 import cn.zhumouren.poetryclub.constant.RedisKey;
 import cn.zhumouren.poetryclub.constant.games.FfoStateType;
-import cn.zhumouren.poetryclub.dao.FfoGameRepository;
-import cn.zhumouren.poetryclub.dao.FfoGameRoomRedisDAO;
-import cn.zhumouren.poetryclub.dao.UserGameStateDAO;
-import cn.zhumouren.poetryclub.dao.UserRepository;
+import cn.zhumouren.poetryclub.dao.*;
 import cn.zhumouren.poetryclub.notice.StompFfoGameNotice;
 import cn.zhumouren.poetryclub.service.FfoService;
 import cn.zhumouren.poetryclub.service.RedisUserService;
@@ -28,10 +25,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -44,9 +38,10 @@ public class FfoServiceImpl implements FfoService {
     private final StompFfoGameNotice ffoGameNotice;
     private final FfoGameRepository ffoGameRepository;
     private final UserRepository userRepository;
+    private final PoemRepository poemRepository;
 
     public FfoServiceImpl(RedisUtil redisUtil, RedisUserService redisUserService,
-                          FfoGameRoomRedisDAO ffoGameRoomRedisDao, UserGameStateDAO userGameStateDAO, StompFfoGameNotice ffoGameNotice, FfoGameRepository ffoGameRepository, UserRepository userRepository) {
+                          FfoGameRoomRedisDAO ffoGameRoomRedisDao, UserGameStateDAO userGameStateDAO, StompFfoGameNotice ffoGameNotice, FfoGameRepository ffoGameRepository, UserRepository userRepository, PoemRepository poemRepository) {
         this.redisUtil = redisUtil;
         this.redisUserService = redisUserService;
         this.ffoGameRoomRedisDao = ffoGameRoomRedisDao;
@@ -54,6 +49,7 @@ public class FfoServiceImpl implements FfoService {
         this.ffoGameNotice = ffoGameNotice;
         this.ffoGameRepository = ffoGameRepository;
         this.userRepository = userRepository;
+        this.poemRepository = poemRepository;
     }
 
     /**
@@ -167,6 +163,11 @@ public class FfoServiceImpl implements FfoService {
             FfoGameUserSentenceEntity ffoGameUserSentenceEntity =
                     new FfoGameUserSentenceEntity(user, sentence.getSentence(), sentence.getSentenceJudgeType(),
                             sentence.getCreateTime());
+            if (ObjectUtils.isNotEmpty(sentence.getPoemId())) {
+                Optional<PoemEntity> poem = poemRepository.findById(sentence.getPoemId());
+                poem.ifPresent(ffoGameUserSentenceEntity::setPoemEntity);
+
+            }
             // 添加本个句子的投票
             sentence.getUserVotes().forEach(vote -> {
                 UserEntity voteUser = userRepository.findByUsername(vote.getUser().getUsername());
@@ -174,7 +175,6 @@ public class FfoServiceImpl implements FfoService {
                         vote.getFfoVoteType(), vote.getCreateTime()));
             });
         });
-
         ffoGameEntity.setCreateTime(ffoGameDTO.getCreateTime());
         ffoGameEntity.setEndTime(ffoGameDTO.getEndTime());
         ffoGameRepository.save(ffoGameEntity);

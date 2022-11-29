@@ -289,15 +289,14 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
         }
         // 3.3 检查允许说什么样类型的诗句
         FfoGamePoemType ffoGamePoemType = ffoGameDTO.getFfoGamePoemType();
+        PoemEntity poemEntity = poemRepository.findByContentContains(sentence);
         if (ffoGamePoemType.equals(FfoGamePoemType.ONLY_ANCIENTS_POEM)) {
             log.debug("只允许古诗，但没有找到古诗了，{} 本轮结束", userDTO);
-            PoemEntity poemEntity = poemRepository.findByContentContains(sentence);
             if (ObjectUtils.isEmpty(poemEntity)) {
                 ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.KEYWORD_NOT_IN_CORRECT_POSITION);
                 return;
             }
         } else if (ffoGamePoemType.equals(FfoGamePoemType.ONLY_SELF_CREAT)) {
-            PoemEntity poemEntity = poemRepository.findByContentContains(sentence);
             if (ObjectUtils.isNotEmpty(poemEntity)) {
                 log.debug("只允许自创作，但找到了古诗，{} 本轮结束", userDTO);
                 ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.ONLY_SELF_CREAT_BUT_FIND);
@@ -310,9 +309,9 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
         // 先在数据库里找古诗，找到古诗直接成功，没有找到则开启投票
         else if (ffoGamePoemType.equals(FfoGamePoemType.ALL)) {
             log.debug("可以说古诗，也可以自由创作");
-            PoemEntity poemEntity = poemRepository.findByContentContains(sentence);
             if (ObjectUtils.isNotEmpty(poemEntity)) {
                 log.debug("数据库中找到诗 {}", poemEntity);
+                ffoGameSentenceDTO.setPoemId(poemEntity.getId());
                 ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.SUCCESS);
             } else {
                 log.debug("没有在数据库中找到诗，开启投票");
@@ -320,6 +319,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
             }
             return;
         }
+        ffoGameSentenceDTO.setPoemId(poemEntity.getId());
         ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.SUCCESS);
     }
 

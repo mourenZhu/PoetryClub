@@ -19,6 +19,9 @@ public class FfoGameUserSentenceEntity {
     @ManyToOne
     private UserEntity userEntity;
     private String sentence;
+
+    @ManyToOne
+    private PoemEntity poemEntity;
     @Enumerated(EnumType.STRING)
     private FfoGameSentenceJudgeType sentenceJudgeType;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
