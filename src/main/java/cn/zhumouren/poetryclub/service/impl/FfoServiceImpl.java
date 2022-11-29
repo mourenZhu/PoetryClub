@@ -120,6 +120,7 @@ public class FfoServiceImpl implements FfoService {
         boolean b = ffoGameRoomRedisDao.saveFfoGameRoomDTO(ffoGameRoomDTO);
         ffoGameNotice.userGameRoomActionNotice(user, user.getNickname() + "离开了房间!", ffoGameRoomDTO.getUsernames());
         ffoGameNotice.ffoGameRoomUsersNotice(ffoGameRoomDTO.getUsers());
+        ffoGameNotice.ffoGameRoomNotice(ffoGameRoomDTO);
         return ResponseResult.bool(b);
     }
 
