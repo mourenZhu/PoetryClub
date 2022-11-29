@@ -20,6 +20,7 @@ import cn.zhumouren.poetryclub.service.FfoService;
 import cn.zhumouren.poetryclub.service.FfoTaskService;
 import cn.zhumouren.poetryclub.service.RedisUserService;
 import cn.zhumouren.poetryclub.util.FfoGameUtil;
+import com.google.common.collect.Iterables;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
@@ -90,9 +91,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
         FfoGameDTO ffoGameDTO = FfoGameDTO.getFfoGameDTOByFfoGameRoomDTO(ffoGameRoomDTO);
         ffoGameRedisDao.saveFfoGameDTO(ffoGameDTO);
         // 开始通知用户游戏开始
-        FfoSpeakInfoOutputVO ffoSpeakInfoOutputVO = new FfoSpeakInfoOutputVO();
-        ffoSpeakInfoOutputVO.setNextSpeaker(ffoGameDTO.getNextSpeaker());
-        ffoGameNotice.ffoSpeakNotice(ffoGameDTO.getUsernames(), ffoSpeakInfoOutputVO);
+        ffoGameNotice.ffoNextNotice(ffoGameDTO.getUsernames(), new FfoNextOutputVO(ffoGameDTO));
         // 添加玩家超时发言任务
         LocalDateTime timeout = FfoGameUtil.getFfoSpeakerNextEndTime(ffoGameDTO);
         addUserSendSentenceTimeoutTask(ffoGameDTO.getRoomId(), timeout);
@@ -368,8 +367,8 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
      * @param ffoGameDTO
      */
     private void userFfoSpeakNotice(FfoGameDTO ffoGameDTO) {
-        FfoSpeakInfoOutputVO ffoSpeakInfoOutputVO = new FfoSpeakInfoOutputVO(ffoGameDTO);
-        ffoGameNotice.ffoSpeakNotice(ffoGameDTO.getUsernames(), ffoSpeakInfoOutputVO);
+        ffoGameNotice.ffoNextNotice(ffoGameDTO.getUsernames(), new FfoNextOutputVO(ffoGameDTO));
+        ffoGameNotice.ffoSentenceNotice(ffoGameDTO.getUsernames(), Iterables.getLast(ffoGameDTO.getUserSentences()));
     }
 
     /**

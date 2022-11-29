@@ -1,10 +1,11 @@
 package cn.zhumouren.poetryclub.notice;
 
 import cn.zhumouren.poetryclub.bean.dto.FfoGameRoomDTO;
+import cn.zhumouren.poetryclub.bean.dto.FfoGameSentenceDTO;
 import cn.zhumouren.poetryclub.bean.dto.UserDTO;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameOverOutputVO;
-import cn.zhumouren.poetryclub.bean.vo.FfoSpeakInfoOutputVO;
+import cn.zhumouren.poetryclub.bean.vo.FfoNextOutputVO;
 import cn.zhumouren.poetryclub.bean.vo.FfoVoteOutputVO;
 import cn.zhumouren.poetryclub.bean.vo.MessageOutputVO;
 import cn.zhumouren.poetryclub.constant.MessageDestinations;
@@ -39,9 +40,14 @@ public class StompFfoGameNotice {
         });
     }
 
-    public void ffoSpeakNotice(Iterable<String> users, FfoSpeakInfoOutputVO ffoSpeakInfoOutputVO) {
+    public void ffoSentenceNotice(Iterable<String> users, FfoGameSentenceDTO ffoGameSentenceDTO) {
         users.forEach(user -> messagingTemplate.convertAndSendToUser(
-                user, MessageDestinations.USER_GAME_FFO_INFO_DESTINATION, ffoSpeakInfoOutputVO));
+                user, MessageDestinations.USER_GAME_FFO_SENTENCE_DESTINATION, ffoGameSentenceDTO));
+    }
+
+    public void ffoNextNotice(Iterable<String> users, FfoNextOutputVO ffoNextOutputVO) {
+        users.forEach(user -> messagingTemplate.convertAndSendToUser(
+                user, MessageDestinations.USER_GAME_FFO_NEXT_DESTINATION, ffoNextOutputVO));
     }
 
     public void ffoVoteNotice(Iterable<String> users, FfoVoteOutputVO ffoVoteOutputVO) {

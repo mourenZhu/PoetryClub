@@ -12,9 +12,13 @@ public class MessageDestinations {
      */
     public static final String USER_GAME_FFO_ROOM_DESTINATION = "/game/ffo/room";
     /**
-     * 飞花令游戏信息路径
+     * 飞花令游戏句子路径
      */
-    public static final String USER_GAME_FFO_INFO_DESTINATION = "/game/ffo/info";
+    public static final String USER_GAME_FFO_SENTENCE_DESTINATION = "/game/ffo/sentence";
+    /**
+     * 飞花令下一个用户发言
+     */
+    public static final String USER_GAME_FFO_NEXT_DESTINATION = "/game/ffo/next";
     /**
      * 飞花令房间所有用户信息路径
      */
