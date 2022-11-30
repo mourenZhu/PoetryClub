@@ -54,7 +54,8 @@ public class FfoController {
 
     @PostMapping
     public ResponseResult<Boolean> startGame() {
-        return null;
+        UserEntity userEntity = SecurityContextUtil.getUserEntity();
+        return ffoPlayingService.userStartGame(userEntity);
     }
 
     @MessageMapping("/ffo/{roomId}/sentence")
@@ -72,7 +73,7 @@ public class FfoController {
     }
 
     @MessageMapping("/ffo/{roomId}/users")
-    public void putUsersSequence(List<String> users, @DestinationVariable("roomId") String roomId)  {
+    public void putUsersSequence(List<String> users, @DestinationVariable("roomId") String roomId) {
         UserEntity userEntity = SecurityContextUtil.getUserEntity();
         ffoService.updateUsersSequence(roomId, userEntity, users);
     }
