@@ -62,17 +62,23 @@ public class FfoServiceImpl implements FfoService {
     @Transactional
     @Override
     public synchronized ResponseResult<Boolean> userEnterGameRoom(UserEntity user, String roomId) {
-
         FfoGameRoomDTO ffoGameRoomDTO = ffoGameRoomRedisDao.getFfoGameRoomDTO(roomId);
         if (ffoGameRoomDTO.getFfoStateType().equals(FfoStateType.PLAYING)) {
             return ResponseResult.failedWithMsg("游戏进行中，不可加入");
         }
-        if (ffoGameRoomDTO.getUsers().size() == ffoGameRoomDTO.getMaxPlayers()) {
-            return ResponseResult.failedWithMsg("房间人数已满");
+        UserGameStateDTO userGameStateDTO = userGameStateDAO.getUserGameStateDTO(user.getUsername());
+        if (ObjectUtils.isNotEmpty(userGameStateDTO)) {
+            if (!userGameStateDTO.getRoomId().equals(roomId)) {
+                return ResponseResult.failedWithMsg("玩家在其他房间中，不允许加入多个房间");
+            }
         }
         UserDTO userDTO = new UserDTO(user);
         if (ffoGameRoomDTO.getUsers().contains(userDTO)) {
-            return ResponseResult.failedWithMsg("用户已在房间中");
+            // 如果玩家已经在本房间中，直接返回true
+            return ResponseResult.success();
+        }
+        if (ffoGameRoomDTO.getUsers().size() == ffoGameRoomDTO.getMaxPlayers()) {
+            return ResponseResult.failedWithMsg("房间人数已满");
         }
         ffoGameRoomDTO.getUsers().add(userDTO);
         redisUtil.hset(RedisKey.FFO_GAME_ROOM_KEY.name(), roomId, ffoGameRoomDTO);
