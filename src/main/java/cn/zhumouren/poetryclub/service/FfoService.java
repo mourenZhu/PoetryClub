@@ -11,7 +11,7 @@ import java.util.Set;
 
 public interface FfoService extends UserWebsocketService {
 
-    ResponseResult<String> userCreateGameRoom(UserEntity user, FfoGameRoomReqVO ffoGameRoomReqVO);
+    ResponseResult userCreateGameRoom(UserEntity user, FfoGameRoomReqVO ffoGameRoomReqVO);
 
     ResponseResult<Boolean> userEnterGameRoom(UserEntity user, String roomId);
 

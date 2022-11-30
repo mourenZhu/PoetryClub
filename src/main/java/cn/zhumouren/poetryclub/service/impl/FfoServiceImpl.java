@@ -200,7 +200,10 @@ public class FfoServiceImpl implements FfoService {
 
     @Transactional
     @Override
-    public ResponseResult<String> userCreateGameRoom(UserEntity user, FfoGameRoomReqVO ffoGameRoomReqVO) {
+    public ResponseResult userCreateGameRoom(UserEntity user, FfoGameRoomReqVO ffoGameRoomReqVO) {
+        if (ObjectUtils.isNotEmpty(userGameStateDAO.getUserGameStateDTO(user.getUsername()))) {
+            return ResponseResult.failedWithMsg("玩家已在房间中");
+        }
         if (!redisUtil.hasKey(RedisKey.FFO_GAME_ROOM_KEY.name())) {
             redisUtil.hmset(RedisKey.FFO_GAME_ROOM_KEY.name(), new HashMap<>());
         }
