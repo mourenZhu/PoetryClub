@@ -2,6 +2,7 @@ package cn.zhumouren.poetryclub.bean.dto;
 
 import cn.zhumouren.poetryclub.bean.mapper.FfoGameMapper;
 import cn.zhumouren.poetryclub.constant.games.FfoGamePoemType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Iterables;
 import lombok.Data;
 
@@ -73,18 +74,22 @@ public class FfoGameDTO implements Serializable {
         return ffoGameDTO;
     }
 
+    @JsonIgnore
     public UserDTO getNextSpeaker() {
         return playingUsers.peek();
     }
 
+    @JsonIgnore
     public FfoGameSentenceDTO getLastSentenceDTO() {
         return Iterables.getLast(userSentences);
     }
 
+    @JsonIgnore
     public int getUserSequence(UserDTO userDTO) {
         return this.users.indexOf(userDTO) + 1;
     }
 
+    @JsonIgnore
     public List<String> getUsernames() {
         return users.stream().map(UserDTO::getUsername).collect(Collectors.toList());
     }
