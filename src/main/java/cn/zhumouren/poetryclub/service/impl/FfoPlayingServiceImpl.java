@@ -92,6 +92,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
         ffoGameRedisDao.saveFfoGameDTO(ffoGameDTO);
         // 开始通知用户游戏开始
         ffoGameNotice.ffoNextNotice(ffoGameDTO.getUsernames(), new FfoNextOutputVO(ffoGameDTO));
+        ffoGameNotice.ffoGameRoomNotice(ffoGameRoomDTO);
         // 添加玩家超时发言任务
         LocalDateTime timeout = FfoGameUtil.getFfoSpeakerNextEndTime(ffoGameDTO);
         addUserSendSentenceTimeoutTask(ffoGameDTO.getRoomId(), timeout);
@@ -177,12 +178,12 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
         }
         // 用户这句诗不满足本局条件
         else {
-            ffoGameDTO.getRanking().push(userDTO);
+            ffoGameDTO.getRanking().offerFirst(userDTO);
         }
         // 6. 如果只剩一个人，则游戏结束
         if (ffoGameDTO.getPlayingUsers().size() == 1) {
             UserDTO pollUser = ffoGameDTO.getPlayingUsers().poll();
-            ffoGameDTO.getRanking().push(pollUser);
+            ffoGameDTO.getRanking().offerFirst(pollUser);
             ffoGameDTO.setEndTime(LocalDateTime.now());
             ffoGameOver(ffoGameDTO);
             return;
@@ -395,10 +396,14 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
      * @param ffoGameDTO
      */
     private void ffoGameOver(FfoGameDTO ffoGameDTO) {
-        ffoService.saveFfoGame(ffoGameDTO);
+        log.debug("房间 {} 游戏结束, ffoGameDTO = {}", ffoGameDTO.getRoomId(), ffoGameDTO);
         ffoGameNotice.ffoGameOverNotice(ffoGameDTO.getUsernames(), new FfoGameOverOutputVO(ffoGameDTO));
+        ffoService.saveFfoGame(ffoGameDTO);
         ffoGameRedisDao.delFfoGameDTO(ffoGameDTO.getRoomId());
-        ffoGameRoomRedisDao.updateFfoGameRoomState(ffoGameDTO.getRoomId(), FfoStateType.WAITING);
+        var ffoGameRoomDTO = ffoGameRoomRedisDao.getFfoGameRoomDTO(ffoGameDTO.getRoomId());
+        ffoGameRoomDTO.setFfoStateType(FfoStateType.WAITING);
+        ffoGameNotice.ffoGameRoomNotice(ffoGameRoomDTO);
+        ffoGameRoomRedisDao.saveFfoGameRoomDTO(ffoGameRoomDTO);
     }
 
 }

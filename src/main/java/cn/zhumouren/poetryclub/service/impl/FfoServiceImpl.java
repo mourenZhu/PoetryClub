@@ -159,10 +159,10 @@ public class FfoServiceImpl implements FfoService {
         int ranking = 0;
         while (!ffoGameDTO.getRanking().isEmpty()) {
             ranking++;
-            UserDTO userDTO = ffoGameDTO.getRanking().pop();
+            var userDTO = ffoGameDTO.getRanking().pollFirst();
             UserEntity userEntity = userRepository.findByUsername(userDTO.getUsername());
-            ffoGameEntity.addUserInfo(new FfoGameUserInfoEntity(userEntity, ranking,
-                    ffoGameDTO.getUserSequence(userDTO)));
+            ffoGameEntity.addUserInfo(new FfoGameUserInfoEntity(userEntity,
+                    ffoGameDTO.getUserSequence(userDTO), ranking));
         }
         // 添加用户发的飞花令句子
         ffoGameDTO.getUserSentences().forEach(sentence -> {

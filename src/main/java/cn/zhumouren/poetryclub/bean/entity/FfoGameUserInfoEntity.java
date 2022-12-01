@@ -32,7 +32,7 @@ public class FfoGameUserInfoEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (id == null) return true;
+        if (id == null) return false;
         FfoGameUserInfoEntity that = (FfoGameUserInfoEntity) o;
         return getId().equals(that.getId());
     }
