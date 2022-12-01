@@ -335,6 +335,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
                     ffoGameDTO.getNextSpeaker(), "", FfoGameSentenceJudgeType.NULL_CONTENT, timeout);
             ffoGameDTO.getUserSentences().add(ffoGameSentenceDTO);
             ffoSentenceHandle(ffoGameDTO);
+            ffoTaskService.removeSpeakTimeOutTask(roomId);
         });
     }
 
@@ -357,6 +358,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
                 }
             });
             ffoVoteHandle(ffoGameDTO);
+            ffoTaskService.removeVoteTimeOutTask(roomId);
         });
     }
 

@@ -32,7 +32,7 @@ public class FfoGameUtil {
      */
     public static String getTimeoutCron(LocalDateTime timeout) {
         return timeout.getSecond() + " " + timeout.getMinute() + " " + timeout.getHour() + " "
-                + " " + timeout.getDayOfMonth() + " " + timeout.getMonthValue() + " ? " + timeout.getYear();
+                + " " + timeout.getDayOfMonth() + " " + timeout.getMonthValue() + " ?";
     }
 
     /**
