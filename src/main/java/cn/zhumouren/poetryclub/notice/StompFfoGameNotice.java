@@ -41,6 +41,7 @@ public class StompFfoGameNotice {
     }
 
     public void ffoSentenceNotice(Iterable<String> users, FfoGameSentenceDTO ffoGameSentenceDTO) {
+        log.debug("通知, 飞花令为: {}", ffoGameSentenceDTO);
         users.forEach(user -> messagingTemplate.convertAndSendToUser(
                 user, MessageDestinations.USER_GAME_FFO_SENTENCE_DESTINATION, ffoGameSentenceDTO));
     }

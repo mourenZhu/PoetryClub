@@ -112,6 +112,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
      */
     @Override
     public void userSendFfoSentence(String roomId, UserEntity userEntity, FfoSentenceInputVO ffoSentenceInputVO) {
+        log.info("roomId: {}, 用户: {}, 飞花令发送了: {}", roomId, userEntity, ffoSentenceInputVO);
         String sentence = ffoSentenceInputVO.getSentence();
         FfoGameDTO ffoGameDTO = ffoGameRedisDao.getFfoGameDTO(roomId);
         // 1. 检测该用户是否满足发送句子的条件
