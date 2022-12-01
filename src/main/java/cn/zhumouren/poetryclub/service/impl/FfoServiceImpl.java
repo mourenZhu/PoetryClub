@@ -149,6 +149,7 @@ public class FfoServiceImpl implements FfoService {
     @Override
     public void saveFfoGame(FfoGameDTO ffoGameDTO) {
         FfoGameEntity ffoGameEntity = new FfoGameEntity();
+        ffoGameEntity.setFfoGamePoemType(ffoGameDTO.getFfoGamePoemType());
         ffoGameEntity.setKeyword(ffoGameDTO.getKeyword());
         ffoGameEntity.setPlayerPreparationSecond(ffoGameDTO.getPlayerPreparationSecond());
         ffoGameEntity.setAllowWordInAny(ffoGameDTO.getAllowWordInAny());
@@ -172,7 +173,6 @@ public class FfoServiceImpl implements FfoService {
             if (ObjectUtils.isNotEmpty(sentence.getPoemId())) {
                 Optional<PoemEntity> poem = poemRepository.findById(sentence.getPoemId());
                 poem.ifPresent(ffoGameUserSentenceEntity::setPoemEntity);
-
             }
             // 添加本个句子的投票
             sentence.getUserVotes().forEach(vote -> {
@@ -180,6 +180,7 @@ public class FfoServiceImpl implements FfoService {
                 ffoGameUserSentenceEntity.addUserVote(new FfoGameUserVoteEntity(voteUser,
                         vote.getFfoVoteType(), vote.getCreateTime()));
             });
+            ffoGameEntity.addUserSentence(ffoGameUserSentenceEntity);
         });
         ffoGameEntity.setCreateTime(ffoGameDTO.getCreateTime());
         ffoGameEntity.setEndTime(ffoGameDTO.getEndTime());
