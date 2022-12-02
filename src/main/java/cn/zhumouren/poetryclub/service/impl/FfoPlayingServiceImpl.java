@@ -88,11 +88,12 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
         // 开启游戏
         ffoGameRoomDTO.setFfoStateType(FfoStateType.PLAYING);
         ffoGameRoomRedisDao.saveFfoGameRoomDTO(ffoGameRoomDTO);
-        FfoGameDTO ffoGameDTO = FfoGameDTO.getFfoGameDTOByFfoGameRoomDTO(ffoGameRoomDTO);
+        FfoGameDTO ffoGameDTO = new FfoGameDTO(ffoGameRoomDTO);
         ffoGameRedisDao.saveFfoGameDTO(ffoGameDTO);
         // 开始通知用户游戏开始
         ffoGameNotice.ffoNextNotice(ffoGameDTO.getUsernames(), new FfoNextOutputVO(ffoGameDTO));
         ffoGameNotice.ffoGameRoomNotice(ffoGameRoomDTO);
+        ffoGameNotice.ffoGameNotice(ffoGameDTO);
         // 添加玩家超时发言任务
         LocalDateTime timeout = FfoGameUtil.getFfoSpeakerNextEndTime(ffoGameDTO);
         addUserSendSentenceTimeoutTask(ffoGameDTO.getRoomId(), timeout);
@@ -125,9 +126,12 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
             log.debug("next speaker = {}, 但是 user = {}, 不满足条件", ffoGameDTO.getNextSpeaker(), userEntity.getUsername());
             return;
         }
-        if (ffoGameDTO.getLastSentenceDTO()
-                .getSentenceJudgeType().equals(FfoGameSentenceJudgeType.WAITING_USERS_VOTE)) {
-            log.debug("用户在等待投票，不允许回答");
+        if (ObjectUtils.isNotEmpty(ffoGameDTO.getUserSentences())) {
+            if (ffoGameDTO.getLastSentenceDTO()
+                    .getSentenceJudgeType().equals(FfoGameSentenceJudgeType.WAITING_USERS_VOTE)) {
+                log.debug("用户在等待投票，不允许回答");
+                return;
+            }
         }
         if (LocalDateTime.now().isAfter(FfoGameUtil.getFfoSpeakerNextEndTime(ffoGameDTO))) {
             log.debug("user = {}, 超时作答，等待超时任务自动处理", userEntity.getUsername());
@@ -159,8 +163,8 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
     /**
      * 飞花令 通用的最后几步
      * 5. 把本回合数据存入ffoGameDTO中
-     * 6. 如果只剩一个人，则游戏结束
-     * 7. 通知用户的发言
+     * 6. 通知用户的发言
+     * 7. 如果只剩一个人，则游戏结束
      * 8. 存入redis
      *
      * @param ffoGameDTO
@@ -181,7 +185,9 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
         else {
             ffoGameDTO.getRanking().offerFirst(userDTO);
         }
-        // 6. 如果只剩一个人，则游戏结束
+        // 6. 通知用户发言
+        userFfoSpeakNotice(ffoGameDTO);
+        // 7. 如果只剩一个人，则游戏结束
         if (ffoGameDTO.getPlayingUsers().size() == 1) {
             UserDTO pollUser = ffoGameDTO.getPlayingUsers().poll();
             ffoGameDTO.getRanking().offerFirst(pollUser);
@@ -189,8 +195,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
             ffoGameOver(ffoGameDTO);
             return;
         }
-        // 7、8 步 通知用户，存入redis
-        userFfoSpeakNotice(ffoGameDTO);
+        // 8. 存入redis
         ffoGameRedisDao.saveFfoGameDTO(ffoGameDTO);
     }
 

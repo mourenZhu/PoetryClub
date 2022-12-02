@@ -5,6 +5,7 @@ import cn.zhumouren.poetryclub.constant.games.FfoGamePoemType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Iterables;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
+@NoArgsConstructor
 @Data
 public class FfoGameDTO implements Serializable {
 
@@ -58,20 +60,24 @@ public class FfoGameDTO implements Serializable {
 
     private LocalDateTime endTime;
 
-    public static FfoGameDTO getFfoGameDTOByFfoGameRoomDTO(FfoGameRoomDTO ffoGameRoomDTO) {
-        FfoGameDTO ffoGameDTO = FfoGameMapper.INSTANCE.ffoGameRoomDTOToFfoGameDTO(ffoGameRoomDTO);
-        ffoGameDTO.setRoomId(ffoGameRoomDTO.getId());
-        ffoGameDTO.setCreateTime(LocalDateTime.now());
-        ffoGameDTO.setKeyword(ffoGameRoomDTO.getKeyword());
-        if (ffoGameDTO.getAllowWordInAny()) {
-            ffoGameDTO.setKeywordIndex(-1);
+    public FfoGameDTO(FfoGameRoomDTO ffoGameRoomDTO) {
+        roomId = ffoGameRoomDTO.getId();
+        users = ffoGameRoomDTO.getUsers();
+        playingUsers = new ConcurrentLinkedQueue<>(ffoGameRoomDTO.getUsers());
+        keyword = ffoGameRoomDTO.getKeyword();
+        allowWordInAny = ffoGameRoomDTO.getAllowWordInAny();
+        if (allowWordInAny) {
+            keywordIndex = -1;
         } else {
-            ffoGameDTO.setKeywordIndex(0);
+            keywordIndex = 0;
         }
-        ffoGameDTO.setPlayingUsers(new ConcurrentLinkedQueue<>(ffoGameRoomDTO.getUsers()));
-        ffoGameDTO.setRanking(new ArrayDeque<>());
-        ffoGameDTO.setUserSentences(new LinkedList<>());
-        return ffoGameDTO;
+        playerPreparationSecond = ffoGameRoomDTO.getPlayerPreparationSecond();
+        maxSentenceLength = ffoGameRoomDTO.getMaxSentenceLength();
+        constantSentenceLength = ffoGameRoomDTO.getConstantSentenceLength();
+        ffoGamePoemType = ffoGameRoomDTO.getFfoGamePoemType();
+        userSentences = new ArrayList<>();
+        ranking = new ArrayDeque<>(ffoGameRoomDTO.getUsers().size());
+        createTime = LocalDateTime.now();
     }
 
     @JsonIgnore
