@@ -1,5 +1,6 @@
 package cn.zhumouren.poetryclub.notice;
 
+import cn.zhumouren.poetryclub.bean.dto.FfoGameDTO;
 import cn.zhumouren.poetryclub.bean.dto.FfoGameRoomDTO;
 import cn.zhumouren.poetryclub.bean.dto.FfoGameSentenceDTO;
 import cn.zhumouren.poetryclub.bean.dto.UserDTO;
@@ -38,6 +39,15 @@ public class StompFfoGameNotice {
             messagingTemplate.convertAndSendToUser(username, MessageDestinations.USER_GAME_ROOM_MESSAGE_DESTINATION,
                     MessageOutputVO.getOutputMessageDTO(user, msg));
         });
+    }
+
+    /**
+     * 游戏数据通知
+     */
+    public void ffoGameNotice(FfoGameDTO ffoGameDTO) {
+        log.debug("游戏数据通知 {}", ffoGameDTO);
+        ffoGameDTO.getUsernames().forEach(user -> messagingTemplate
+                .convertAndSendToUser(user, MessageDestinations.USER_GAME_FFO_DESTINATION, ffoGameDTO));
     }
 
     public void ffoSentenceNotice(Iterable<String> users, FfoGameSentenceDTO ffoGameSentenceDTO) {

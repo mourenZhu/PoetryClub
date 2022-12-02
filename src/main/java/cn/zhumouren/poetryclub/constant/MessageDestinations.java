@@ -12,6 +12,10 @@ public class MessageDestinations {
      */
     public static final String USER_GAME_FFO_ROOM_DESTINATION = "/game/ffo/room";
     /**
+     * 飞花令游戏数据路径
+     */
+    public static final String USER_GAME_FFO_DESTINATION = "/game/ffo";
+    /**
      * 飞花令游戏句子路径
      */
     public static final String USER_GAME_FFO_SENTENCE_DESTINATION = "/game/ffo/sentence";
@@ -32,5 +36,5 @@ public class MessageDestinations {
     /**
      * 飞花令游戏结束路径
      */
-    public static final String USER_GAME_FFO_OVER_DESTINATION = "/game/ffo/over";
+    public static final String USER_GAME_FFO_OVER_DESTINATION = "/game/ffo/end";
 }
