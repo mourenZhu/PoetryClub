@@ -1,6 +1,7 @@
 package cn.zhumouren.poetryclub.bean.dto;
 
 import cn.zhumouren.poetryclub.constant.games.FfoGameSentenceJudgeType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -53,6 +54,7 @@ public class FfoGameSentenceDTO implements Serializable {
         return true;
     }
 
+    @JsonIgnore
     public List<UserDTO> getVotedUsers() {
         List<UserDTO> votedUsers = new ArrayList<>();
         userVotes.forEach(voteDTO -> votedUsers.add(voteDTO.getUser()));
