@@ -22,6 +22,10 @@ public enum FfoGameSentenceJudgeType {
      */
     KEYWORD_NOT_IN_CORRECT_POSITION,
     /**
+     * 内容重复
+     */
+    DUPLICATE_CONTENT,
+    /**
      * 只允许说古诗，但没有在数据库中找到
      */
     ONLY_ANCIENTS_POEM_BUT_NOT_FIND,

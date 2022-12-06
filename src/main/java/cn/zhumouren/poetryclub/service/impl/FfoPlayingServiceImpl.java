@@ -281,6 +281,13 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
                 return;
             }
         }
+        // 查看是否重复
+        for (FfoGameSentenceDTO userSentence : ffoGameDTO.getUserSentences()) {
+            if (userSentence.getSentence().equals(ffoGameSentenceDTO.getSentence())) {
+                ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.DUPLICATE_CONTENT);
+                return;
+            }
+        }
         // 3.2 检测句子是否在相应位置
         // 允许 令 在任意位置，但句子中不含 令
         if (!ffoGameDTO.getAllowWordInAny() && sentence.contains(ffoGameDTO.getKeyword().toString())) {
