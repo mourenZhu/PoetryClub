@@ -193,6 +193,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
             ffoGameDTO.getRanking().offerFirst(pollUser);
             ffoGameDTO.setEndTime(LocalDateTime.now());
             ffoGameOver(ffoGameDTO);
+            ffoTaskService.removeSpeakTimeOutTask(ffoGameDTO.getRoomId());
             return;
         }
         // 8. 添加发言超时任务
@@ -345,7 +346,6 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
                     fgd.getNextSpeaker(), "", FfoGameSentenceJudgeType.NULL_CONTENT, timeout);
             fgd.getUserSentences().add(ffoGameSentenceDTO);
             ffoSentenceHandle(fgd);
-            ffoTaskService.removeSpeakTimeOutTask(roomId);
         });
     }
 

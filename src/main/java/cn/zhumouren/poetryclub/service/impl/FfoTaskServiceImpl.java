@@ -41,21 +41,25 @@ public class FfoTaskServiceImpl implements FfoTaskService {
 
     @Override
     public void addSpeakTimeOutTask(String roomId, String cronExpression, Runnable tasklet) {
+        log.info("飞花令定时任务: roomId {}, cronExpression {}", roomId, cronExpression);
         addTask(TASK_SPEAK + roomId, cronExpression, tasklet);
     }
 
     @Override
     public void removeSpeakTimeOutTask(String roomId) {
+        log.info("移除定时任务: roomId {}", roomId);
         removeTask(TASK_SPEAK + roomId);
     }
 
     @Override
     public void addVoteTimeOutTask(String roomId, String cronExpression, Runnable tasklet) {
+        log.info("投票定时任务: roomId {}, cronExpression {}", roomId, cronExpression);
         addTask(TASK_VOTE + roomId, cronExpression, tasklet);
     }
 
     @Override
     public void removeVoteTimeOutTask(String roomId) {
+        log.info("移除投票定时任务: roomId {}", roomId);
         removeTask(TASK_VOTE + roomId);
     }
 }
