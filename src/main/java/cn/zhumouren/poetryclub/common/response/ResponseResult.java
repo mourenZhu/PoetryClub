@@ -71,27 +71,24 @@ public class ResponseResult<T> implements Serializable {
         return vo;
     }
 
-    public static ResponseResult<Boolean> failed() {
-        ResponseResult<Boolean> vo = new ResponseResult<>();
+    public static <T> ResponseResult<T> failed() {
+        ResponseResult<T> vo = new ResponseResult<>();
         vo.code = ResponseCode.FAILED.getCode();
         vo.msg = ResponseCode.FAILED.getMsg();
-        vo.data = Boolean.FALSE;
         return vo;
     }
 
-    public static ResponseResult<Boolean> failed(ResponseCode code) {
-        ResponseResult<Boolean> vo = new ResponseResult<>();
+    public static <T> ResponseResult<T> failed(ResponseCode code) {
+        ResponseResult<T> vo = new ResponseResult<>();
         vo.code = code.getCode();
         vo.msg = code.getMsg();
-        vo.data = Boolean.FALSE;
         return vo;
     }
 
-    public static ResponseResult<Boolean> failedWithMsg(String message) {
-        ResponseResult<Boolean> vo = new ResponseResult<>();
+    public static <T> ResponseResult<T> failedWithMsg(String message) {
+        ResponseResult<T> vo = new ResponseResult<>();
         vo.code = ResponseCode.FAILED.getCode();
         vo.msg = message;
-        vo.data = Boolean.FALSE;
         return vo;
     }
 
