@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class FfoVoteOutputVO implements Serializable {
 
-    private UserDTO currentSpeaker;
+    private UserDTO currentUser;
 
     private String currentSentence;
 

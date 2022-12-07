@@ -4,7 +4,7 @@ import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomReqVO;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomResVO;
 import cn.zhumouren.poetryclub.bean.vo.FfoSentenceInputVO;
-import cn.zhumouren.poetryclub.bean.vo.FfoVoteInputVO;
+import cn.zhumouren.poetryclub.bean.vo.FfoVoteReqVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.service.FfoPlayingService;
 import cn.zhumouren.poetryclub.service.FfoService;
@@ -65,11 +65,12 @@ public class FfoController {
         ffoPlayingService.userSendFfoSentence(roomId, userEntity, ffoSentenceInputVO);
     }
 
-    @MessageMapping("/ffo/{roomId}/vote")
-    public void voteFfoSentence(FfoVoteInputVO ffoVoteInputVO, @DestinationVariable("roomId") String roomId) {
+    @PostMapping("/{roomId}/vote")
+    public ResponseResult<Boolean> postFfoVote(
+            @PathVariable("roomId") String roomId, @RequestBody FfoVoteReqVO ffoVoteReqVO) {
         UserEntity userEntity = SecurityContextUtil.getUserEntity();
-        ffoVoteInputVO.setCreateTime(LocalDateTime.now());
-        ffoPlayingService.userVoteFfoSentence(roomId, userEntity, ffoVoteInputVO);
+        ffoVoteReqVO.setCreateTime(LocalDateTime.now());
+        return ffoPlayingService.userVoteFfoSentence(roomId, userEntity, ffoVoteReqVO);
     }
 
     @MessageMapping("/ffo/{roomId}/users")

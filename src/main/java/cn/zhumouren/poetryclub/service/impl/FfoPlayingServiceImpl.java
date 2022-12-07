@@ -207,37 +207,50 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
      *
      * @param roomId
      * @param userEntity
-     * @param ffoVoteInputVO
+     * @param ffoVoteReqVO
      */
     @Override
-    public void userVoteFfoSentence(String roomId, UserEntity userEntity, FfoVoteInputVO ffoVoteInputVO) {
+    public ResponseResult<Boolean> userVoteFfoSentence(String roomId, UserEntity userEntity, FfoVoteReqVO ffoVoteReqVO) {
         FfoGameDTO ffoGameDTO = ffoGameRedisDao.getFfoGameDTO(roomId);
         UserDTO userDTO = new UserDTO(userEntity);
         if (ObjectUtils.isEmpty(ffoGameDTO)) {
             log.debug("游戏 {} 不存在", roomId);
-            return;
+            return ResponseResult.failedWithMsg("游戏不存在");
         }
         if (!ffoGameDTO.getUsers().contains(userDTO)) {
             log.debug("用户 {} 不在 {} 房间中", userEntity.getUsername(), roomId);
-            return;
+            return ResponseResult.failedWithMsg("用户不在房间中");
         }
         if (ffoGameDTO.getRanking().contains(userDTO)) {
             log.debug("用户 {} 已被淘汰，不能投票", userEntity.getUsername());
-            return;
+            return ResponseResult.failedWithMsg("用户已被淘汰");
         }
         FfoGameSentenceDTO ffoGameSentenceDTO = ffoGameDTO.getLastSentenceDTO();
-        boolean voted = ffoGameSentenceDTO.sentenceVote(new FfoGameVoteDTO(userDTO,
-                ffoVoteInputVO.getFfoVoteType(), ffoVoteInputVO.getCreateTime()));
-        if (!voted) {
-            return;
+
+        var ffoGameVoteDTO = new FfoGameVoteDTO(userDTO,
+                ffoVoteReqVO.getFfoVoteType(), ffoVoteReqVO.getCreateTime());
+        if (!ffoGameSentenceDTO.getSentenceJudgeType().equals(FfoGameSentenceJudgeType.WAITING_USERS_VOTE)) {
+            log.debug("不在等待投票的状态中");
+            return ResponseResult.failedWithMsg("不在等待投票的状态中");
         }
+        if (ffoGameSentenceDTO.getUser().equals(ffoGameVoteDTO.getUser())) {
+            log.debug("用户 {} 不能给自己投票", ffoGameVoteDTO.getUser());
+            return ResponseResult.failedWithMsg("用户不能给自己投票");
+        }
+        if (ffoGameSentenceDTO.isVoted(ffoGameVoteDTO.getUser())) {
+            log.debug("用户 {} 已经投过票了", ffoGameVoteDTO.getUser());
+            return ResponseResult.failedWithMsg("用户已经投过票了");
+        }
+        log.info("投票信息: ffoGameVoteDTO = {}", ffoGameVoteDTO);
+        ffoGameSentenceDTO.getUserVotes().add(ffoGameVoteDTO);
         // 最后一个用户投票，进入最后投票处理阶段
-        if (ffoGameSentenceDTO.getUserVotes().size() == ffoGameDTO.getUsers().size()) {
+        if (ffoGameSentenceDTO.getUserVotes().size() == ffoGameDTO.getPlayingUsers().size() - 1) {
             ffoTaskService.removeVoteTimeOutTask(roomId);
             ffoVoteHandle(ffoGameDTO);
-            return;
+            return ResponseResult.success();
         }
         ffoGameRedisDao.saveFfoGameDTO(ffoGameDTO);
+        return ResponseResult.success();
     }
 
     /**
@@ -248,8 +261,9 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
      */
     private void ffoVoteHandle(FfoGameDTO ffoGameDTO) {
         FfoGameSentenceDTO ffoGameSentenceDTO = ffoGameDTO.getLastSentenceDTO();
+        ffoGameSentenceDTO.setCreateTime(LocalDateTime.now());
         // 只要没被淘汰的人投票有一半及以上的人通过，则算成功
-        if (ffoGameSentenceDTO.getUserVotes().size() >= ffoGameDTO.getPlayingUsers().size() / 2) {
+        if (ffoGameSentenceDTO.getFavorNums() >= ffoGameDTO.getPlayingUsers().size() / 2) {
             ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.SUCCESS);
         } else {
             ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.VOTE_FAILED);

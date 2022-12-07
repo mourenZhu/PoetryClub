@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-public class FfoVoteInputVO implements Serializable {
+public class FfoVoteReqVO implements Serializable {
     private FfoVoteType ffoVoteType;
     private LocalDateTime createTime;
 }

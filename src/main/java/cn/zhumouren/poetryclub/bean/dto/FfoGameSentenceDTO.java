@@ -1,6 +1,7 @@
 package cn.zhumouren.poetryclub.bean.dto;
 
 import cn.zhumouren.poetryclub.constant.games.FfoGameSentenceJudgeType;
+import cn.zhumouren.poetryclub.constant.games.FfoVoteType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -50,8 +51,26 @@ public class FfoGameSentenceDTO implements Serializable {
             log.debug("用户 {} 不能给自己投票", ffoGameVoteDTO.getUser());
             return false;
         }
+        if (isVoted(ffoGameVoteDTO.getUser())) {
+            log.debug("用户 {} 已经投过票了", ffoGameVoteDTO.getUser());
+            return false;
+        }
         userVotes.add(ffoGameVoteDTO);
         return true;
+    }
+
+    /**
+     * 投过票为true, 没有投过为false
+     * @param userDTO
+     * @return
+     */
+    public boolean isVoted(UserDTO userDTO) {
+        for (FfoGameVoteDTO userVote : userVotes) {
+            if (userVote.getUser().equals(userDTO)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @JsonIgnore
@@ -59,5 +78,15 @@ public class FfoGameSentenceDTO implements Serializable {
         List<UserDTO> votedUsers = new ArrayList<>();
         userVotes.forEach(voteDTO -> votedUsers.add(voteDTO.getUser()));
         return votedUsers;
+    }
+
+    @JsonIgnore
+    public int getFavorNums() {
+        return (int) userVotes.stream().mapToInt((userVote) -> {
+         if (userVote.getFfoVoteType().equals(FfoVoteType.FAVOR)) {
+             return 1;
+         }
+         return 0;
+        }).summaryStatistics().getSum();
     }
 }
