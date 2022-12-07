@@ -57,6 +57,7 @@ public class StompFfoGameNotice {
     }
 
     public void ffoNextNotice(Iterable<String> users, FfoNextOutputVO ffoNextOutputVO) {
+        log.debug("通知, 下一个回答的用户");
         users.forEach(user -> messagingTemplate.convertAndSendToUser(
                 user, MessageDestinations.USER_GAME_FFO_NEXT_DESTINATION, ffoNextOutputVO));
     }
