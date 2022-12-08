@@ -31,12 +31,12 @@ public class FfoPlayingServiceTest {
     public void creatGameRoomAndEnterRoomAndStartGameTest() {
         UserEntity user = userRepository.findByUsername("test00");
         FfoGameRoomReqVO ffoGameRoomReqVO = new FfoGameRoomReqVO();
-        String roomId = ffoService.userCreateGameRoom(user, ffoGameRoomReqVO).getData();
+//        String roomId = ffoService.userCreateGameRoom(user, ffoGameRoomReqVO).getData();
 
         for (int i = 1; i < 3; i++) {
             UserEntity u = userRepository.findByUsername("test0" + i);
-            ResponseResult<Boolean> booleanResponseResult = ffoService.userEnterGameRoom(u, roomId);
-            System.out.println("user " + u.getUsername() + "  enter = " + booleanResponseResult.getData());
+//            ResponseResult<Boolean> booleanResponseResult = ffoService.userEnterGameRoom(u, roomId);
+//            System.out.println("user " + u.getUsername() + "  enter = " + booleanResponseResult.getData());
         }
 
         System.out.println(ffoPlayingService.userStartGame(user));

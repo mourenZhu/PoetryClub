@@ -310,12 +310,15 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
             return;
         }
         // 令 要处于指定位置，但不处于指定位置
-        else if (!ffoGameDTO.getAllowWordInAny() &&
-                sentence.matches(String.format("^[\\u4e00-\\u9fa5]{%d}%c.*",
-                        ffoGameDTO.getKeywordIndex(), ffoGameDTO.getKeyword()))) {
-            log.debug("令 要处于指定位置，但不处于指定位置，{} 本轮结束", userDTO);
-            ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.KEYWORD_NOT_IN_CORRECT_POSITION);
-            return;
+        if (!ffoGameDTO.getAllowWordInAny()) {
+            var format = String.format("^[\\u4e00-\\u9fa5]{%d}%c.*",
+                    ffoGameDTO.getKeywordIndex(), ffoGameDTO.getKeyword());
+            log.debug("句子 {}, 令 format {}, 结果 {}", sentence, format, sentence.matches(format));
+            if (!sentence.matches(format)) {
+                log.debug("令 要处于 {} 位置，但不处于指定位置，{} 本轮结束", ffoGameDTO.getKeywordIndex(), userDTO);
+                ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.KEYWORD_NOT_IN_CORRECT_POSITION);
+                return;
+            }
         }
         // 3.3 检查允许说什么样类型的诗句
         FfoGamePoemType ffoGamePoemType = ffoGameDTO.getFfoGamePoemType();
