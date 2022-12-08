@@ -304,7 +304,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
         }
         // 3.2 检测句子是否在相应位置
         // 允许 令 在任意位置，但句子中不含 令
-        if (sentence.contains(ffoGameDTO.getKeyword().toString())) {
+        if (!sentence.contains(ffoGameDTO.getKeyword().toString())) {
             log.debug("句子中不含 令， {} 本轮结束", userDTO);
             ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.NO_KEYWORD);
             return;
