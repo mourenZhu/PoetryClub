@@ -26,7 +26,7 @@ import java.time.format.DateTimeFormatter;
 @EnableScheduling
 public class AppConfig {
 
-//    @Bean
+    @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -42,7 +42,7 @@ public class AppConfig {
         javaTimeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(DateTimeFormatter.ofPattern("HH:mm:ss")));
 
         objectMapper.registerModule(javaTimeModule);
-        objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+//        objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
 //        objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance,
 //                ObjectMapper.DefaultTyping.NON_FINAL);
         return objectMapper;
