@@ -22,6 +22,7 @@ import cn.zhumouren.poetryclub.util.RedisUtil;
 import cn.zhumouren.poetryclub.util.RoomIdUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.data.keyvalue.repository.KeyValueRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +31,6 @@ import java.util.*;
 @Slf4j
 @Service
 public class FfoServiceImpl implements FfoService {
-
     private final RedisUtil redisUtil;
     private final RedisUserService redisUserService;
     private final FfoGameRoomRedisDAO ffoGameRoomRedisDao;
@@ -41,7 +41,9 @@ public class FfoServiceImpl implements FfoService {
     private final PoemRepository poemRepository;
 
     public FfoServiceImpl(RedisUtil redisUtil, RedisUserService redisUserService,
-                          FfoGameRoomRedisDAO ffoGameRoomRedisDao, UserGameStateDAO userGameStateDAO, StompFfoGameNotice ffoGameNotice, FfoGameRepository ffoGameRepository, UserRepository userRepository, PoemRepository poemRepository) {
+                          FfoGameRoomRedisDAO ffoGameRoomRedisDao, UserGameStateDAO userGameStateDAO,
+                          StompFfoGameNotice ffoGameNotice, FfoGameRepository ffoGameRepository,
+                          UserRepository userRepository, PoemRepository poemRepository) {
         this.redisUtil = redisUtil;
         this.redisUserService = redisUserService;
         this.ffoGameRoomRedisDao = ffoGameRoomRedisDao;
@@ -109,7 +111,10 @@ public class FfoServiceImpl implements FfoService {
         if (ffoGameRoomDTO.getFfoStateType().equals(FfoStateType.PLAYING)) {
             return ResponseResult.failedWithMsg("游戏进行中，不能离开游戏");
         }
-        ffoGameRoomDTO.removeUser(new UserDTO(user));
+        boolean isRemove = ffoGameRoomDTO.removeUser(new UserDTO(user));
+        if (!isRemove) {
+            return ResponseResult.failedWithMsg("不在游戏房间中");
+        }
         redisUserService.userLeaveGameRoom(user);
         // 如果users 长度为0，则删除房间
         // 否则从新设置房主
@@ -143,6 +148,40 @@ public class FfoServiceImpl implements FfoService {
             ffoGameRoomResVOs.add(FfoGameMapper.INSTANCE.ffoGameRoomDTOToFfoGameRoomResVO(ffoGameRoomDTO));
         });
         return ResponseResult.success(ffoGameRoomResVOs);
+    }
+
+    @Override
+    public void kickOutUser(String roomId, UserEntity homeowner, String kickOutUser) {
+        if (!redisUtil.hHasKey(RedisKey.FFO_GAME_ROOM_KEY.name(), roomId)) {
+            log.debug("飞花令游戏房间不存在");
+            return;
+        }
+        FfoGameRoomDTO ffoGameRoomDTO = ffoGameRoomRedisDao.getFfoGameRoomDTO(roomId);
+        UserDTO homeownerDTO = new UserDTO(homeowner);
+        if (!ffoGameRoomDTO.getHomeowner().equals(homeownerDTO)) {
+            log.debug("只有房主才能踢出用户");
+            return;
+        }
+        if (ffoGameRoomDTO.getFfoStateType().equals(FfoStateType.PLAYING)) {
+            log.debug("游戏进行中，不能踢出用户");
+            return;
+        }
+        if (homeownerDTO.getUsername().equals(kickOutUser)) {
+            log.debug("房主不能踢自己");
+            return;
+        }
+        UserDTO kickOutUserDTO = ffoGameRoomDTO.getUserDTOByUsername(kickOutUser);
+        if (ObjectUtils.isEmpty(kickOutUserDTO)) {
+            log.debug("{} 不在房间中", kickOutUser);
+            return;
+        }
+        ffoGameRoomDTO.removeUser(kickOutUserDTO);
+        ffoGameRoomRedisDao.saveFfoGameRoomDTO(ffoGameRoomDTO);
+        ffoGameNotice.ffoGameRoomUserKickOutNotice(kickOutUser);
+        ffoGameNotice.userGameRoomActionNotice(kickOutUserDTO, kickOutUserDTO.getNickname() + "被踢出了房间!",
+                ffoGameRoomDTO.getUsernames());
+        ffoGameNotice.ffoGameRoomUsersNotice(ffoGameRoomDTO.getUsers());
+        ffoGameNotice.ffoGameRoomNotice(ffoGameRoomDTO);
     }
 
     @Transactional(rollbackFor = Exception.class)

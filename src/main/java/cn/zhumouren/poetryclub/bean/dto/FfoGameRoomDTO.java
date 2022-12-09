@@ -78,4 +78,18 @@ public class FfoGameRoomDTO implements Serializable {
     public boolean removeUser(UserDTO userDTO) {
         return users.remove(userDTO);
     }
+
+    @JsonIgnore
+    public UserDTO getUserDTOByUsername(String username) {
+        for (UserDTO userDTO : users) {
+            if (userDTO.getUsername().equals(username)) {
+                return userDTO;
+            }
+        }
+        return null;
+    }
+
+    public boolean hasUser(String user) {
+        return getUsernames().contains(user);
+    }
 }

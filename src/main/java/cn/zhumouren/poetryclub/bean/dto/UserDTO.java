@@ -23,6 +23,9 @@ public class UserDTO implements Serializable {
         this.avatar = UserUtil.getUserAvatarUrl(userEntity.getAvatarName());
     }
 
+    public UserDTO(String username) {
+        this.username = username;
+    }
 
     @Override
     public boolean equals(Object o) {

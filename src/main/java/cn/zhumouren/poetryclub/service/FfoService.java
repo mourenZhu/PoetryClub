@@ -19,6 +19,16 @@ public interface FfoService extends UserWebsocketService {
 
     ResponseResult<Set<FfoGameRoomResVO>> listFfoGameRoom();
 
+    /**
+     * 把用户踢出房间
+     *
+     * @param roomId
+     * @param homeowner
+     * @param kickOutUser
+     * @return
+     */
+    void kickOutUser(String roomId, UserEntity homeowner, String kickOutUser);
+
     void saveFfoGame(FfoGameDTO ffoGameDTO);
 
     void updateUsersSequence(String roomId, UserEntity homeowner, List<String> users);

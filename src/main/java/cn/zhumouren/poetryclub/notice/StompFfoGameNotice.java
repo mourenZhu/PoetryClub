@@ -37,8 +37,31 @@ public class StompFfoGameNotice {
         noticeUsers.forEach(username -> {
             log.debug("发送给 = {}", username);
             messagingTemplate.convertAndSendToUser(username, MessageDestinations.USER_GAME_ROOM_MESSAGE_DESTINATION,
-                    MessageOutputVO.getOutputMessageDTO(user, msg));
+                    new MessageOutputVO(user, msg));
         });
+    }
+
+    /**
+     * 用户在房间中的行为通知
+     *
+     * @param user        做出行为的用户
+     * @param msg         要通知的信息
+     * @param noticeUsers 被通知的用户
+     */
+    public void userGameRoomActionNotice(UserDTO user, String msg, Iterable<String> noticeUsers) {
+        noticeUsers.forEach(username -> {
+            log.debug("发送给 = {}", username);
+            messagingTemplate.convertAndSendToUser(username, MessageDestinations.USER_GAME_ROOM_MESSAGE_DESTINATION,
+                    new MessageOutputVO(user, msg));
+        });
+    }
+
+
+
+    public void ffoGameRoomUserKickOutNotice(String kickOutUser) {
+        messagingTemplate.convertAndSendToUser(kickOutUser,
+                MessageDestinations.USER_GAME_FFO_ROOM_KICK_OUT_DESTINATION,
+                kickOutUser + "被踢出房间了");
     }
 
     /**

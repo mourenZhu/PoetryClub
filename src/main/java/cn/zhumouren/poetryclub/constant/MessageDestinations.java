@@ -12,6 +12,10 @@ public class MessageDestinations {
      */
     public static final String USER_GAME_FFO_ROOM_DESTINATION = "/game/ffo/room";
     /**
+     * 用户被踢出房间路径
+     */
+    public static final String USER_GAME_FFO_ROOM_KICK_OUT_DESTINATION = "/game/ffo/room/kick_out";
+    /**
      * 飞花令游戏数据路径
      */
     public static final String USER_GAME_FFO_DESTINATION = "/game/ffo";

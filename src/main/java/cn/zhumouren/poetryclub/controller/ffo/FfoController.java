@@ -78,6 +78,11 @@ public class FfoController {
         UserEntity userEntity = SecurityContextUtil.getUserEntity();
         ffoService.updateUsersSequence(roomId, userEntity, users);
     }
-
+    @MessageMapping("/ffo/{roomId}/kick_out/{kickOutUser}")
+    public void kickOutUser(@DestinationVariable("roomId") String roomId,
+                            @DestinationVariable("kickOutUser") String kickOutUser) {
+        UserEntity userEntity = SecurityContextUtil.getUserEntity();
+        ffoService.kickOutUser(roomId, userEntity, kickOutUser);
+    }
 
 }
