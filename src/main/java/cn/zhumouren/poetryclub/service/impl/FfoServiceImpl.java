@@ -163,13 +163,18 @@ public class FfoServiceImpl implements FfoService {
         Map<String, FfoGameRoomDTO> ffoGameRoomDTOHashMap = ffoGameRoomRedisDao.getFfoGameRoomDTOMap();
         List<FfoGameRoomResVO> ffoGameRoomResVOs = new ArrayList<>();
         if (ObjectUtils.isNotEmpty(roomId)) {
-            ffoGameRoomResVOs.add(FfoGameMapper.INSTANCE
-                    .ffoGameRoomDTOToFfoGameRoomResVO(ffoGameRoomDTOHashMap.get(roomId)));
+            FfoGameRoomDTO ffoGameRoomDTO = ffoGameRoomDTOHashMap.get(roomId);
+            if (ffoGameRoomDTO.getDisplay()) {
+                ffoGameRoomResVOs.add(FfoGameMapper.INSTANCE
+                        .ffoGameRoomDTOToFfoGameRoomResVO(ffoGameRoomDTO));
+            }
             return ResponseResult.success(ffoGameRoomResVOs);
         }
         for (Map.Entry<String, FfoGameRoomDTO> stringFfoGameRoomDTOEntry : ffoGameRoomDTOHashMap.entrySet()) {
-            ffoGameRoomResVOs.add(FfoGameMapper.INSTANCE.ffoGameRoomDTOToFfoGameRoomResVO(stringFfoGameRoomDTOEntry
-                    .getValue()));
+            if (stringFfoGameRoomDTOEntry.getValue().getDisplay()) {
+                ffoGameRoomResVOs.add(FfoGameMapper.INSTANCE.ffoGameRoomDTOToFfoGameRoomResVO(stringFfoGameRoomDTOEntry
+                        .getValue()));
+            }
         }
         if (ObjectUtils.isNotEmpty(keyword)) {
             ffoGameRoomResVOs = ffoGameRoomResVOs.stream().filter(fgr ->
