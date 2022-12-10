@@ -66,6 +66,9 @@ public class FfoServiceImpl implements FfoService {
     @Override
     public synchronized ResponseResult<Boolean> userEnterGameRoom(UserEntity user, String roomId) {
         FfoGameRoomDTO ffoGameRoomDTO = ffoGameRoomRedisDao.getFfoGameRoomDTO(roomId);
+        if (ObjectUtils.isEmpty(ffoGameRoomDTO)) {
+            return ResponseResult.failedWithMsg(roomId + " 房间不存在");
+        }
         if (ffoGameRoomDTO.getFfoStateType().equals(FfoStateType.PLAYING)) {
             return ResponseResult.failedWithMsg("游戏进行中，不可加入");
         }

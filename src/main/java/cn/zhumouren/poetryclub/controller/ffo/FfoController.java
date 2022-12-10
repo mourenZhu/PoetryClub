@@ -11,6 +11,7 @@ import cn.zhumouren.poetryclub.constant.games.FfoStateType;
 import cn.zhumouren.poetryclub.service.FfoPlayingService;
 import cn.zhumouren.poetryclub.service.FfoService;
 import cn.zhumouren.poetryclub.util.SecurityContextUtil;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.validation.annotation.Validated;
@@ -40,6 +41,9 @@ public class FfoController {
 
     @PostMapping("/room/{roomId}")
     public ResponseResult<Boolean> enterGameRoom(@PathVariable("roomId") String roomId) {
+        if (ObjectUtils.isEmpty(roomId)) {
+            return ResponseResult.failedWithMsg("房间号为空");
+        }
         return ffoService.userEnterGameRoom(SecurityContextUtil.getUserEntity(), roomId);
     }
 
