@@ -6,6 +6,8 @@ import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomResVO;
 import cn.zhumouren.poetryclub.bean.vo.FfoSentenceInputVO;
 import cn.zhumouren.poetryclub.bean.vo.FfoVoteReqVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
+import cn.zhumouren.poetryclub.constant.games.FfoGamePoemType;
+import cn.zhumouren.poetryclub.constant.games.FfoStateType;
 import cn.zhumouren.poetryclub.service.FfoPlayingService;
 import cn.zhumouren.poetryclub.service.FfoService;
 import cn.zhumouren.poetryclub.util.SecurityContextUtil;
@@ -47,8 +49,13 @@ public class FfoController {
     }
 
     @GetMapping("/")
-    public ResponseResult<List<FfoGameRoomResVO>> listFfoGameRoom() {
-        return ffoService.listFfoGameRoom();
+    public ResponseResult<List<FfoGameRoomResVO>> listFfoGameRoom(
+            @RequestParam(required = false) String roomId,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Boolean allowWordInAny,
+            @RequestParam(required = false) FfoGamePoemType ffoGamePoemType,
+            @RequestParam(required = false) FfoStateType ffoStateType) {
+        return ffoService.listFfoGameRoom(roomId, keyword, allowWordInAny, ffoGamePoemType, ffoStateType);
     }
 
     @PostMapping
@@ -77,6 +84,7 @@ public class FfoController {
         UserEntity userEntity = SecurityContextUtil.getUserEntity();
         ffoService.updateUsersSequence(roomId, userEntity, users);
     }
+
     @MessageMapping("/ffo/{roomId}/kick_out/{kickOutUser}")
     public void kickOutUser(@DestinationVariable("roomId") String roomId,
                             @DestinationVariable("kickOutUser") String kickOutUser) {

@@ -5,6 +5,8 @@ import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomReqVO;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomResVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
+import cn.zhumouren.poetryclub.constant.games.FfoGamePoemType;
+import cn.zhumouren.poetryclub.constant.games.FfoStateType;
 
 import java.util.List;
 
@@ -17,6 +19,9 @@ public interface FfoService extends UserWebsocketService {
     ResponseResult<Boolean> userLeaveGameRoom(UserEntity user);
 
     ResponseResult<List<FfoGameRoomResVO>> listFfoGameRoom();
+
+    ResponseResult<List<FfoGameRoomResVO>> listFfoGameRoom(
+            String roomId, String keyword, Boolean allowWordInAny, FfoGamePoemType ffoGamePoemType, FfoStateType ffoStateType);
 
     /**
      * 把用户踢出房间

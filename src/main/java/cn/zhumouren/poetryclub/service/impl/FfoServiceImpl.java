@@ -12,6 +12,7 @@ import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constant.GamesType;
 import cn.zhumouren.poetryclub.constant.MessageDestinations;
 import cn.zhumouren.poetryclub.constant.RedisKey;
+import cn.zhumouren.poetryclub.constant.games.FfoGamePoemType;
 import cn.zhumouren.poetryclub.constant.games.FfoStateType;
 import cn.zhumouren.poetryclub.dao.*;
 import cn.zhumouren.poetryclub.notice.StompFfoGameNotice;
@@ -22,11 +23,11 @@ import cn.zhumouren.poetryclub.util.RedisUtil;
 import cn.zhumouren.poetryclub.util.RoomIdUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.data.keyvalue.repository.KeyValueRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -149,6 +150,40 @@ public class FfoServiceImpl implements FfoService {
                 ffoGameRoomResVOs.add(FfoGameMapper.INSTANCE.ffoGameRoomDTOToFfoGameRoomResVO(ffoGameRoomDTO));
             }
         });
+        return ResponseResult.success(ffoGameRoomResVOs);
+    }
+
+    @Override
+    public ResponseResult<List<FfoGameRoomResVO>> listFfoGameRoom(
+            String roomId, String keyword, Boolean allowWordInAny,
+            FfoGamePoemType ffoGamePoemType, FfoStateType ffoStateType) {
+        Map<String, FfoGameRoomDTO> ffoGameRoomDTOHashMap = ffoGameRoomRedisDao.getFfoGameRoomDTOMap();
+        List<FfoGameRoomResVO> ffoGameRoomResVOs = new ArrayList<>();
+        if (ObjectUtils.isNotEmpty(roomId)) {
+            ffoGameRoomResVOs.add(FfoGameMapper.INSTANCE
+                    .ffoGameRoomDTOToFfoGameRoomResVO(ffoGameRoomDTOHashMap.get(roomId)));
+            return ResponseResult.success(ffoGameRoomResVOs);
+        }
+        for (Map.Entry<String, FfoGameRoomDTO> stringFfoGameRoomDTOEntry : ffoGameRoomDTOHashMap.entrySet()) {
+            ffoGameRoomResVOs.add(FfoGameMapper.INSTANCE.ffoGameRoomDTOToFfoGameRoomResVO(stringFfoGameRoomDTOEntry
+                    .getValue()));
+        }
+        if (ObjectUtils.isNotEmpty(keyword)) {
+            ffoGameRoomResVOs = ffoGameRoomResVOs.stream().filter(fgr ->
+                    fgr.getKeyword().equals(keyword)).collect(Collectors.toList());
+        }
+        if (ObjectUtils.isNotEmpty(allowWordInAny)) {
+            ffoGameRoomResVOs = ffoGameRoomResVOs.stream().filter(fgr ->
+                    fgr.getAllowWordInAny().equals(allowWordInAny)).collect(Collectors.toList());
+        }
+        if (ObjectUtils.isNotEmpty(ffoGamePoemType)) {
+            ffoGameRoomResVOs = ffoGameRoomResVOs.stream().filter(fgr ->
+                    fgr.getFfoGamePoemType().equals(ffoGamePoemType)).collect(Collectors.toList());
+        }
+        if (ObjectUtils.isNotEmpty(ffoStateType)) {
+            ffoGameRoomResVOs = ffoGameRoomResVOs.stream().filter(fgr ->
+                    fgr.getFfoStateType().equals(ffoStateType)).collect(Collectors.toList());
+        }
         return ResponseResult.success(ffoGameRoomResVOs);
     }
 

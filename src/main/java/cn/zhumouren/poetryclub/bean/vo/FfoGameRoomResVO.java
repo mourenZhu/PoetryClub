@@ -14,6 +14,7 @@ import java.util.Set;
 public class FfoGameRoomResVO implements Serializable {
     private String id;
     private String name;
+    private String keyword;
     private Integer maxPlayers;
     private Integer playerPreparationSecond;
     private Boolean display;
