@@ -12,6 +12,8 @@ public interface RedisUserService {
 
     void userLeaveGameRoom(UserEntity user);
 
+    void userLeaveGameRoom(String username);
+
     String getUserGameRoomId(UserEntity user, GamesType gamesType);
 
     List<UserDTO> listGameRoomUser(String roomId);

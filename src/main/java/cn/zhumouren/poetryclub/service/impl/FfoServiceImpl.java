@@ -221,6 +221,7 @@ public class FfoServiceImpl implements FfoService {
             return;
         }
         ffoGameRoomDTO.removeUser(kickOutUserDTO);
+        redisUserService.userLeaveGameRoom(kickOutUser);
         ffoGameRoomRedisDao.saveFfoGameRoomDTO(ffoGameRoomDTO);
         ffoGameNotice.ffoGameRoomUserKickOutNotice(kickOutUser);
         ffoGameNotice.userGameRoomActionNotice(kickOutUserDTO, kickOutUserDTO.getNickname() + "被踢出了房间!",

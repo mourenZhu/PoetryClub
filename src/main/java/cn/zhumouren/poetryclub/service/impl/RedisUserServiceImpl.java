@@ -35,6 +35,11 @@ public class RedisUserServiceImpl implements RedisUserService {
     }
 
     @Override
+    public void userLeaveGameRoom(String username) {
+        redisUtil.hdel(RedisKey.USER_GAME_STATE.name(), username);
+    }
+
+    @Override
     public String getUserGameRoomId(UserEntity user, GamesType gamesType) {
         UserGameStateDTO userGameStateDTO = (UserGameStateDTO) redisUtil
                 .hget(RedisKey.USER_GAME_STATE.name(), user.getUsername());
