@@ -7,7 +7,6 @@ import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomResVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 
 import java.util.List;
-import java.util.Set;
 
 public interface FfoService extends UserWebsocketService {
 
@@ -17,7 +16,7 @@ public interface FfoService extends UserWebsocketService {
 
     ResponseResult<Boolean> userLeaveGameRoom(UserEntity user);
 
-    ResponseResult<Set<FfoGameRoomResVO>> listFfoGameRoom();
+    ResponseResult<List<FfoGameRoomResVO>> listFfoGameRoom();
 
     /**
      * 把用户踢出房间

@@ -8,6 +8,9 @@ import cn.zhumouren.poetryclub.util.RedisUtil;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Repository
 public class FfoGameRoomRedisDAO {
 
@@ -23,6 +26,10 @@ public class FfoGameRoomRedisDAO {
 
     public boolean saveFfoGameRoomDTO(FfoGameRoomDTO ffoGameRoomDTO) {
         return redisUtil.hset(RedisKey.FFO_GAME_ROOM_KEY.name(), ffoGameRoomDTO.getId(), ffoGameRoomDTO, TimeSecondConstant.HOUR_SECOND * 12);
+    }
+
+    public Map<String, FfoGameRoomDTO> getFfoGameRoomDTOMap() {
+        return (HashMap<String, FfoGameRoomDTO>) redisUtil.hmget(RedisKey.FFO_GAME_ROOM_KEY.name());
     }
 
     public void updateFfoGameRoomState(String roomId, FfoStateType ffoStateType) {

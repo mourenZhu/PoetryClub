@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/user/games/ffo")
@@ -48,7 +47,7 @@ public class FfoController {
     }
 
     @GetMapping("/")
-    public ResponseResult<Set<FfoGameRoomResVO>> listFfoGameRoom() {
+    public ResponseResult<List<FfoGameRoomResVO>> listFfoGameRoom() {
         return ffoService.listFfoGameRoom();
     }
 

@@ -141,11 +141,13 @@ public class FfoServiceImpl implements FfoService {
     }
 
     @Override
-    public ResponseResult<Set<FfoGameRoomResVO>> listFfoGameRoom() {
-        HashMap<String, FfoGameRoomDTO> ffoGameRoomDTOHashMap = (HashMap<String, FfoGameRoomDTO>) redisUtil.hmget(RedisKey.FFO_GAME_ROOM_KEY.name());
-        Set<FfoGameRoomResVO> ffoGameRoomResVOs = new HashSet<>();
+    public ResponseResult<List<FfoGameRoomResVO>> listFfoGameRoom() {
+        Map<String, FfoGameRoomDTO> ffoGameRoomDTOHashMap = ffoGameRoomRedisDao.getFfoGameRoomDTOMap();
+        List<FfoGameRoomResVO> ffoGameRoomResVOs = new ArrayList<>();
         ffoGameRoomDTOHashMap.forEach((roomId, ffoGameRoomDTO) -> {
-            ffoGameRoomResVOs.add(FfoGameMapper.INSTANCE.ffoGameRoomDTOToFfoGameRoomResVO(ffoGameRoomDTO));
+            if (ffoGameRoomDTO.getDisplay()) {
+                ffoGameRoomResVOs.add(FfoGameMapper.INSTANCE.ffoGameRoomDTOToFfoGameRoomResVO(ffoGameRoomDTO));
+            }
         });
         return ResponseResult.success(ffoGameRoomResVOs);
     }
