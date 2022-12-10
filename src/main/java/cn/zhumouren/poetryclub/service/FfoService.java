@@ -33,4 +33,13 @@ public interface FfoService extends UserWebsocketService {
 
     void updateUsersSequence(String roomId, UserEntity homeowner, List<String> users);
 
+    /**
+     * 用户更新房间数据
+     *
+     * @param roomId
+     * @param homeowner
+     * @param ffoGameRoomReqVO
+     */
+    void updateGameRoom(String roomId, UserEntity homeowner, FfoGameRoomReqVO ffoGameRoomReqVO);
+
 }

@@ -243,6 +243,23 @@ public class FfoServiceImpl implements FfoService {
         ffoGameRoomRedisDao.saveFfoGameRoomDTO(ffoGameRoomDTO);
     }
 
+    @Override
+    public void updateGameRoom(String roomId, UserEntity homeowner, FfoGameRoomReqVO ffoGameRoomReqVO) {
+        FfoGameRoomDTO ffoGameRoomDTO = ffoGameRoomRedisDao.getFfoGameRoomDTO(roomId);
+        if (ObjectUtils.isEmpty(ffoGameRoomDTO)) {
+            log.info("房间 {} 不存在", roomId);
+            return;
+        }
+        UserDTO userDTO = new UserDTO(homeowner);
+        if (!ffoGameRoomDTO.getHomeowner().equals(userDTO)) {
+            log.info("{} 不是房间 {} 的房主", userDTO, roomId);
+            return;
+        }
+        ffoGameRoomDTO.update(ffoGameRoomReqVO);
+        ffoGameRoomRedisDao.saveFfoGameRoomDTO(ffoGameRoomDTO);
+        ffoGameNotice.ffoGameRoomNotice(ffoGameRoomDTO);
+    }
+
 
     @Transactional
     @Override

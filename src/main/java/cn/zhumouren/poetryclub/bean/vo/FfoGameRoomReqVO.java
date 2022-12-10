@@ -33,13 +33,17 @@ public class FfoGameRoomReqVO implements Serializable {
     /**
      * 飞花令句子的最大长度
      */
+    @Range(min = 4, max = 7)
     private Integer maxSentenceLength;
     /**
      * 本局游戏飞花令句子长度是否可变
      * 如果不可变，则每回合的句子长度 等于 句子的最大长度
      * 如果可变，则每回合的句子长度 小于等于 句子的最大长度
      */
+    @NotNull
     private Boolean constantSentenceLength;
+    @NotNull
     private Boolean display;
+    @NotNull
     private FfoGamePoemType ffoGamePoemType;
 }

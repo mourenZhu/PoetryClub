@@ -2,6 +2,7 @@ package cn.zhumouren.poetryclub.bean.dto;
 
 import cn.zhumouren.poetryclub.bean.mapper.FfoGameMapper;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomReqVO;
+import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomResVO;
 import cn.zhumouren.poetryclub.constant.games.FfoGamePoemType;
 import cn.zhumouren.poetryclub.constant.games.FfoStateType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -91,5 +92,17 @@ public class FfoGameRoomDTO implements Serializable {
 
     public boolean hasUser(String user) {
         return getUsernames().contains(user);
+    }
+
+    public void update(FfoGameRoomReqVO ffoGameRoomReqVO) {
+        this.name = ffoGameRoomReqVO.getName();
+        this.maxPlayers = ffoGameRoomReqVO.getMaxPlayers();
+        this.keyword = ffoGameRoomReqVO.getKeyword();
+        this.allowWordInAny = ffoGameRoomReqVO.getAllowWordInAny();
+        this.playerPreparationSecond = ffoGameRoomReqVO.getPlayerPreparationSecond();
+        this.maxSentenceLength = ffoGameRoomReqVO.getMaxSentenceLength();
+        this.constantSentenceLength = ffoGameRoomReqVO.getConstantSentenceLength();
+        this.display = ffoGameRoomReqVO.getDisplay();
+        this.ffoGamePoemType = ffoGameRoomReqVO.getFfoGamePoemType();
     }
 }

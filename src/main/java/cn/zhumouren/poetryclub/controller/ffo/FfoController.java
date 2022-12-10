@@ -85,4 +85,11 @@ public class FfoController {
         ffoService.kickOutUser(roomId, userEntity, kickOutUser);
     }
 
+    @MessageMapping("/ffo/{roomId}/update")
+    public void updateGameRoom(@Validated FfoGameRoomReqVO ffoGameRoomReqVO,
+                               @DestinationVariable("roomId") String roomId) {
+        UserEntity userEntity = SecurityContextUtil.getUserEntity();
+        ffoService.updateGameRoom(roomId, userEntity, ffoGameRoomReqVO);
+    }
+
 }
