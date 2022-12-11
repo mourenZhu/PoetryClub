@@ -4,11 +4,9 @@ import cn.zhumouren.poetryclub.bean.entity.PoemEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.util.List;
 
-@RepositoryRestResource(collectionResourceRel = "poem")
 public interface PoemRepository extends JpaRepository<PoemEntity, Long> {
     PoemEntity findByContentContains(String content);
 

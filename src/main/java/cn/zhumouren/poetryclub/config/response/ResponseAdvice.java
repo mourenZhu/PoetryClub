@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
-import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
@@ -41,9 +40,6 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
             return objectMapper.writeValueAsString(ResponseResult.success(body));
         }
         if(body instanceof ResponseResult<?>){
-            return body;
-        }
-        if (body instanceof RepresentationModel<?>) {
             return body;
         }
 //        log.info("body = {}", body.getClass());
