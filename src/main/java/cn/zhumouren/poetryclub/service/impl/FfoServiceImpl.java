@@ -301,6 +301,10 @@ public class FfoServiceImpl implements FfoService {
             log.info("{} 不是房间 {} 的房主", userDTO, roomId);
             return;
         }
+        if (ffoGameRoomDTO.getFfoStateType().equals(FfoStateType.PLAYING)) {
+            log.info("{} 正在游戏中，不能修改", roomId);
+            return;
+        }
         ffoGameRoomDTO.update(ffoGameRoomReqVO);
         ffoGameRoomRedisDao.saveFfoGameRoomDTO(ffoGameRoomDTO);
         ffoGameNotice.ffoGameRoomNotice(ffoGameRoomDTO);
