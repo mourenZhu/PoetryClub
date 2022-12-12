@@ -3,6 +3,7 @@ package cn.zhumouren.poetryclub.service;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.mapper.UserMapper;
 import cn.zhumouren.poetryclub.bean.vo.UserRegisterVO;
+import cn.zhumouren.poetryclub.constant.DBRoleType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,6 +34,18 @@ public class UserServiceTest {
             UserEntity userEntity = UserMapper.INSTANCE.userRegisterVOToUserEntity(userRegisterVO);
             userService.createUser(userEntity);
         }
+    }
 
+    @Rollback(value = false)
+    @Transactional
+    @Test
+    public void createAdminTest() {
+        String pw = "123456";
+        for (int i = 0; i < 10; i++) {
+            UserRegisterVO userRegisterVO;
+            userRegisterVO = new UserRegisterVO("admin0" + i, pw);
+            UserEntity userEntity = UserMapper.INSTANCE.userRegisterVOToUserEntity(userRegisterVO);
+            userService.createUser(userEntity, DBRoleType.ROLE_ADMIN);
+        }
     }
 }
