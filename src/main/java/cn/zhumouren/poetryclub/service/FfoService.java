@@ -8,6 +8,7 @@ import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomResVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constant.games.FfoGamePoemType;
 import cn.zhumouren.poetryclub.constant.games.FfoStateType;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -48,7 +49,9 @@ public interface FfoService extends UserWebsocketService {
      */
     void updateGameRoom(String roomId, UserEntity homeowner, FfoGameRoomReqVO ffoGameRoomReqVO);
 
-    ResponseResult<List<FfoGameResVo>> listUserFfoGame(UserEntity userEntity, Pageable pageable);
+    ResponseResult<Page<FfoGameResVo>> listFfoGame(Pageable pageable);
+
+    ResponseResult<Page<FfoGameResVo>> listUserFfoGame(String username, Pageable pageable);
 
     /**
      * 获取飞花令的游戏记录

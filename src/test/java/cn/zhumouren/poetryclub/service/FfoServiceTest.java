@@ -13,6 +13,7 @@ import cn.zhumouren.poetryclub.util.PageUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Set;
@@ -85,7 +86,13 @@ public class FfoServiceTest {
     @Test
     public void listUserFfoGamesTest() {
         UserEntity test01 = userRepository.findByUsername("test01");
-        List<FfoGameResVo> data = ffoService.listUserFfoGame(test01, PageUtil.getPageable()).getData();
-        data.forEach(System.out::println);
+//        List<FfoGameResVo> data = ffoService.listUserFfoGame(test01.getUsername(), PageUtil.getPageable()).getData();
+//        data.forEach(System.out::println);
+    }
+
+    @Test
+    public void listFfoGameTest() {
+        ResponseResult<Page<FfoGameResVo>> pageResponseResult = ffoService.listFfoGame(PageUtil.getPageable());
+        pageResponseResult.getData().getContent().forEach(System.out::println);
     }
 }

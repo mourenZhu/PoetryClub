@@ -24,6 +24,7 @@ import cn.zhumouren.poetryclub.util.RedisUtil;
 import cn.zhumouren.poetryclub.util.RoomIdUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -316,20 +317,23 @@ public class FfoServiceImpl implements FfoService {
     }
 
     @Override
-    public ResponseResult<List<FfoGameResVo>> listUserFfoGame(UserEntity userEntity, Pageable pageable) {
-        List<FfoGameEntity> data = ffoGameRepository
-                .findByUserInfoEntities_UserEntity_UsernameOrderByEndTimeDesc(
-                        userEntity.getUsername(), pageable);
-        return ResponseResult.success(ffoGameMapper.toDtoList(data));
+    public ResponseResult<Page<FfoGameResVo>> listFfoGame(Pageable pageable) {
+        Page<FfoGameEntity> page = ffoGameRepository.findAll(pageable);
+        return ResponseResult.success(page.map(ffoGameMapper::toDto));
+    }
+
+    @Override
+    public ResponseResult<Page<FfoGameResVo>> listUserFfoGame(String username, Pageable pageable) {
+        Page<FfoGameEntity> page = ffoGameRepository
+                .findByUserInfoEntities_UserEntity_UsernameOrderByEndTimeDesc(username, pageable);
+        return ResponseResult.success(page.map(ffoGameMapper::toDto));
     }
 
     @Override
     public ResponseResult<FfoGameResVo> getFfoGame(Long id) {
         Optional<FfoGameEntity> optional = ffoGameRepository.findById(id);
-        if (optional.isPresent()) {
-            return ResponseResult.success(ffoGameMapper.toDto(optional.get()));
-        }
-        return ResponseResult.failedWithMsg(id + " 不存在");
+        return optional.map(ffoGameEntity -> ResponseResult.success(ffoGameMapper.toDto(ffoGameEntity)))
+                .orElseGet(() -> ResponseResult.failedWithMsg(id + " 不存在"));
     }
 
 

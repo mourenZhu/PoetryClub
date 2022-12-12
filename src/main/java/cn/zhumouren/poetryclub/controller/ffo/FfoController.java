@@ -10,8 +10,10 @@ import cn.zhumouren.poetryclub.service.FfoService;
 import cn.zhumouren.poetryclub.util.PageUtil;
 import cn.zhumouren.poetryclub.util.SecurityContextUtil;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,12 +68,24 @@ public class FfoController {
         return ffoPlayingService.userStartGame(userEntity);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping("/")
-    public ResponseResult<List<FfoGameResVo>> listFfoGame(
+    public ResponseResult<Page<FfoGameResVo>> listFfoGame(
+            @RequestParam(required = false) Integer pageNum,
+            @RequestParam(required = false) Integer pageSize) {
+        return ffoService.listFfoGame(PageUtil.getPageable(pageNum, pageSize));
+    }
+
+    @GetMapping("/{username}/")
+    public ResponseResult<Page<FfoGameResVo>> listUserFfoGame(
+            @PathVariable("username") String username,
             @RequestParam(required = false) Integer pageNum,
             @RequestParam(required = false) Integer pageSize) {
         UserEntity userEntity = SecurityContextUtil.getUserEntity();
-        return ffoService.listUserFfoGame(userEntity, PageUtil.getPageable(pageNum, pageSize));
+        if (!userEntity.getUsername().equals(username)) {
+            return ResponseResult.failedWithMsg("没有权限查看其他用户的比赛记录");
+        }
+        return ffoService.listUserFfoGame(username, PageUtil.getPageable(pageNum, pageSize));
     }
 
     @GetMapping("/{id}")

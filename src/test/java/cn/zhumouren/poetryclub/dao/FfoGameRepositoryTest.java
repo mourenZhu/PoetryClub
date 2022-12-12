@@ -6,6 +6,7 @@ import cn.zhumouren.poetryclub.util.PageUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -20,10 +21,9 @@ public class FfoGameRepositoryTest {
 
     @Test
     public void listUserFfoGameTest() {
-        List<FfoGameEntity> data = ffoGameRepository.findByUserInfoEntities_UserEntity_UsernameOrderByEndTimeDesc
+        Page page = ffoGameRepository.findByUserInfoEntities_UserEntity_UsernameOrderByEndTimeDesc
                 ("test01", PageUtil.getPageable());
-        data.forEach(d -> {
-            System.out.println(ffoGameMapper.toDto(d));
-        });
+        System.out.println(page);
+        page.getContent().forEach(System.out::println);
     }
 }
