@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ResponseBaseExceptionHandler {
 
-    @ExceptionHandler(BaseException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseResult<Boolean> exception(BaseException e) {
-        return ResponseResult.failed(e.getResponseCode());
-    }
+//    @ExceptionHandler(BaseException.class)
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    public ResponseResult<Boolean> exception(BaseException e) {
+//        return ResponseResult.failed(e.getResponseCode());
+//    }
 }
