@@ -20,7 +20,7 @@ configurations {
         extendsFrom annotationProcessor
     }
 }
-def mapstructVersion = '1.5.2.Final'
+def mapstructVersion = '1.5.3.Final'
 def jjwtVersion = '0.11.5'
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -50,7 +50,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
-    testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+//    testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
 }
 
 group = 'cn.zhumouren'
