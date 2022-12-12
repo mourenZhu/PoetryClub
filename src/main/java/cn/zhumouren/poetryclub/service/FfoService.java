@@ -2,11 +2,13 @@ package cn.zhumouren.poetryclub.service;
 
 import cn.zhumouren.poetryclub.bean.dto.FfoGameDTO;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
+import cn.zhumouren.poetryclub.bean.vo.FfoGameResVo;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomReqVO;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomResVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constant.games.FfoGamePoemType;
 import cn.zhumouren.poetryclub.constant.games.FfoStateType;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -45,5 +47,14 @@ public interface FfoService extends UserWebsocketService {
      * @param ffoGameRoomReqVO
      */
     void updateGameRoom(String roomId, UserEntity homeowner, FfoGameRoomReqVO ffoGameRoomReqVO);
+
+    ResponseResult<List<FfoGameResVo>> listUserFfoGame(UserEntity userEntity, Pageable pageable);
+
+    /**
+     * 获取飞花令的游戏记录
+     * @param id
+     * @return
+     */
+    ResponseResult<FfoGameResVo> getFfoGame(Long id);
 
 }

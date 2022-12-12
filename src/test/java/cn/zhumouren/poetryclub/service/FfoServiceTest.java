@@ -1,16 +1,20 @@
 package cn.zhumouren.poetryclub.service;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
+import cn.zhumouren.poetryclub.bean.vo.FfoGameResVo;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomReqVO;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomResVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constant.games.FfoGamePoemType;
+import cn.zhumouren.poetryclub.dao.FfoGameRepository;
 import cn.zhumouren.poetryclub.dao.UserRepository;
 import cn.zhumouren.poetryclub.service.impl.FfoServiceImpl;
+import cn.zhumouren.poetryclub.util.PageUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
 import java.util.Set;
 
 @SpringBootTest
@@ -21,6 +25,8 @@ public class FfoServiceTest {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private FfoGameRepository ffoGameRepository;
 
     @Test
     public void creteGameRoomTest() {
@@ -56,8 +62,8 @@ public class FfoServiceTest {
 
     @Test
     public void listGameRoomTest() {
-        Set<FfoGameRoomResVO> data = ffoService.listFfoGameRoom().getData();
-        data.forEach(System.out::println);
+//        Set<FfoGameRoomResVO> data = ffoService.listFfoGameRoom().getData();
+//        data.forEach(System.out::println);
     }
 
     @Test
@@ -74,5 +80,12 @@ public class FfoServiceTest {
             ResponseResult<Boolean> booleanResponseResult1 = ffoService.userLeaveGameRoom(user);
             System.out.println(booleanResponseResult1);
         }
+    }
+
+    @Test
+    public void listUserFfoGamesTest() {
+        UserEntity test01 = userRepository.findByUsername("test01");
+        List<FfoGameResVo> data = ffoService.listUserFfoGame(test01, PageUtil.getPageable()).getData();
+        data.forEach(System.out::println);
     }
 }

@@ -1,15 +1,13 @@
 package cn.zhumouren.poetryclub.controller.ffo;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
-import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomReqVO;
-import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomResVO;
-import cn.zhumouren.poetryclub.bean.vo.FfoSentenceInputVO;
-import cn.zhumouren.poetryclub.bean.vo.FfoVoteReqVO;
+import cn.zhumouren.poetryclub.bean.vo.*;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constant.games.FfoGamePoemType;
 import cn.zhumouren.poetryclub.constant.games.FfoStateType;
 import cn.zhumouren.poetryclub.service.FfoPlayingService;
 import cn.zhumouren.poetryclub.service.FfoService;
+import cn.zhumouren.poetryclub.util.PageUtil;
 import cn.zhumouren.poetryclub.util.SecurityContextUtil;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -52,7 +50,7 @@ public class FfoController {
         return ffoService.userLeaveGameRoom(SecurityContextUtil.getUserEntity());
     }
 
-    @GetMapping("/")
+    @GetMapping("/room/")
     public ResponseResult<List<FfoGameRoomResVO>> listFfoGameRoom(
             @RequestParam(required = false) String roomId,
             @RequestParam(required = false) String keyword,
@@ -66,6 +64,19 @@ public class FfoController {
     public ResponseResult<Boolean> startGame() {
         UserEntity userEntity = SecurityContextUtil.getUserEntity();
         return ffoPlayingService.userStartGame(userEntity);
+    }
+
+    @GetMapping("/")
+    public ResponseResult<List<FfoGameResVo>> listFfoGame(
+            @RequestParam(required = false) Integer pageNum,
+            @RequestParam(required = false) Integer pageSize) {
+        UserEntity userEntity = SecurityContextUtil.getUserEntity();
+        return ffoService.listUserFfoGame(userEntity, PageUtil.getPageable(pageNum, pageSize));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseResult<FfoGameResVo> getFfoGame(@PathVariable("id") Long id) {
+        return ffoService.getFfoGame(id);
     }
 
     @MessageMapping("/ffo/{roomId}/sentence")

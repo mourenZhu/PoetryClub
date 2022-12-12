@@ -6,6 +6,7 @@ import cn.zhumouren.poetryclub.bean.dto.UserDTO;
 import cn.zhumouren.poetryclub.bean.dto.UserGameStateDTO;
 import cn.zhumouren.poetryclub.bean.entity.*;
 import cn.zhumouren.poetryclub.bean.mapper.FfoGameMapper;
+import cn.zhumouren.poetryclub.bean.vo.FfoGameResVo;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomReqVO;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameRoomResVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
@@ -23,6 +24,7 @@ import cn.zhumouren.poetryclub.util.RedisUtil;
 import cn.zhumouren.poetryclub.util.RoomIdUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,10 +43,12 @@ public class FfoServiceImpl implements FfoService {
     private final UserRepository userRepository;
     private final PoemRepository poemRepository;
 
+    private final FfoGameMapper ffoGameMapper;
+
     public FfoServiceImpl(RedisUtil redisUtil, RedisUserService redisUserService,
                           FfoGameRoomRedisDAO ffoGameRoomRedisDao, UserGameStateDAO userGameStateDAO,
                           StompFfoGameNotice ffoGameNotice, FfoGameRepository ffoGameRepository,
-                          UserRepository userRepository, PoemRepository poemRepository) {
+                          UserRepository userRepository, PoemRepository poemRepository, FfoGameMapper ffoGameMapper) {
         this.redisUtil = redisUtil;
         this.redisUserService = redisUserService;
         this.ffoGameRoomRedisDao = ffoGameRoomRedisDao;
@@ -53,6 +57,7 @@ public class FfoServiceImpl implements FfoService {
         this.ffoGameRepository = ffoGameRepository;
         this.userRepository = userRepository;
         this.poemRepository = poemRepository;
+        this.ffoGameMapper = ffoGameMapper;
     }
 
     /**
@@ -308,6 +313,23 @@ public class FfoServiceImpl implements FfoService {
         ffoGameRoomDTO.update(ffoGameRoomReqVO);
         ffoGameRoomRedisDao.saveFfoGameRoomDTO(ffoGameRoomDTO);
         ffoGameNotice.ffoGameRoomNotice(ffoGameRoomDTO);
+    }
+
+    @Override
+    public ResponseResult<List<FfoGameResVo>> listUserFfoGame(UserEntity userEntity, Pageable pageable) {
+        List<FfoGameEntity> data = ffoGameRepository
+                .findByUserInfoEntities_UserEntity_UsernameOrderByEndTimeDesc(
+                        userEntity.getUsername(), pageable);
+        return ResponseResult.success(ffoGameMapper.toDtoList(data));
+    }
+
+    @Override
+    public ResponseResult<FfoGameResVo> getFfoGame(Long id) {
+        Optional<FfoGameEntity> optional = ffoGameRepository.findById(id);
+        if (optional.isPresent()) {
+            return ResponseResult.success(ffoGameMapper.toDto(optional.get()));
+        }
+        return ResponseResult.failedWithMsg(id + " 不存在");
     }
 
 
