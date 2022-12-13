@@ -80,11 +80,15 @@ public class FfoController {
     @GetMapping("/{username}/")
     public ResponseResult<Page<FfoGameResVo>> listUserFfoGame(
             @PathVariable("username") String username,
+            @RequestParam(required = false) Character keyword,
             @RequestParam(required = false) Integer pageNum,
             @RequestParam(required = false) Integer pageSize) {
         UserEntity userEntity = SecurityContextUtil.getUserEntity();
         if (!userEntity.getUsername().equals(username)) {
             return ResponseResult.failedWithMsg("没有权限查看其他用户的比赛记录");
+        }
+        if (ObjectUtils.isNotEmpty(keyword)) {
+            return ffoService.listUserFfoGame(username, keyword, PageUtil.getPageable(pageNum, pageSize));
         }
         return ffoService.listUserFfoGame(username, PageUtil.getPageable(pageNum, pageSize));
     }

@@ -53,6 +53,8 @@ public interface FfoService extends UserWebsocketService {
 
     ResponseResult<Page<FfoGameResVo>> listUserFfoGame(String username, Pageable pageable);
 
+    ResponseResult<Page<FfoGameResVo>> listUserFfoGame(String username, Character keyword, Pageable pageable);
+
     /**
      * 获取飞花令的游戏记录
      * @param id

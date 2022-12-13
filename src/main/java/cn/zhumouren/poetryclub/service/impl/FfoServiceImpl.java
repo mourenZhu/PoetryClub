@@ -330,6 +330,13 @@ public class FfoServiceImpl implements FfoService {
     }
 
     @Override
+    public ResponseResult<Page<FfoGameResVo>> listUserFfoGame(String username, Character keyword, Pageable pageable) {
+        Page<FfoGameEntity> page = ffoGameRepository
+                .findByUserInfoEntities_UserEntity_UsernameAndKeywordOrderByEndTimeDesc(username, keyword, pageable);
+        return ResponseResult.success(page.map(ffoGameMapper::toDto));
+    }
+
+    @Override
     public ResponseResult<FfoGameResVo> getFfoGame(Long id) {
         Optional<FfoGameEntity> optional = ffoGameRepository.findById(id);
         return optional.map(ffoGameEntity -> ResponseResult.success(ffoGameMapper.toDto(ffoGameEntity)))
