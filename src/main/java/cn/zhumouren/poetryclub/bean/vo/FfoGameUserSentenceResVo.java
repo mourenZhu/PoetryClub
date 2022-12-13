@@ -2,6 +2,7 @@ package cn.zhumouren.poetryclub.bean.vo;
 
 import cn.zhumouren.poetryclub.bean.entity.PoemEntity;
 import cn.zhumouren.poetryclub.constant.games.FfoGameSentenceJudgeType;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,6 +15,7 @@ import java.util.Set;
 @Data
 public class FfoGameUserSentenceResVo implements Serializable {
     private final Long id;
+    @JsonProperty("userVO")
     private final UserPublicResVo userEntity;
     private final String sentence;
     private final PoemEntity poem;

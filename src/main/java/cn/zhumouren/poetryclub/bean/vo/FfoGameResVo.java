@@ -1,6 +1,7 @@
 package cn.zhumouren.poetryclub.bean.vo;
 
 import cn.zhumouren.poetryclub.constant.games.FfoGamePoemType;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.validation.constraints.Min;
@@ -28,7 +29,9 @@ public class FfoGameResVo implements Serializable {
     private final Boolean constantSentenceLength;
     @NotNull
     private final FfoGamePoemType ffoGamePoemType;
+    @JsonProperty("userInfos")
     private final Set<FfoGameUserInfoResVo> userInfoEntities;
+    @JsonProperty("userSentences")
     private final Set<FfoGameUserSentenceResVo> userSentenceEntities;
     @NotNull
     private final LocalDateTime createTime;
