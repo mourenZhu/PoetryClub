@@ -21,6 +21,6 @@ public class FfoGameUserSentenceResVo implements Serializable {
     private final PoemEntity poem;
     private final FfoGameSentenceJudgeType sentenceJudgeType;
     @JsonProperty("userVotes")
-    private final Set<FfoGameUserVoteResDto> userVoteEntities;
+    private final Set<FfoGameUserVoteResVo> userVoteEntities;
     private final LocalDateTime createTime;
 }

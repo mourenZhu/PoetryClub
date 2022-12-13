@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  * A DTO for the {@link cn.zhumouren.poetryclub.bean.entity.FfoGameUserVoteEntity} entity
  */
 @Data
-public class FfoGameUserVoteResDto implements Serializable {
+public class FfoGameUserVoteResVo implements Serializable {
     @JsonProperty("userVo")
     private final UserPublicResVo userEntity;
     private final FfoVoteType ffoVoteType;
