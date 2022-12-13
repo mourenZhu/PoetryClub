@@ -21,7 +21,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/user/games/ffo")
+@RequestMapping("/api/games/ffo")
+@PreAuthorize("hasAnyRole('ROLE_USER')")
 public class FfoController {
 
     private final FfoService ffoService;
