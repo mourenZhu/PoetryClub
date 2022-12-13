@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  */
 @Data
 public class FfoGameUserVoteResDto implements Serializable {
-    @JsonProperty("userVO")
+    @JsonProperty("userVo")
     private final UserPublicResVo userEntity;
     private final FfoVoteType ffoVoteType;
     private final LocalDateTime createTime;

@@ -15,7 +15,7 @@ import java.util.Set;
 @Data
 public class FfoGameUserSentenceResVo implements Serializable {
     private final Long id;
-    @JsonProperty("userVO")
+    @JsonProperty("userVo")
     private final UserPublicResVo userEntity;
     private final String sentence;
     private final PoemEntity poem;

@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Data
 public class FfoGameUserInfoResVo implements Serializable {
     private final Long id;
-    @JsonProperty("userVO")
+    @JsonProperty("userVo")
     private final UserPublicResVo userEntity;
     @Range(min = 1, max = 10)
     private final Integer sequence;
