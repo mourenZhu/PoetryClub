@@ -3,6 +3,7 @@ package cn.zhumouren.poetryclub.init.db;
 import cn.zhumouren.poetryclub.bean.entity.AuthorEntity;
 import cn.zhumouren.poetryclub.dao.AuthorRepository;
 import cn.zhumouren.poetryclub.init.IInitData;
+import cn.zhumouren.poetryclub.init.db.utils.PoemUtil;
 import cn.zhumouren.poetryclub.property.AppInitProperty;
 import cn.zhumouren.poetryclub.util.JsonFileUtil;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
@@ -33,7 +34,7 @@ public class InitAuthor implements IInitData {
 
     private final AuthorRepository authorRepository;
 
-    public InitAuthor(AppInitProperty appInitProperty, AuthorRepository authorRepository) {
+    public InitAuthor(AppInitProperty appInitProperty, AuthorRepository authorRepository, PoemUtil poemUtil) {
         this.appInitProperty = appInitProperty;
         this.authorRepository = authorRepository;
     }

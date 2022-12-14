@@ -30,11 +30,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PoemUtil {
 
     private final AuthorRepository authorRepository;
-    private final Map<String, AuthorEntity> authorMap = new HashMap<>();
+    private Map<String, AuthorEntity> authorMap;
     private final Map<String, LiteratureTagEntity> tagEntityMap = new ConcurrentHashMap<>();
 
     public PoemUtil(AuthorRepository authorRepository) {
         this.authorRepository = authorRepository;
+    }
+
+    public void setAuthorMap(Map<String, AuthorEntity> authorMap) {
+        this.authorMap = authorMap;
     }
 
     public List<Map> getPoemMaps(File file) throws IOException {
