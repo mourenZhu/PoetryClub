@@ -343,7 +343,7 @@ public class FfoServiceImpl implements FfoService {
     }
 
     @Override
-    public ResponseResult<Page<FfoGameResVo>> specificationListUserFfoGame(
+    public ResponseResult<Page<FfoGameResVo>> specificationListFfoGame(
             String username, Character keyword, Pageable pageable) {
         Specification<FfoGameEntity> specification = (root, query, criteriaBuilder) -> {
             List<Predicate> listAnd = new ArrayList<>();
@@ -361,6 +361,7 @@ public class FfoServiceImpl implements FfoService {
                 return query.where(andPre).getRestriction();
             }
             query.distinct(true);
+            query.orderBy(criteriaBuilder.desc(root.get("endTime")));
             return query.where().getRestriction();
         };
         Page<FfoGameEntity> page = ffoGameRepository.findAll(specification, pageable);

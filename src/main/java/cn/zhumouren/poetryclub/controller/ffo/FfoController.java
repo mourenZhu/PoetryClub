@@ -76,7 +76,7 @@ public class FfoController {
             @RequestParam(required = false) Character keyword,
             @RequestParam(required = false) Integer pageNum,
             @RequestParam(required = false) Integer pageSize) {
-        return ffoService.specificationListUserFfoGame(username, keyword, PageUtil.getPageable(pageNum, pageSize));
+        return ffoService.specificationListFfoGame(username, keyword, PageUtil.getPageable(pageNum, pageSize));
     }
 
     @GetMapping("/{username}/")

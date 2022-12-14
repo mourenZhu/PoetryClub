@@ -63,7 +63,7 @@ public interface FfoService extends UserWebsocketService {
      * @param pageable
      * @return
      */
-    ResponseResult<Page<FfoGameResVo>> specificationListUserFfoGame(
+    ResponseResult<Page<FfoGameResVo>> specificationListFfoGame(
             String username, Character keyword, Pageable pageable);
 
     /**
