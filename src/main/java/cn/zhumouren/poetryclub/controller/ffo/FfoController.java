@@ -72,9 +72,11 @@ public class FfoController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping("/")
     public ResponseResult<Page<FfoGameResVo>> listFfoGame(
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) Character keyword,
             @RequestParam(required = false) Integer pageNum,
             @RequestParam(required = false) Integer pageSize) {
-        return ffoService.listFfoGame(PageUtil.getPageable(pageNum, pageSize));
+        return ffoService.specificationListUserFfoGame(username, keyword, PageUtil.getPageable(pageNum, pageSize));
     }
 
     @GetMapping("/{username}/")

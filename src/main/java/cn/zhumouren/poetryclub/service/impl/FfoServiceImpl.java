@@ -22,13 +22,19 @@ import cn.zhumouren.poetryclub.service.RedisUserService;
 import cn.zhumouren.poetryclub.util.FfoGameUtil;
 import cn.zhumouren.poetryclub.util.RedisUtil;
 import cn.zhumouren.poetryclub.util.RoomIdUtil;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -333,6 +339,31 @@ public class FfoServiceImpl implements FfoService {
     public ResponseResult<Page<FfoGameResVo>> listUserFfoGame(String username, Character keyword, Pageable pageable) {
         Page<FfoGameEntity> page = ffoGameRepository
                 .findByUserInfoEntities_UserEntity_UsernameAndKeywordOrderByEndTimeDesc(username, keyword, pageable);
+        return ResponseResult.success(page.map(ffoGameMapper::toDto));
+    }
+
+    @Override
+    public ResponseResult<Page<FfoGameResVo>> specificationListUserFfoGame(
+            String username, Character keyword, Pageable pageable) {
+        Specification<FfoGameEntity> specification = (root, query, criteriaBuilder) -> {
+            List<Predicate> listAnd = new ArrayList<>();
+            var userJoin = root.join("userInfoEntities", JoinType.LEFT)
+                    .join("userEntity", JoinType.LEFT);
+            if (ObjectUtils.isNotEmpty(username)) {
+                listAnd.add(criteriaBuilder.equal(userJoin.get("username").as(String.class), username));
+            }
+            if (ObjectUtils.isNotEmpty(keyword)) {
+                listAnd.add(criteriaBuilder.equal(root.get("keyword"), keyword));
+            }
+            Predicate[] andPres = new Predicate[listAnd.size()];
+            if (andPres.length != 0) {
+                Predicate andPre = criteriaBuilder.and(listAnd.toArray(andPres));
+                return query.where(andPre).getRestriction();
+            }
+            query.distinct(true);
+            return query.where().getRestriction();
+        };
+        Page<FfoGameEntity> page = ffoGameRepository.findAll(specification, pageable);
         return ResponseResult.success(page.map(ffoGameMapper::toDto));
     }
 
