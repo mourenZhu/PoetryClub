@@ -347,9 +347,9 @@ public class FfoServiceImpl implements FfoService {
             String username, Character keyword, Pageable pageable) {
         Specification<FfoGameEntity> specification = (root, query, criteriaBuilder) -> {
             List<Predicate> listAnd = new ArrayList<>();
-            var userJoin = root.join("userInfoEntities", JoinType.LEFT)
-                    .join("userEntity", JoinType.LEFT);
             if (ObjectUtils.isNotEmpty(username)) {
+                var userJoin = root.join("userInfoEntities", JoinType.LEFT)
+                        .join("userEntity", JoinType.LEFT);
                 listAnd.add(criteriaBuilder.equal(userJoin.get("username").as(String.class), username));
             }
             if (ObjectUtils.isNotEmpty(keyword)) {
