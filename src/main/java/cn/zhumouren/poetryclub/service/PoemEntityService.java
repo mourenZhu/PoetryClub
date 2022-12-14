@@ -1,8 +1,12 @@
 package cn.zhumouren.poetryclub.service;
 
 import cn.zhumouren.poetryclub.bean.entity.PoemEntity;
+import cn.zhumouren.poetryclub.common.response.ResponseResult;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Set;
 
 public interface PoemEntityService {
 
@@ -22,4 +26,20 @@ public interface PoemEntityService {
      * @return
      */
     List<PoemEntity> listBySentence(String sentence);
+
+    /**
+     * 古诗的复杂查询
+     *
+     * @param author
+     * @param title
+     * @param content
+     * @param tags
+     * @param keyword
+     * @param keywordIndex
+     * @param pageable
+     * @return
+     */
+    ResponseResult<Page<PoemEntity>> listPoem(
+            String author, String title, String content, Set<String> tags,
+            Character keyword, Integer keywordIndex, Pageable pageable);
 }
