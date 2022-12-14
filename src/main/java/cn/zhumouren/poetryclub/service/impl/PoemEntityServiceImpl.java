@@ -18,6 +18,7 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -31,8 +32,12 @@ public class PoemEntityServiceImpl implements PoemEntityService {
 
     @Override
     public List<PoemEntity> listBySentenceWordIndex(Character word, int index) {
-        String regex = String.format("(^[\\u4e00-\\u9fa5]{%d}%c.*|^.*?[，。？；]+[\\u4e00-\\u9fa5]{%d}%c.*)", index, word, index, word);
+        String regex = getFfoRegex(word, index);
         return poemRepository.findByRegex(regex);
+    }
+
+    private String getFfoRegex(Character word, int index) {
+        return String.format("(^[\\u4e00-\\u9fa5]{%d}%c.*|^.*?[，。？；]+[\\u4e00-\\u9fa5]{%d}%c.*)", index, word, index, word);
     }
 
     @Override
@@ -42,24 +47,30 @@ public class PoemEntityServiceImpl implements PoemEntityService {
     }
 
     @Override
+    public ResponseResult<PoemEntity> getPoem(Long id) {
+        Optional<PoemEntity> optional = poemRepository.findById(id);
+        return optional.map(ResponseResult::success).orElseGet(() -> ResponseResult.failedWithMsg("该诗不存在"));
+    }
+
+    @Override
     public ResponseResult<Page<PoemEntity>> listPoem(
             String author, String title, String content, Set<String> tags,
-            Character keyword, Integer keywordIndex, Pageable pageable) {
+            Pageable pageable) {
         Specification<PoemEntity> specification = (root, query, criteriaBuilder) -> {
             List<Predicate> listAnd = new ArrayList<>();
             List<Predicate> listOr = new ArrayList<>();
             Join<PoemEntity, AuthorEntity> authorJoin = root.join("author", JoinType.LEFT);
             Join<PoemEntity, LiteratureTagEntity> tagJoin = root.join("tags", JoinType.LEFT);
-            if (!StringUtils.isBlank(author)) {
+            if (StringUtils.isNotBlank(author)) {
                 listAnd.add(criteriaBuilder.like(authorJoin.get("name").as(String.class), "%" + author + "%"));
             }
-            if (!StringUtils.isBlank(title)) {
+            if (StringUtils.isNotBlank(title)) {
                 listAnd.add(criteriaBuilder.like(root.get("title").as(String.class), "%" + title + "%"));
             }
-            if (!StringUtils.isBlank(content)) {
+            if (StringUtils.isNotBlank(content)) {
                 listAnd.add(criteriaBuilder.like(root.get("content").as(String.class), "%" + content + "%"));
             }
-            if (!ObjectUtils.isEmpty(tags)) {
+            if (ObjectUtils.isNotEmpty(tags)) {
                 for (String tag : tags) {
                     listOr.add(criteriaBuilder.like(tagJoin.get("tag"), "%" + tag + "%"));
                 }
@@ -79,6 +90,12 @@ public class PoemEntityServiceImpl implements PoemEntityService {
             return query.where().getRestriction();
         };
         Page<PoemEntity> page = poemRepository.findAll(specification, pageable);
+        return ResponseResult.success(page);
+    }
+
+    @Override
+    public ResponseResult<Page<PoemEntity>> listPoem(Character keyword, Integer keywordIndex, Pageable pageable) {
+        Page<PoemEntity> page = poemRepository.findByRegex(getFfoRegex(keyword, keywordIndex), pageable);
         return ResponseResult.success(page);
     }
 }

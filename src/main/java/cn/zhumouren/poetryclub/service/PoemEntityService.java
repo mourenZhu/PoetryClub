@@ -27,6 +27,8 @@ public interface PoemEntityService {
      */
     List<PoemEntity> listBySentence(String sentence);
 
+    ResponseResult<PoemEntity> getPoem(Long id);
+
     /**
      * 古诗的复杂查询
      *
@@ -34,12 +36,20 @@ public interface PoemEntityService {
      * @param title
      * @param content
      * @param tags
-     * @param keyword
-     * @param keywordIndex
      * @param pageable
      * @return
      */
     ResponseResult<Page<PoemEntity>> listPoem(
             String author, String title, String content, Set<String> tags,
-            Character keyword, Integer keywordIndex, Pageable pageable);
+            Pageable pageable);
+
+    /**
+     * 通过关键字和位置来找诗
+     *
+     * @param keyword
+     * @param keywordIndex
+     * @param pageable
+     * @return
+     */
+    ResponseResult<Page<PoemEntity>> listPoem(Character keyword, Integer keywordIndex, Pageable pageable);
 }

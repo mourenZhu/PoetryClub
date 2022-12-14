@@ -1,6 +1,7 @@
 package cn.zhumouren.poetryclub.dao;
 
 import cn.zhumouren.poetryclub.bean.entity.PoemEntity;
+import cn.zhumouren.poetryclub.util.PageUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,5 +33,14 @@ public class PoemRepositoryTest {
         List<PoemEntity> poemEntities = poemRepository.findByRegex(regex);
         System.out.println("有诗: " + poemEntities.size() + " 首");
         poemEntities.forEach(System.out::println);
+    }
+
+    @Test
+    public void regexPageTest() {
+        String regex = String.format("(^[\\u4e00-\\u9fa5]{%d}%c.*|^.*?[，。？]+[\\u4e00-\\u9fa5]{%d}%c.*)", 5, '花', 5, '花');
+        System.out.println("regex = " + regex);
+        var page = poemRepository.findByRegex(regex, PageUtil.getPageable());
+        System.out.println("有诗: " + page.getContent().size() + " 首");
+        page.getContent().forEach(System.out::println);
     }
 }
