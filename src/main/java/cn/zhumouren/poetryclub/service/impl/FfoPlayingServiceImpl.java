@@ -15,10 +15,7 @@ import cn.zhumouren.poetryclub.dao.FfoGameRedisDAO;
 import cn.zhumouren.poetryclub.dao.FfoGameRoomRedisDAO;
 import cn.zhumouren.poetryclub.dao.PoemRepository;
 import cn.zhumouren.poetryclub.notice.StompFfoGameNotice;
-import cn.zhumouren.poetryclub.service.FfoPlayingService;
-import cn.zhumouren.poetryclub.service.FfoService;
-import cn.zhumouren.poetryclub.service.FfoTaskService;
-import cn.zhumouren.poetryclub.service.RedisUserService;
+import cn.zhumouren.poetryclub.service.*;
 import cn.zhumouren.poetryclub.util.FfoGameUtil;
 import com.google.common.collect.Iterables;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -34,6 +32,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
     private final RedisUserService redisUserService;
 
     private final PoemRepository poemRepository;
+    private final PoemEntityService poemEntityService;
     private final FfoGameRoomRedisDAO ffoGameRoomRedisDao;
     private final FfoGameRedisDAO ffoGameRedisDao;
     private final StompFfoGameNotice ffoGameNotice;
@@ -42,10 +41,11 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
     private final CommonWordRepository commonWordRepository;
 
     public FfoPlayingServiceImpl(RedisUserService redisUserService, PoemRepository poemRepository,
-                                 FfoGameRoomRedisDAO ffoGameRoomRedisDao, FfoGameRedisDAO ffoGameRedisDao,
+                                 PoemEntityService poemEntityService, FfoGameRoomRedisDAO ffoGameRoomRedisDao, FfoGameRedisDAO ffoGameRedisDao,
                                  StompFfoGameNotice ffoGameNotice, FfoTaskService ffoTaskService, FfoService ffoService, CommonWordRepository commonWordRepository) {
         this.redisUserService = redisUserService;
         this.poemRepository = poemRepository;
+        this.poemEntityService = poemEntityService;
         this.ffoGameRoomRedisDao = ffoGameRoomRedisDao;
         this.ffoGameRedisDao = ffoGameRedisDao;
         this.ffoGameNotice = ffoGameNotice;
@@ -322,7 +322,11 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
         }
         // 3.3 检查允许说什么样类型的诗句
         FfoGamePoemType ffoGamePoemType = ffoGameDTO.getFfoGamePoemType();
-        PoemEntity poemEntity = poemRepository.findByContentContains(sentence);
+        PoemEntity poemEntity = null;
+        List<PoemEntity> poemEntityList = poemEntityService.listBySentence(sentence);
+        if (ObjectUtils.isNotEmpty(poemEntityList)) {
+            poemEntity = poemEntityList.get(0);
+        }
         if (ffoGamePoemType.equals(FfoGamePoemType.ONLY_ANCIENTS_POEM)) {
             if (ObjectUtils.isEmpty(poemEntity)) {
                 log.debug("只允许古诗，但没有找到古诗了，{} 本轮结束", userDTO);

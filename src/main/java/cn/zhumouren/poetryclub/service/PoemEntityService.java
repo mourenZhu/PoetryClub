@@ -14,4 +14,12 @@ public interface PoemEntityService {
      * @return
      */
     List<PoemEntity> listBySentenceWordIndex(Character word, int index);
+
+    /**
+     * 通过一个句子来查找诗，找到的条件是，句子必须相同
+     *
+     * @param sentence
+     * @return
+     */
+    List<PoemEntity> listBySentence(String sentence);
 }

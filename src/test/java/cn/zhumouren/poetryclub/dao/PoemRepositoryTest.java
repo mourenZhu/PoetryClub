@@ -15,8 +15,8 @@ public class PoemRepositoryTest {
 
     @Test
     public void findByContentContainsTest() {
-        PoemEntity poemEntity = poemRepository.findByContentContains("xxxxxx");
-        System.out.println(poemEntity);
+        var poems = poemRepository.findByContentContains("xxxxxx");
+        System.out.println(poems);
     }
 
     @Test

@@ -8,7 +8,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface PoemRepository extends JpaRepository<PoemEntity, Long> {
-    PoemEntity findByContentContains(String content);
+    List<PoemEntity> findByContentLike(String content);
+    List<PoemEntity> findByContentContains(String content);
 
     List<PoemEntity> findByAuthor_NameContains(String name);
 
