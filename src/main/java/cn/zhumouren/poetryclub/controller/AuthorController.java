@@ -2,6 +2,7 @@ package cn.zhumouren.poetryclub.controller;
 
 
 import cn.zhumouren.poetryclub.bean.entity.AuthorEntity;
+import cn.zhumouren.poetryclub.bean.vo.AuthorResVo;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.service.AuthorService;
 import cn.zhumouren.poetryclub.util.PageUtil;
@@ -24,7 +25,7 @@ public class AuthorController {
     }
 
     @GetMapping("/")
-    public ResponseResult<Page<AuthorEntity>> listAuthor(
+    public ResponseResult<Page<AuthorResVo>> listAuthor(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String era,
             @RequestParam(required = false) String description,

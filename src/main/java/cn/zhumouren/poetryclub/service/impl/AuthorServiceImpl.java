@@ -1,6 +1,8 @@
 package cn.zhumouren.poetryclub.service.impl;
 
 import cn.zhumouren.poetryclub.bean.entity.AuthorEntity;
+import cn.zhumouren.poetryclub.bean.mapper.AuthorMapper;
+import cn.zhumouren.poetryclub.bean.vo.AuthorResVo;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.dao.AuthorRepository;
 import cn.zhumouren.poetryclub.service.AuthorService;
@@ -25,7 +27,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public ResponseResult<Page<AuthorEntity>> listAuthor(
+    public ResponseResult<Page<AuthorResVo>> listAuthor(
             String name, String era, String description, Pageable pageable) {
         Specification<AuthorEntity> specification = (root, query, cb) -> {
             List<Predicate> listAnd = new ArrayList<>();
@@ -47,6 +49,6 @@ public class AuthorServiceImpl implements AuthorService {
             return query.where().getRestriction();
         };
         Page<AuthorEntity> page = authorRepository.findAll(specification, pageable);
-        return ResponseResult.success(page);
+        return ResponseResult.success(page.map(AuthorMapper.INSTANCE::toDto));
     }
 }

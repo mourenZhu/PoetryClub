@@ -2,6 +2,7 @@ package cn.zhumouren.poetryclub.controller;
 
 
 import cn.zhumouren.poetryclub.bean.entity.PoemEntity;
+import cn.zhumouren.poetryclub.bean.vo.PoemResVo;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.service.PoemEntityService;
 import cn.zhumouren.poetryclub.util.PageUtil;
@@ -26,12 +27,12 @@ public class PoemController {
     }
 
     @GetMapping("/{id}")
-    public ResponseResult<PoemEntity> getPoem(@PathVariable("id") Long id) {
+    public ResponseResult<PoemResVo> getPoem(@PathVariable("id") Long id) {
         return poemEntityService.getPoem(id);
     }
 
     @GetMapping("/")
-    public ResponseResult<Page<PoemEntity>> listPoem(
+    public ResponseResult<Page<PoemResVo>> listPoem(
             @RequestParam(required = false) String author,
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String content,
@@ -47,7 +48,7 @@ public class PoemController {
     }
 
     @GetMapping("/key-index/")
-    public ResponseResult<Page<PoemEntity>> ffoListPoem(
+    public ResponseResult<Page<PoemResVo>> ffoListPoem(
             Character keyword, Integer index,
             @RequestParam(required = false) Integer pageNum,
             @RequestParam(required = false) Integer pageSize) {
