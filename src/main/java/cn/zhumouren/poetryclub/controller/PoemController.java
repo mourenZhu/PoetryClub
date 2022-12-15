@@ -8,13 +8,15 @@ import cn.zhumouren.poetryclub.util.PageUtil;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.HashSet;
 
+@PreAuthorize("permitAll()")
 @RestController
-@RequestMapping("/api/public/poem")
+@RequestMapping("/api/poem")
 public class PoemController {
 
     private final PoemEntityService poemEntityService;
