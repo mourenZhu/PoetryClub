@@ -34,6 +34,7 @@ public class PoemController {
     @GetMapping("/")
     public ResponseResult<Page<PoemResVo>> listPoem(
             @RequestParam(required = false) String author,
+            @RequestParam(required = false) String era,
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String content,
             @RequestParam(required = false) String[] tags,
@@ -43,7 +44,7 @@ public class PoemController {
             tags = new String[0];
         }
         Pageable pageable = PageUtil.getPageable(pageNum, pageSize);
-        return poemEntityService.listPoem(author, title, content, new HashSet<>(Arrays.asList(tags)),
+        return poemEntityService.listPoem(author, era, title, content, new HashSet<>(Arrays.asList(tags)),
                 pageable);
     }
 

@@ -61,7 +61,7 @@ public class PoemEntityServiceImpl implements PoemEntityService {
 
     @Override
     public ResponseResult<Page<PoemResVo>> listPoem(
-            String author, String title, String content, Set<String> tags,
+            String author, String era, String title, String content, Set<String> tags,
             Pageable pageable) {
         Specification<PoemEntity> specification = (root, query, criteriaBuilder) -> {
             List<Predicate> listAnd = new ArrayList<>();
@@ -70,6 +70,9 @@ public class PoemEntityServiceImpl implements PoemEntityService {
             Join<PoemEntity, LiteratureTagEntity> tagJoin = root.join("tags", JoinType.LEFT);
             if (StringUtils.isNotBlank(author)) {
                 listAnd.add(criteriaBuilder.like(authorJoin.get("name").as(String.class), "%" + author + "%"));
+            }
+            if (StringUtils.isNotBlank(era)) {
+                listAnd.add(criteriaBuilder.like(authorJoin.get("era").as(String.class), "%" + era + "%"));
             }
             if (StringUtils.isNotBlank(title)) {
                 listAnd.add(criteriaBuilder.like(root.get("title").as(String.class), "%" + title + "%"));

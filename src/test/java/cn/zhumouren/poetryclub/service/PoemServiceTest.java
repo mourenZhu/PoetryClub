@@ -28,7 +28,7 @@ public class PoemServiceTest {
 
     @Test
     public void tagsTest() {
-        var page = poemEntityService.listPoem("", "", "",
+        var page = poemEntityService.listPoem("", "","", "",
                 new HashSet<>(Arrays.asList("春", "花")), PageUtil.getPageable());
         page.getData().getContent().forEach(System.out::println);
     }

@@ -34,6 +34,7 @@ public interface PoemEntityService {
      * 古诗的复杂查询
      *
      * @param author
+     * @param era
      * @param title
      * @param content
      * @param tags
@@ -41,7 +42,7 @@ public interface PoemEntityService {
      * @return
      */
     ResponseResult<Page<PoemResVo>> listPoem(
-            String author, String title, String content, Set<String> tags,
+            String author, String era, String title, String content, Set<String> tags,
             Pageable pageable);
 
     /**
