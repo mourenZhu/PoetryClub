@@ -17,7 +17,7 @@ import java.util.HashSet;
 
 @PreAuthorize("permitAll()")
 @RestController
-@RequestMapping("/api/poem")
+@RequestMapping("/api/public/poem")
 public class PoemController {
 
     private final PoemEntityService poemEntityService;

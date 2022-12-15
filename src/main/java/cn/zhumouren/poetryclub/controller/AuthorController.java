@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @PreAuthorize("permitAll()")
 @RestController
-@RequestMapping("/api/author")
+@RequestMapping("/api/public/author")
 public class AuthorController {
 
     private final AuthorService authorService;
