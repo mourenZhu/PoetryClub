@@ -1,7 +1,10 @@
 package cn.zhumouren.poetryclub.service.impl;
 
+import cn.zhumouren.poetryclub.bean.entity.AuthorEntity;
 import cn.zhumouren.poetryclub.bean.entity.RoleEntity;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
+import cn.zhumouren.poetryclub.bean.mapper.UserMapper;
+import cn.zhumouren.poetryclub.bean.vo.UserResVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constant.DBRoleType;
 import cn.zhumouren.poetryclub.dao.RoleRepository;
@@ -12,13 +15,21 @@ import cn.zhumouren.poetryclub.util.FileUtil;
 import cn.zhumouren.poetryclub.util.SecurityContextUtil;
 import cn.zhumouren.poetryclub.util.UserUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.criteria.Predicate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -94,6 +105,41 @@ public class UserServiceImpl implements UserService {
         }
         userEntity.setRoles(roles);
         return createUser(userEntity);
+    }
+
+    @Override
+    public ResponseResult<UserResVO> getByUsername(String username) {
+        UserEntity userEntity = userRepository.findByUsername(username);
+        if (ObjectUtils.isNotEmpty(userEntity)) {
+            return ResponseResult.success(UserMapper.INSTANCE.userEntityToUserResVO(userEntity));
+        }
+        return ResponseResult.failedWithMsg("用户不存在");
+    }
+
+    @Override
+    public ResponseResult<Page<UserResVO>> listUser(
+            String nickname, String username, String email, Pageable pageable) {
+        Specification<UserEntity> specification = (root, query, cb) -> {
+            List<Predicate> listAnd = new ArrayList<>();
+            if (StringUtils.isNotBlank(nickname)) {
+                listAnd.add(cb.like(root.get("nickname"), "%" + nickname + "%"));
+            }
+            if (StringUtils.isNotBlank(username)) {
+                listAnd.add(cb.like(root.get("username"), "%" + username + "%"));
+            }
+            if (StringUtils.isNotBlank(email)) {
+                listAnd.add(cb.like(root.get("email"), "%" + email + "%"));
+            }
+            Predicate[] andPres = new Predicate[listAnd.size()];
+            query.distinct(true);
+            if (ArrayUtils.isNotEmpty(andPres)) {
+                Predicate andPre = cb.and(listAnd.toArray(andPres));
+                return query.where(andPre).getRestriction();
+            }
+            return query.where().getRestriction();
+        };
+        Page<UserEntity> page = userRepository.findAll(specification, pageable);
+        return ResponseResult.success(page.map(UserMapper.INSTANCE::userEntityToUserResVO));
     }
 
     private String getUserAvatarSystemFilePath() {
