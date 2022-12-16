@@ -32,7 +32,7 @@ public class UserEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Length(message = "用户名不能为空", min = 6, max = 30)
+    @Length(message = "用户名长度为6-30", min = 6, max = 30)
     @NotEmpty
     @Column(unique = true)
     private String username;

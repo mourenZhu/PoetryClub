@@ -11,9 +11,8 @@ import java.io.Serializable;
  */
 @Data
 public class UserRegisterVO implements Serializable {
-    @Length(message = "用户名不能为空", min = 6, max = 30)
-    @NotEmpty
+    @Length(message = "用户名长度为6-30", min = 6, max = 30)
     private final String username;
-    @NotEmpty
+    @Length(message = "密码长度必须为6-30", min = 6, max = 30)
     private final String password;
 }
