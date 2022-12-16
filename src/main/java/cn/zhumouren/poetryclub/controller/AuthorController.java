@@ -8,10 +8,7 @@ import cn.zhumouren.poetryclub.service.AuthorService;
 import cn.zhumouren.poetryclub.util.PageUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @PreAuthorize("permitAll()")
 @RestController
@@ -22,6 +19,11 @@ public class AuthorController {
 
     public AuthorController(AuthorService authorService) {
         this.authorService = authorService;
+    }
+
+    @GetMapping("/{id}")
+    public ResponseResult<AuthorResVo> getAuthor(@PathVariable Long id) {
+        return authorService.getAuthor(id);
     }
 
     @GetMapping("/")

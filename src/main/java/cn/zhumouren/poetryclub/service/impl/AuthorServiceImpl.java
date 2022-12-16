@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AuthorServiceImpl implements AuthorService {
@@ -24,6 +25,14 @@ public class AuthorServiceImpl implements AuthorService {
 
     public AuthorServiceImpl(AuthorRepository authorRepository) {
         this.authorRepository = authorRepository;
+    }
+
+    @Override
+    public ResponseResult<AuthorResVo> getAuthor(Long id) {
+        Optional<AuthorEntity> optional = authorRepository.findById(id);
+        return optional.map(authorEntity ->
+                ResponseResult.success(AuthorMapper.INSTANCE.toDto(authorEntity)))
+                .orElse(ResponseResult.failedWithMsg("该作者不存在"));
     }
 
     @Override
