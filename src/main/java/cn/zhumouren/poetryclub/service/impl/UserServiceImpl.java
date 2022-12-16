@@ -4,6 +4,7 @@ import cn.zhumouren.poetryclub.bean.entity.AuthorEntity;
 import cn.zhumouren.poetryclub.bean.entity.RoleEntity;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.mapper.UserMapper;
+import cn.zhumouren.poetryclub.bean.vo.ChangePasswordVo;
 import cn.zhumouren.poetryclub.bean.vo.UserResVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constant.DBRoleType;
@@ -63,6 +64,16 @@ public class UserServiceImpl implements UserService {
     public ResponseResult<Boolean> isUsernameAvailable(String username) {
         UserEntity user = userRepository.findByUsername(username);
         return ResponseResult.success(ObjectUtils.isEmpty(user));
+    }
+
+    @Override
+    public ResponseResult<Boolean> changePassword(UserEntity userEntity, ChangePasswordVo changePasswordVo) {
+        if (!passwordEncoder.matches(changePasswordVo.getOldPassword(), userEntity.getPassword())) {
+            return ResponseResult.failedWithMsg("原密码错误，请重试");
+        }
+        userEntity.setPassword(passwordEncoder.encode(changePasswordVo.getNewPassword()));
+        userRepository.save(userEntity);
+        return ResponseResult.success();
     }
 
     @Override

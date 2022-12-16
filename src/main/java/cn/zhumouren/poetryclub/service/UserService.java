@@ -1,6 +1,7 @@
 package cn.zhumouren.poetryclub.service;
 
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
+import cn.zhumouren.poetryclub.bean.vo.ChangePasswordVo;
 import cn.zhumouren.poetryclub.bean.vo.UserResVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constant.DBRoleType;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
  **/
 public interface UserService {
     ResponseResult<Boolean> isUsernameAvailable(String username);
+    ResponseResult<Boolean> changePassword(UserEntity userEntity, ChangePasswordVo changePasswordVo);
 
     ResponseResult<Boolean> saveUserAvatar(MultipartFile file);
 
