@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Data
 public class UserReqVO implements Serializable {
     @Length(max = 20)
-    private final String nickname;
+    private String nickname;
     @Email
-    private final String email;
+    private String email;
 }
