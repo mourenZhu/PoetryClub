@@ -1,9 +1,9 @@
 package cn.zhumouren.poetryclub.service.impl;
 
-import cn.zhumouren.poetryclub.bean.entity.AuthorEntity;
 import cn.zhumouren.poetryclub.bean.entity.RoleEntity;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.mapper.UserMapper;
+import cn.zhumouren.poetryclub.bean.vo.AdminChangePasswordVo;
 import cn.zhumouren.poetryclub.bean.vo.ChangePasswordVo;
 import cn.zhumouren.poetryclub.bean.vo.UserResVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
@@ -13,7 +13,6 @@ import cn.zhumouren.poetryclub.dao.UserRepository;
 import cn.zhumouren.poetryclub.property.AppWebImageProperty;
 import cn.zhumouren.poetryclub.service.UserService;
 import cn.zhumouren.poetryclub.util.FileUtil;
-import cn.zhumouren.poetryclub.util.SecurityContextUtil;
 import cn.zhumouren.poetryclub.util.UserUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
@@ -77,8 +76,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseResult<Boolean> saveUserAvatar(MultipartFile file) {
-        UserEntity userEntity = SecurityContextUtil.getUserEntity();
+    public ResponseResult<Boolean> changePassword(String username, AdminChangePasswordVo adminChangePasswordVo) {
+        UserEntity userEntity = userRepository.findByUsername(username);
+        if (ObjectUtils.isEmpty(userEntity)) {
+            return ResponseResult.failedWithMsg("用户不存在");
+        }
+        userEntity.setPassword(passwordEncoder.encode(adminChangePasswordVo.getNewPassword()));
+        userRepository.save(userEntity);
+        return ResponseResult.success();
+    }
+
+    @Override
+    public ResponseResult<Boolean> saveUserAvatar(UserEntity userEntity, MultipartFile file) {
         // 先删除原图片
         FileUtil.deleteFile(getUserAvatarSystemFilePath() + "/" + userEntity.getAvatarName());
         String fileName = FileUtil.saveFileGetFileName(file, getUserAvatarSystemFilePath(),
