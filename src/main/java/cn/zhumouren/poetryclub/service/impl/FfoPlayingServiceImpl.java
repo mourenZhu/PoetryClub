@@ -3,6 +3,7 @@ package cn.zhumouren.poetryclub.service.impl;
 import cn.zhumouren.poetryclub.bean.dto.*;
 import cn.zhumouren.poetryclub.bean.entity.PoemEntity;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
+import cn.zhumouren.poetryclub.bean.mapper.PoemMapper;
 import cn.zhumouren.poetryclub.bean.vo.*;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constant.GamesType;
@@ -39,10 +40,11 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
     private final FfoTaskService ffoTaskService;
     private final FfoService ffoService;
     private final CommonWordRepository commonWordRepository;
+    private final PoemMapper poemMapper;
 
     public FfoPlayingServiceImpl(RedisUserService redisUserService, PoemRepository poemRepository,
                                  PoemEntityService poemEntityService, FfoGameRoomRedisDAO ffoGameRoomRedisDao, FfoGameRedisDAO ffoGameRedisDao,
-                                 StompFfoGameNotice ffoGameNotice, FfoTaskService ffoTaskService, FfoService ffoService, CommonWordRepository commonWordRepository) {
+                                 StompFfoGameNotice ffoGameNotice, FfoTaskService ffoTaskService, FfoService ffoService, CommonWordRepository commonWordRepository, PoemMapper poemMapper) {
         this.redisUserService = redisUserService;
         this.poemRepository = poemRepository;
         this.poemEntityService = poemEntityService;
@@ -52,6 +54,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
         this.ffoTaskService = ffoTaskService;
         this.ffoService = ffoService;
         this.commonWordRepository = commonWordRepository;
+        this.poemMapper = poemMapper;
     }
 
     /**
@@ -348,7 +351,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
             log.debug("可以说古诗，也可以自由创作");
             if (ObjectUtils.isNotEmpty(poemEntity)) {
                 log.debug("数据库中找到诗 {}", poemEntity);
-                ffoGameSentenceDTO.setPoemId(poemEntity.getId());
+                ffoGameSentenceDTO.setPoem(poemMapper.toInfoPoemVo(poemEntity));
                 ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.SUCCESS);
             } else {
                 log.debug("没有在数据库中找到诗，开启投票");
@@ -356,7 +359,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
             }
             return;
         }
-        ffoGameSentenceDTO.setPoemId(poemEntity.getId());
+        ffoGameSentenceDTO.setPoem(poemMapper.toInfoPoemVo(poemEntity));
         ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.SUCCESS);
     }
 

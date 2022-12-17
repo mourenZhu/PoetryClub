@@ -2,6 +2,7 @@ package cn.zhumouren.poetryclub.bean.mapper;
 
 import cn.zhumouren.poetryclub.bean.entity.LiteratureTagEntity;
 import cn.zhumouren.poetryclub.bean.entity.PoemEntity;
+import cn.zhumouren.poetryclub.bean.vo.InfoPoemVo;
 import cn.zhumouren.poetryclub.bean.vo.PoemResVo;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
@@ -25,4 +26,14 @@ public interface PoemMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     PoemEntity partialUpdate(PoemResVo poemResVo, @MappingTarget PoemEntity poemEntity);
+
+    @Mapping(source = "authorName", target = "author.name")
+    PoemEntity toEntity1(InfoPoemVo infoPoemVo);
+
+    @Mapping(source = "author.name", target = "authorName")
+    InfoPoemVo toInfoPoemVo(PoemEntity poemEntity);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "authorName", target = "author.name")
+    PoemEntity partialUpdate1(InfoPoemVo infoPoemVo, @MappingTarget PoemEntity poemEntity);
 }

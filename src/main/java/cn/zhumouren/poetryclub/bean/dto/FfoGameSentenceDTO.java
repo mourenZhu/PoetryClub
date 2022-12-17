@@ -1,5 +1,6 @@
 package cn.zhumouren.poetryclub.bean.dto;
 
+import cn.zhumouren.poetryclub.bean.vo.InfoPoemVo;
 import cn.zhumouren.poetryclub.constant.games.FfoGameSentenceJudgeType;
 import cn.zhumouren.poetryclub.constant.games.FfoVoteType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -22,7 +23,7 @@ public class FfoGameSentenceDTO implements Serializable {
     private UserDTO user;
     private String sentence;
     private FfoGameSentenceJudgeType sentenceJudgeType;
-    private Long poemId;
+    private InfoPoemVo poem;
     private List<FfoGameVoteDTO> userVotes;
     private LocalDateTime createTime;
 

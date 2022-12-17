@@ -32,7 +32,9 @@ public class PoemRepositoryTest {
         System.out.println("regex = " + regex);
         List<PoemEntity> poemEntities = poemRepository.findByRegex(regex);
         System.out.println("有诗: " + poemEntities.size() + " 首");
-        poemEntities.forEach(System.out::println);
+        poemEntities.forEach(poem -> {
+            System.out.println(poem.getContent());
+        });
     }
 
     @Test

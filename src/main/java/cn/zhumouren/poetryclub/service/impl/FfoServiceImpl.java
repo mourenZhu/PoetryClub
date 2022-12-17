@@ -267,8 +267,8 @@ public class FfoServiceImpl implements FfoService {
             FfoGameUserSentenceEntity ffoGameUserSentenceEntity =
                     new FfoGameUserSentenceEntity(user, sentence.getSentence(), sentence.getSentenceJudgeType(),
                             sentence.getCreateTime());
-            if (ObjectUtils.isNotEmpty(sentence.getPoemId())) {
-                Optional<PoemEntity> poem = poemRepository.findById(sentence.getPoemId());
+            if (ObjectUtils.isNotEmpty(sentence.getPoem())) {
+                Optional<PoemEntity> poem = poemRepository.findById(sentence.getPoem().getId());
                 poem.ifPresent(ffoGameUserSentenceEntity::setPoemEntity);
             }
             // 添加本个句子的投票

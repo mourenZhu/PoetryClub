@@ -4,7 +4,7 @@ import cn.zhumouren.poetryclub.bean.entity.FfoGameUserSentenceEntity;
 import cn.zhumouren.poetryclub.bean.vo.FfoGameUserSentenceResVo;
 import org.mapstruct.*;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring", uses = {UserMapper.class, FfoGameUserVoteMapper.class})
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring", uses = {UserMapper.class, FfoGameUserVoteMapper.class, AuthorMapper.class, PoemMapper.class})
 public interface FfoGameUserSentenceMapper {
     @Mapping(source = "poem", target = "poemEntity")
     FfoGameUserSentenceEntity toEntity(FfoGameUserSentenceResVo ffoGameUserSentenceResVo);
