@@ -182,6 +182,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
             // 如果只允许令在指定地方，则当前用户回答正确，令出现的位置到下一个
             if (!ffoGameDTO.getAllowWordInAny()) {
                 ffoGameDTO.setKeywordIndex((ffoGameDTO.getKeywordIndex() + 1) % ffoGameDTO.getMaxSentenceLength());
+                ffoGameNotice.ffoKeywordIndexNotice(ffoGameDTO.getUsernames(), ffoGameDTO.getKeywordIndex());
             }
         }
         // 用户这句诗不满足本局条件

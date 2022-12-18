@@ -28,6 +28,10 @@ public class MessageDestinations {
      */
     public static final String USER_GAME_FFO_NEXT_DESTINATION = "/game/ffo/next";
     /**
+     * 飞花令的令应该出现的索引位置
+     */
+    public static final String USER_GAME_FFO_KEYWORD_INDEX_DESTINATION = "/game/ffo/keyword_index";
+    /**
      * 飞花令房间所有用户信息路径
      */
     public static final String USER_GAME_FFO_USERS_DESTINATION = "/game/ffo/users";

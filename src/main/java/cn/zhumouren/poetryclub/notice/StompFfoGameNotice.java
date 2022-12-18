@@ -57,7 +57,6 @@ public class StompFfoGameNotice {
     }
 
 
-
     public void ffoGameRoomUserKickOutNotice(String kickOutUser) {
         messagingTemplate.convertAndSendToUser(kickOutUser,
                 MessageDestinations.USER_GAME_FFO_ROOM_KICK_OUT_DESTINATION,
@@ -83,6 +82,11 @@ public class StompFfoGameNotice {
         log.debug("通知, 下一个回答的用户");
         users.forEach(user -> messagingTemplate.convertAndSendToUser(
                 user, MessageDestinations.USER_GAME_FFO_NEXT_DESTINATION, ffoNextOutputVO));
+    }
+
+    public void ffoKeywordIndexNotice(Iterable<String> users, Integer keywordIndex) {
+        users.forEach(user -> messagingTemplate.convertAndSendToUser(
+                user, MessageDestinations.USER_GAME_FFO_KEYWORD_INDEX_DESTINATION, keywordIndex));
     }
 
     public void ffoVoteNotice(Iterable<String> users, FfoVoteOutputVO ffoVoteOutputVO) {
