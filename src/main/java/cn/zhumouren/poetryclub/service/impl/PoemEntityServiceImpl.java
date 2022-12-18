@@ -8,6 +8,7 @@ import cn.zhumouren.poetryclub.bean.vo.PoemResVo;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.dao.PoemRepository;
 import cn.zhumouren.poetryclub.service.PoemEntityService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
@@ -24,6 +25,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class PoemEntityServiceImpl implements PoemEntityService {
 
@@ -47,7 +49,8 @@ public class PoemEntityServiceImpl implements PoemEntityService {
 
     @Override
     public List<PoemEntity> listBySentence(String sentence) {
-        String regex = String.format("(^%s?[，。？；].*|^.*?[，。？]%s?[，。？；].*)", sentence, sentence);
+        String regex = String.format("(^%s[，。？；].*|^.*?[，。？]%s[，。？；].*)", sentence, sentence);
+        log.debug("飞花令查询句子的正则表达式 {}", regex);
         return poemRepository.findByRegex(regex);
     }
 
