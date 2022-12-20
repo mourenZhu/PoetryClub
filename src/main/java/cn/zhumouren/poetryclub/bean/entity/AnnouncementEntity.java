@@ -16,7 +16,7 @@ public class AnnouncementEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String content;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;

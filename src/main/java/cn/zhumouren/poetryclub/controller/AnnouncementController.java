@@ -28,10 +28,12 @@ public class AnnouncementController {
 
     @GetMapping("/title/")
     public ResponseResult<Page<AnnouncementTitleResVo>> pageTitle(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String content,
             @RequestParam(required = false) Integer pageNum,
             @RequestParam(required = false) Integer pageSize
     ) {
-        return announcementService.pageTitleVo(PageUtil.getPageable(pageNum, pageSize));
+        return announcementService.pageTitleVo(title, content, PageUtil.getPageable(pageNum, pageSize));
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")

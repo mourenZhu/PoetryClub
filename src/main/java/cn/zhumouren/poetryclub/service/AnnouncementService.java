@@ -13,5 +13,5 @@ public interface AnnouncementService {
     ResponseResult<Boolean> del(Long id);
     ResponseResult<Boolean> update(AnnouncementPutVo announcementPutVo);
     ResponseResult<AnnouncementResVo> get(Long id);
-    ResponseResult<Page<AnnouncementTitleResVo>> pageTitleVo(Pageable pageable);
+    ResponseResult<Page<AnnouncementTitleResVo>> pageTitleVo(String title, String content, Pageable pageable);
 }
