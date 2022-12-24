@@ -9,6 +9,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,8 @@ public class UserResVO implements Serializable {
     @JsonIgnore
     private final String avatarName;
     private Set<RoleEntity> roles;
+    private LocalDateTime createTime;
+    private LocalDateTime updateTime;
 
     public Set<String> getRoles() {
         return roles.stream().map(roleEntity ->

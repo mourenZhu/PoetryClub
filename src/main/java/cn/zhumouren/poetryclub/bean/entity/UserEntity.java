@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -50,6 +51,8 @@ public class UserEntity implements UserDetails {
 
     @Email
     private String email;
+    private LocalDateTime createTime;
+    private LocalDateTime updateTime;
 
     @Override
     public boolean equals(Object o) {

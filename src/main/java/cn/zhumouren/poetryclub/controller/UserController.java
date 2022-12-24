@@ -20,6 +20,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+
 /**
  * @author mourenZhu
  * @version 1.0
@@ -83,6 +85,7 @@ public class UserController {
         log.debug("{} 修改用户信息", userEntity.getUsername());
         userEntity.setEmail(userReqVO.getEmail());
         userEntity.setNickname(userReqVO.getNickname());
+        userEntity.setUpdateTime(LocalDateTime.now());
         userRepository.save(userEntity);
         return ResponseResult.success();
     }
@@ -97,6 +100,7 @@ public class UserController {
         }
         userEntity.setEmail(userReqVO.getEmail());
         userEntity.setNickname(userReqVO.getNickname());
+        userEntity.setUpdateTime(LocalDateTime.now());
         userRepository.save(userEntity);
         return ResponseResult.success();
     }

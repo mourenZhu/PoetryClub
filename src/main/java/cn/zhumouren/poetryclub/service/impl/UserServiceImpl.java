@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.Predicate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -71,6 +72,7 @@ public class UserServiceImpl implements UserService {
             return ResponseResult.failedWithMsg("原密码错误，请重试");
         }
         userEntity.setPassword(passwordEncoder.encode(changePasswordVo.getNewPassword()));
+        userEntity.setUpdateTime(LocalDateTime.now());
         userRepository.save(userEntity);
         return ResponseResult.success();
     }
@@ -82,6 +84,7 @@ public class UserServiceImpl implements UserService {
             return ResponseResult.failedWithMsg("用户不存在");
         }
         userEntity.setPassword(passwordEncoder.encode(adminChangePasswordVo.getNewPassword()));
+        userEntity.setUpdateTime(LocalDateTime.now());
         userRepository.save(userEntity);
         return ResponseResult.success();
     }
@@ -93,6 +96,7 @@ public class UserServiceImpl implements UserService {
         String fileName = FileUtil.saveFileGetFileName(file, getUserAvatarSystemFilePath(),
                 UserUtil.getUserAvatarName(userEntity.getUsername()));
         userEntity.setAvatarName(fileName);
+        userEntity.setUpdateTime(LocalDateTime.now());
         userRepository.save(userEntity);
         return ResponseResult.success();
     }
@@ -113,6 +117,7 @@ public class UserServiceImpl implements UserService {
         }
         log.debug("user = {}", userEntity);
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
+        userEntity.setCreateTime(LocalDateTime.now());
         UserEntity save = userRepository.save(userEntity);
         return ResponseResult.success(ObjectUtils.isNotEmpty(save));
     }
