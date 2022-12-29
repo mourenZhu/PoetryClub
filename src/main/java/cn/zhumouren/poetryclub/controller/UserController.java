@@ -104,11 +104,14 @@ public class UserController {
         userRepository.save(userEntity);
         return ResponseResult.success();
     }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping("/{username}")
     public ResponseResult<UserResVO> getUserByUsername(@PathVariable String username) {
         return userService.getByUsername(username);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping("/")
     public ResponseResult<Page<UserResVO>> listUser(
             @RequestParam(required = false) String nickname,
