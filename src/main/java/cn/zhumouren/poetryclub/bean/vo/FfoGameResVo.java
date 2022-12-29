@@ -8,6 +8,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -15,26 +16,26 @@ import java.util.Set;
  */
 @Data
 public class FfoGameResVo implements Serializable {
-    private final Long id;
+    private Long id;
     @NotNull
-    private final Character keyword;
+    private Character keyword;
     @NotNull
     @Min(15)
-    private final Integer playerPreparationSecond;
+    private Integer playerPreparationSecond;
     @NotNull
-    private final Boolean allowWordInAny;
+    private Boolean allowWordInAny;
     @NotNull
-    private final Integer maxSentenceLength;
+    private Integer maxSentenceLength;
     @NotNull
-    private final Boolean constantSentenceLength;
+    private Boolean constantSentenceLength;
     @NotNull
-    private final FfoGamePoemType ffoGamePoemType;
+    private FfoGamePoemType ffoGamePoemType;
     @JsonProperty("userInfos")
-    private final Set<FfoGameUserInfoResVo> userInfoEntities;
+    private Set<FfoGameUserInfoResVo> userInfoEntities;
     @JsonProperty("userSentences")
-    private final Set<FfoGameUserSentenceResVo> userSentenceEntities;
+    private List<FfoGameUserSentenceResVo> userSentenceEntities;
     @NotNull
-    private final LocalDateTime createTime;
+    private LocalDateTime createTime;
     @NotNull
-    private final LocalDateTime endTime;
+    private LocalDateTime endTime;
 }

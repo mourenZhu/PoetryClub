@@ -371,7 +371,18 @@ public class FfoServiceImpl implements FfoService {
     @Override
     public ResponseResult<FfoGameResVo> getFfoGame(Long id) {
         Optional<FfoGameEntity> optional = ffoGameRepository.findById(id);
-        return optional.map(ffoGameEntity -> ResponseResult.success(ffoGameMapper.toDto(ffoGameEntity)))
+        return optional.map(ffoGameEntity -> {
+                    FfoGameResVo ffoGameResVo = ffoGameMapper.toDto(ffoGameEntity);
+                    ffoGameResVo.getUserSentenceEntities().sort((o1, o2) -> {
+                        if (o1.getCreateTime().isAfter(o2.getCreateTime())) {
+                            return 1;
+                        } else if (o1.getCreateTime().isBefore(o2.getCreateTime())) {
+                            return -1;
+                        }
+                        return 0;
+                    });
+                    return ResponseResult.success(ffoGameResVo);
+        })
                 .orElseGet(() -> ResponseResult.failedWithMsg(id + " 不存在"));
     }
 
