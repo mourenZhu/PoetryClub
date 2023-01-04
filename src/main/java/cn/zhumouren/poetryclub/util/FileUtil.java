@@ -26,7 +26,7 @@ public class FileUtil {
                 multipartFile.getName(), multipartFile.getOriginalFilename(),
                 multipartFile.getContentType(), multipartFile.getSize());
         String suffix = getFileSuffixName(multipartFile);
-        String realPath = path + "\\" + name + suffix;
+        String realPath = path + "/" + name + suffix;
         log.debug("文件路径为:  " + realPath);
         try {
             File dir = new File(path);
