@@ -1,6 +1,8 @@
 package cn.zhumouren.poetryclub.bean.vo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotEmpty;
@@ -10,6 +12,8 @@ import java.io.Serializable;
  * A DTO for the {@link cn.zhumouren.poetryclub.bean.entity.UserEntity} entity
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserRegisterVO implements Serializable {
     @Length(message = "昵称长度为 1-20", min = 1, max = 20)
     private String nickname;

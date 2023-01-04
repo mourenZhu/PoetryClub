@@ -33,9 +33,9 @@ public class UserServiceTest {
         for (int i = 0; i < 100; i++) {
             UserRegisterVO userRegisterVO;
             if (i < 10) {
-                userRegisterVO = new UserRegisterVO("test0" + i, pw);
+                userRegisterVO = new UserRegisterVO("test0" + i, "test0" + i, pw);
             } else {
-                userRegisterVO = new UserRegisterVO("test" + i, pw);
+                userRegisterVO = new UserRegisterVO("test" + i, "test" + i, pw);
             }
             UserEntity userEntity = UserMapper.INSTANCE.userRegisterVOToUserEntity(userRegisterVO);
             userService.createUser(userEntity);
@@ -49,7 +49,7 @@ public class UserServiceTest {
         String pw = "123456";
         for (int i = 0; i < 10; i++) {
             UserRegisterVO userRegisterVO;
-            userRegisterVO = new UserRegisterVO("admin0" + i, pw);
+            userRegisterVO = new UserRegisterVO("admin0" + i, "admin0" + i, pw);
             UserEntity userEntity = UserMapper.INSTANCE.userRegisterVOToUserEntity(userRegisterVO);
             userService.createUser(userEntity, DBRoleType.ROLE_ADMIN, DBRoleType.ROLE_USER);
         }
