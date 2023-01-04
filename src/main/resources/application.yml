@@ -26,8 +26,6 @@ spring:
           s-max-age: 50
 
 app:
-  init:
-    poem-files-path: D:\\data\\github-project\\chinese-poetry\\json
   web:
     image:
       url: http://localhost:${server.port}
