@@ -28,7 +28,6 @@ spring:
 app:
   web:
     image:
-      url: http://localhost:${server.port}
       user-avatar-path: /user_avatar # 与 mvc.static-path-pattern 对应
   page-config:
     default-page-num: 0
