@@ -33,7 +33,6 @@ public class RegisterController {
     @PostMapping("/register")
     public ResponseResult<Boolean> userRegister(@RequestBody @Validated UserRegisterVO userRegisterVO) {
         log.debug("userRegisterVO = {}", userRegisterVO);
-        UserEntity userEntity = UserMapper.INSTANCE.userRegisterVOToUserEntity(userRegisterVO);
-        return userService.createUser(userEntity, DBRoleType.ROLE_USER);
+        return userService.userRegister(userRegisterVO);
     }
 }

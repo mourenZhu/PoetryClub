@@ -3,6 +3,7 @@ package cn.zhumouren.poetryclub.service;
 import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.vo.AdminChangePasswordVo;
 import cn.zhumouren.poetryclub.bean.vo.ChangePasswordVo;
+import cn.zhumouren.poetryclub.bean.vo.UserRegisterVO;
 import cn.zhumouren.poetryclub.bean.vo.UserResVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constant.DBRoleType;
@@ -25,6 +26,8 @@ public interface UserService {
     ResponseResult<Boolean> saveUserAvatar(UserEntity userEntity, MultipartFile file);
 
     ResponseResult<Boolean> createUser(UserEntity userEntity);
+
+    ResponseResult<Boolean> userRegister(UserRegisterVO userRegisterVO);
 
     ResponseResult<Boolean> createUser(UserEntity userEntity, DBRoleType... dbRoleType);
 

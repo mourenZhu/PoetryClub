@@ -5,11 +5,13 @@ import cn.zhumouren.poetryclub.bean.entity.UserEntity;
 import cn.zhumouren.poetryclub.bean.mapper.UserMapper;
 import cn.zhumouren.poetryclub.bean.vo.AdminChangePasswordVo;
 import cn.zhumouren.poetryclub.bean.vo.ChangePasswordVo;
+import cn.zhumouren.poetryclub.bean.vo.UserRegisterVO;
 import cn.zhumouren.poetryclub.bean.vo.UserResVO;
 import cn.zhumouren.poetryclub.common.response.ResponseResult;
 import cn.zhumouren.poetryclub.constant.DBRoleType;
 import cn.zhumouren.poetryclub.dao.RoleRepository;
 import cn.zhumouren.poetryclub.dao.UserRepository;
+import cn.zhumouren.poetryclub.dao.UserVerificationCodeRedisDao;
 import cn.zhumouren.poetryclub.property.AppWebImageProperty;
 import cn.zhumouren.poetryclub.service.UserService;
 import cn.zhumouren.poetryclub.util.FileUtil;
@@ -49,15 +51,17 @@ public class UserServiceImpl implements UserService {
 
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserVerificationCodeRedisDao userVerificationCodeRedisDao;
 
     @Value("${app.files-path}")
     private String appFilesPath;
 
-    public UserServiceImpl(UserRepository userRepository, AppWebImageProperty appWebImageProperty, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, AppWebImageProperty appWebImageProperty, RoleRepository roleRepository, PasswordEncoder passwordEncoder, UserVerificationCodeRedisDao userVerificationCodeRedisDao) {
         this.userRepository = userRepository;
         this.appWebImageProperty = appWebImageProperty;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userVerificationCodeRedisDao = userVerificationCodeRedisDao;
     }
 
     @Override
@@ -120,6 +124,19 @@ public class UserServiceImpl implements UserService {
         userEntity.setCreateTime(LocalDateTime.now());
         UserEntity save = userRepository.save(userEntity);
         return ResponseResult.success(ObjectUtils.isNotEmpty(save));
+    }
+
+    @Override
+    public ResponseResult<Boolean> userRegister(UserRegisterVO userRegisterVO) {
+        String verificationCode = userVerificationCodeRedisDao.getUserVerificationCode(userRegisterVO.getEmail());
+        if (ObjectUtils.isEmpty(verificationCode)) {
+            return ResponseResult.failedWithMsg("请先获取验证码");
+        }
+        if (!userRegisterVO.getVerificationCode().equals(verificationCode)) {
+            return ResponseResult.failedWithMsg("验证码不匹配");
+        }
+        UserEntity userEntity = UserMapper.INSTANCE.userRegisterVOToUserEntity(userRegisterVO);
+        return createUser(userEntity);
     }
 
     @Override
