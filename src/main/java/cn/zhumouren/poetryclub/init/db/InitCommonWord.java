@@ -43,7 +43,7 @@ public class InitCommonWord implements IInitData {
             completableFutures.add(future);
         }
         log.info("开始等待 futures");
-        CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0]));
+        CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
         completableFutures.forEach(future -> mergeWordRankingMap(future.join()));
         save();
     }
