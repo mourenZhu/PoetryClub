@@ -334,7 +334,7 @@ public class FfoPlayingServiceImpl implements FfoPlayingService {
         if (ffoGamePoemType.equals(FfoGamePoemType.ONLY_ANCIENTS_POEM)) {
             if (ObjectUtils.isEmpty(poemEntity)) {
                 log.debug("只允许古诗，但没有找到古诗了，{} 本轮结束", userDTO);
-                ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.KEYWORD_NOT_IN_CORRECT_POSITION);
+                ffoGameSentenceDTO.setSentenceJudgeType(FfoGameSentenceJudgeType.ONLY_ANCIENTS_POEM_BUT_NOT_FIND);
                 return;
             }
         } else if (ffoGamePoemType.equals(FfoGamePoemType.ONLY_SELF_CREAT)) {
